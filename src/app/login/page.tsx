@@ -1,5 +1,6 @@
 import Button from '@/app/ui/button';
 import InputField from '@/app/ui/input-field';
+import Box from '@/app/views/Box';
 
 export default function Page() {
   return (
@@ -19,6 +20,7 @@ export default function Page() {
         </Button>
       </div>
       <InputField title={'Email'} name={'email'}  />
+      <Box title={'Login'} />
     </div>
   );
 }
