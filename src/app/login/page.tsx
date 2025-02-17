@@ -4,23 +4,30 @@ import Box from '@/app/views/Box';
 
 export default function Page() {
   return (
-    <div className={'flex flex-col gap-4'}>
-      <div className={'flex flex-row items-end gap-4'}>
-        <Button>
-            Primary
-                </Button>
-        <Button variant={'cancel'}>Primary</Button>
-        <Button variant={'outline'}>Primary</Button>
-        <Button size={'small'}>Primary</Button>
-        <Button size={'medium'} variant={'cancel'}>
-          Primary
-        </Button>
-        <Button size={'large'} variant={'outline'} disabled={true}>
-          Primary
-        </Button>
+    <main className="flex items-center justify-center md:h-screen">
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+
+        <Box title={'Login'}>
+          <form className={'flex flex-col gap-4'}>
+            <InputField
+              type={'email'}
+              name={'email'}
+              title={'Email'}
+            />
+            <InputField
+              type={'password'}
+              name={'password'}
+              title={'Password'}
+            />
+            <Button
+              variant="submit"
+              type={'submit'}
+            >
+              Login
+            </Button>
+          </form>
+        </Box>
       </div>
-      <InputField title={'Email'} name={'email'}  />
-      <Box title={'Login'} />
-    </div>
+    </main>
   );
 }

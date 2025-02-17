@@ -1,7 +1,7 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ButtonHTMLAttributes } from 'react';
 
 interface Props
-  extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'className'> {
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   variant?: 'submit' | 'cancel' | 'outline';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
@@ -30,7 +30,7 @@ const Button: React.FC<Props> = ({
     <button
       disabled={disabled}
       {...restProps}
-      className={`${sizes[size]} ${variants[variant]} inline-flex items-center gap-x-2 rounded-lg border font-bold disabled:pointer-events-none disabled:opacity-50`}
+      className={`${sizes[size]} ${variants[variant]} justify-center inline-flex items-center gap-x-2 rounded-lg border font-bold disabled:pointer-events-none disabled:opacity-50`}
     />
   );
 };
