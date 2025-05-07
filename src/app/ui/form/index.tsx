@@ -1,5 +1,4 @@
 import React, { ReactElement, FormHTMLAttributes, ReactNode } from 'react';
-import clsx from 'clsx';
 import Button from '../button';
 
 interface Props extends Omit<FormHTMLAttributes<HTMLFormElement>, 'className'> {
