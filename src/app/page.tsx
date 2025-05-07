@@ -11,7 +11,7 @@ export default function Dashboard() {
         {Object.values(navItems)
           .filter(item => item.name !== 'Dashboard')
           .map((item) => (
-            <Box key={item.name} title={item.name}>
+            <Box key={item.name} icon={item.icon} title={item.name}>
               <div className="flex flex-col space-y-4">
                 <p className="text-gray-700 dark:text-gray-300">
                   {item.description}
