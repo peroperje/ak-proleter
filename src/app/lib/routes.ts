@@ -1,10 +1,12 @@
 // Navigation routes for the application
 // This file defines all the navigation routes used throughout the app
+import { icons, IconType } from './icons';
 
 export interface NavItem {
   name: string;
   href: (params?: Record<string, string>) => string;
   description?: string;
+  icon?: IconType;
 }
 
 export interface NavItems {
@@ -15,7 +17,8 @@ export const navItems: NavItems = {
   dashboard: {
     name: 'Dashboard',
     href: () => '/',
-    description: 'View overall statistics and recent activities.'
+    description: 'View overall statistics and recent activities.',
+    icon: 'dashboard'
   },
   athletes: {
     name: 'Athletes',
@@ -25,7 +28,8 @@ export const navItems: NavItems = {
       }
       return '/athletes';
     },
-    description: 'Manage athlete profiles, view statistics, and track progress.'
+    description: 'Manage athlete profiles, view statistics, and track progress.',
+    icon: 'athletes'
   },
   events: {
     name: 'Events',
@@ -35,7 +39,8 @@ export const navItems: NavItems = {
       }
       return '/events';
     },
-    description: 'Manage competitions, training sessions, and other events.'
+    description: 'Manage competitions, training sessions, and other events.',
+    icon: 'events'
   },
   results: {
     name: 'Results',
@@ -45,7 +50,8 @@ export const navItems: NavItems = {
       }
       return '/results';
     },
-    description: 'Record and analyze athlete performance results.'
+    description: 'Record and analyze athlete performance results.',
+    icon: 'results'
   },
   training: {
     name: 'Training',
@@ -55,7 +61,8 @@ export const navItems: NavItems = {
       }
       return '/training';
     },
-    description: 'Plan and track training sessions and exercises.'
+    description: 'Plan and track training sessions and exercises.',
+    icon: 'training'
   },
   coaches: {
     name: 'Coaches',
@@ -65,7 +72,8 @@ export const navItems: NavItems = {
       }
       return '/coaches';
     },
-    description: 'Manage coach profiles and assignments.'
+    description: 'Manage coach profiles and assignments.',
+    icon: 'coaches'
   },
   reports: {
     name: 'Reports',
@@ -75,6 +83,7 @@ export const navItems: NavItems = {
       }
       return '/reports';
     },
-    description: 'Generate reports and analytics on athlete performance.'
+    description: 'Generate reports and analytics on athlete performance.',
+    icon: 'reports'
   },
 };
