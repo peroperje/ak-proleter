@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# AK Proleter - Athlete Tracking Application
+
+A Next.js application for tracking athlete results and performance for Athletic Club Proleter Zrenjanin.
+
+## Features
+
+- **Athlete Management**: Track athlete profiles, personal information, and categories
+- **Event Management**: Manage competitions, training camps, and other events
+- **Results Tracking**: Record and analyze athlete performance results
+- **Training Management**: Plan and track training sessions and exercises
+- **Coach Management**: Manage coach profiles and assignments
+- **Reports**: Generate reports and analytics on athlete performance
+- **Authentication**: Role-based access control for administrators, coaches, athletes, and viewers
+
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: Custom components with Storybook
+- **Authentication**: Custom JWT-based authentication (demo implementation)
+- **API**: Next.js API routes
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.17 or later
+- pnpm (recommended) or npm
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/ak-proleter.git
+   cd ak-proleter
+   ```
+
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+3. Run the development server:
+   ```bash
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+## Project Structure
+
+- `src/app`: Main application code (Next.js App Router)
+  - `api`: API routes for data fetching
+  - `components`: Shared React components
+  - `lib`: Utility functions and type definitions
+  - `ui`: UI components (buttons, inputs, etc.)
+  - `views`: Page-specific components
+  - `(routes)`: Page components for each route
+
+## Demo Accounts
+
+For testing purposes, the following demo accounts are available:
+
+- **Admin**: admin@akproleter.rs / admin123
+- **Coach**: coach@akproleter.rs / coach123
+- **Athlete**: marko.petrovic@example.com / athlete123
+- **Viewer**: viewer@akproleter.rs / viewer123
+
+## Development
+
+### Storybook
+
+This project uses Storybook for component development and testing:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm storybook
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Building for Production
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Future Enhancements
 
-## Learn More
+- Database integration (PostgreSQL, MongoDB, etc.)
+- File uploads for athlete photos and documents
+- Advanced analytics and visualization
+- Mobile application
+- Email notifications
+- Calendar integration
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License - see the LICENSE file for details.
