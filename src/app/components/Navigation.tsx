@@ -17,10 +17,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
               AK Proleter
             </Link>
             <nav className="hidden md:flex space-x-4">
-              {navItems.map((item) => (
+              {Object.values(navItems).map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href()}
                   className={`px-3 py-2 rounded-md text-sm font-medium ${
                     currentPage === item.name.toLowerCase() 
                       ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white' 
@@ -43,10 +43,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
       {/* Mobile navigation menu - shown on small screens */}
       <div className="md:hidden border-t border-gray-200 dark:border-neutral-700">
         <div className="px-2 py-3 space-y-1">
-          {navItems.map((item) => (
+          {Object.values(navItems).map((item) => (
             <Link
               key={item.name}
-              href={item.href}
+              href={item.href()}
               className={`block px-3 py-2 rounded-md text-base font-medium ${
                 currentPage === item.name.toLowerCase()
                   ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
