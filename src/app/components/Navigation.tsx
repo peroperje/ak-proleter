@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { navItems } from '@/app/lib/routes';
 import { icons } from '@/app/lib/icons';
 
@@ -14,8 +15,18 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 mr-8">
-              AK Proleter
+            <Link href="/" className="flex items-center text-sm font-bold text-red-500 dark:text-red-500 hover:text-red-600 dark:hover:text-red-400 mr-8">
+              <Image
+                src="/ak-proleter-zr-logo.svg"
+                alt="AK Proleter Logo"
+                width={40}
+                height={40}
+                className="mr-2"
+              />
+              <div className="flex flex-col leading-none text-center">
+                <span>AK Proleter</span>
+                <span>Zrenjanin</span>
+              </div>
             </Link>
             <nav className="hidden md:flex space-x-4">
               {Object.values(navItems).map((item) => {
