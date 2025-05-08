@@ -41,6 +41,7 @@ export async function GET(request: Request) {
         active: true, // This information is not in the schema, defaulting to true
         categories: user.profile?.category ? [user.profile.category.name] : [],
         address: user.profile?.address || undefined,
+        notes: undefined,
       };
 
       return NextResponse.json(athlete);
@@ -71,6 +72,7 @@ export async function GET(request: Request) {
       active: true, // This information is not in the schema, defaulting to true
       categories: user.profile?.category ? [user.profile.category.name] : [],
       address: user.profile?.address || undefined,
+      notes: user.profile?.bio || undefined,
     }));
 
     return NextResponse.json(athletes);
@@ -108,7 +110,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // Create a new user with profile
+    // Create a new user with a profile
     const newUser = await prisma.user.create({
       data: {
         name: `${body.firstName} ${body.lastName}`,
