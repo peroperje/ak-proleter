@@ -4,64 +4,44 @@ import Box from '@/app/views/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event, Discipline } from '@/app/lib/definitions';
+import prisma from '@/app/lib/prisma';
 
-// Mock data for demonstration
-const mockEvents: Event[] = [
-  {
-    id: '1',
-    name: 'National Championship 2023',
-    description: 'Annual national track and field championship',
-    location: 'Belgrade Stadium, Belgrade',
-    startDate: new Date('2023-06-15'),
-    endDate: new Date('2023-06-17'),
-    eventType: 'competition',
-    disciplines: [
-      { id: '101', name: '100m Sprint', category: 'sprint', measurementUnit: 'time', genderCategory: 'male' },
-      { id: '102', name: '200m Sprint', category: 'sprint', measurementUnit: 'time', genderCategory: 'male' },
-      { id: '103', name: 'Long Jump', category: 'jumps', measurementUnit: 'distance', genderCategory: 'male' },
-      { id: '104', name: '100m Sprint', category: 'sprint', measurementUnit: 'time', genderCategory: 'female' },
-      { id: '105', name: '200m Sprint', category: 'sprint', measurementUnit: 'time', genderCategory: 'female' },
-      { id: '106', name: 'Long Jump', category: 'jumps', measurementUnit: 'distance', genderCategory: 'female' },
-    ],
-    status: 'completed',
-    organizer: 'Serbian Athletics Federation',
-  },
-  {
-    id: '2',
-    name: 'Spring Training Camp',
-    description: 'Intensive training camp for club athletes',
-    location: 'Zrenjanin Sports Center, Zrenjanin',
-    startDate: new Date('2023-03-10'),
-    endDate: new Date('2023-03-20'),
-    eventType: 'camp',
-    disciplines: [
-      { id: '201', name: 'Sprint Training', category: 'sprint', measurementUnit: 'time', genderCategory: 'mixed' },
-      { id: '202', name: 'Endurance Training', category: 'middle-distance', measurementUnit: 'time', genderCategory: 'mixed' },
-      { id: '203', name: 'Strength Training', category: 'throws', measurementUnit: 'distance', genderCategory: 'mixed' },
-    ],
-    status: 'completed',
-    organizer: 'AK Proleter',
-  },
-  {
-    id: '3',
-    name: 'Regional Competition 2023',
-    description: 'Regional qualification event',
-    location: 'Novi Sad Athletics Stadium, Novi Sad',
-    startDate: new Date('2023-09-05'),
-    endDate: new Date('2023-09-06'),
-    eventType: 'competition',
-    disciplines: [
-      { id: '301', name: '400m', category: 'sprint', measurementUnit: 'time', genderCategory: 'male' },
-      { id: '302', name: '800m', category: 'middle-distance', measurementUnit: 'time', genderCategory: 'male' },
-      { id: '303', name: '1500m', category: 'middle-distance', measurementUnit: 'time', genderCategory: 'male' },
-      { id: '304', name: '400m', category: 'sprint', measurementUnit: 'time', genderCategory: 'female' },
-      { id: '305', name: '800m', category: 'middle-distance', measurementUnit: 'time', genderCategory: 'female' },
-      { id: '306', name: '1500m', category: 'middle-distance', measurementUnit: 'time', genderCategory: 'female' },
-    ],
-    status: 'upcoming',
-    organizer: 'Vojvodina Athletics Association',
-  },
-];
+async function getEvents(): Promise<Event[]> {
+  // Fetch events from the database
+  const dbEvents = await prisma.event.findMany({
+    include: {
+      organizer: true,
+      category: true,
+    }
+  });
+
+  // Transform the database events to match the Event interface
+  return dbEvents.map(event => {
+    // Create a mock discipline for each event since we don't have disciplines in the database
+    const mockDiscipline: Discipline = {
+      id: `d-${event.id}`,
+      name: event.category?.name || 'General',
+      category: 'sprint',
+      measurementUnit: 'time',
+      genderCategory: 'mixed',
+    };
+
+    return {
+      id: event.id,
+      name: event.title,
+      description: event.description || '',
+      location: event.location,
+      startDate: event.startDate,
+      endDate: event.endDate || event.startDate,
+      eventType: event.type.toLowerCase() as 'competition' | 'training' | 'camp' | 'other',
+      disciplines: [mockDiscipline],
+      status: event.endDate && event.endDate < new Date() ? 'completed' :
+              event.startDate > new Date() ? 'upcoming' : 'ongoing',
+      organizer: event.organizer.name,
+      notes:  '',
+    };
+  });
+}
 
 // Helper function to format date
 function formatDate(date: Date): string {
@@ -72,7 +52,10 @@ function formatDate(date: Date): string {
   });
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  // Fetch events from the database
+  const events = await getEvents();
+
   const addEventButton = (
     <Link href="/events/new">
       <Button variant="submit">Add Event</Button>
@@ -112,7 +95,7 @@ export default function EventsPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-neutral-700">
-                  {mockEvents.map((event) => {
+                  {events.map((event) => {
                     // Status badge styling
                     const statusStyles = {
                       upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',

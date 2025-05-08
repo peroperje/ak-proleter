@@ -1,39 +1,7 @@
 import { NextResponse } from 'next/server';
 import { User } from '@/app/lib/definitions';
-
-// Mock users for demonstration
-const mockUsers: (User & { password: string })[] = [
-  {
-    id: '1',
-    email: 'admin@akproleter.rs',
-    name: 'Admin User',
-    role: 'admin',
-    password: 'admin123', // In a real app, this would be hashed
-  },
-  {
-    id: '2',
-    email: 'coach@akproleter.rs',
-    name: 'Coach User',
-    role: 'coach',
-    coachId: '1',
-    password: 'coach123', // In a real app, this would be hashed
-  },
-  {
-    id: '3',
-    email: 'marko.petrovic@example.com',
-    name: 'Marko Petrović',
-    role: 'athlete',
-    athleteId: '1',
-    password: 'athlete123', // In a real app, this would be hashed
-  },
-  {
-    id: '4',
-    email: 'viewer@akproleter.rs',
-    name: 'Viewer User',
-    role: 'viewer',
-    password: 'viewer123', // In a real app, this would be hashed
-  },
-];
+import prisma from '@/app/lib/prisma';
+import * as bcrypt from 'bcrypt';
 
 export async function POST(request: Request) {
   try {
@@ -48,52 +16,89 @@ export async function POST(request: Request) {
     }
 
     // Find user by email
-    const user = mockUsers.find(u => u.email === body.email);
+    const user = await prisma.user.findUnique({
+      where: { email: body.email },
+    });
 
-    // Check if user exists and password matches
-    if (!user || user.password !== body.password) {
+    // Check if user exists
+    if (!user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
-    // In a real application, you would:
-    // 1. Use a proper password hashing library like bcrypt
-    // 2. Generate a JWT token or session
-    // 3. Set cookies or return the token
+    // Check if password matches
+    // In a real app, you would use bcrypt.compare
+    // For this demo, we'll just check if the password matches the hashed password
+    // This is not secure and should not be used in production
+    const passwordMatches = await bcrypt.compare(body.password, user.passwordHash);
+    if (!passwordMatches) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 }
+      );
+    }
 
-    // For this demo, we'll just return the user without the password
-    const { password, ...userWithoutPassword } = user;
+    // Map Prisma User to our User interface
+    const userResponse: User = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role.toLowerCase() as 'admin' | 'coach' | 'athlete' | 'viewer',
+    };
 
+    // In a real app, you would generate a JWT token here
     return NextResponse.json({
-      user: userWithoutPassword,
-      // In a real app, you would include a token here
-      token: 'mock-jwt-token',
+      user: userResponse,
+      token: 'mock-jwt-token', // In a real app, this would be a JWT token
     });
   } catch (error) {
+    console.error('Error authenticating user:', error);
     return NextResponse.json(
-      { error: 'Invalid request body' },
-      { status: 400 }
+      { error: 'Authentication failed' },
+      { status: 500 }
     );
   }
 }
 
 // Route to check if a user is authenticated
 export async function GET(request: Request) {
-  // In a real application, you would:
-  // 1. Get the token from the Authorization header or cookies
-  // 2. Verify the token
-  // 3. Return the user information if valid
+  try {
+    // In a real application, you would:
+    // 1. Get the token from the Authorization header or cookies
+    // 2. Verify the token
+    // 3. Return the user information if valid
 
-  // For this demo, we'll just return a mock response
-  return NextResponse.json({
-    authenticated: true,
-    user: {
-      id: '1',
-      email: 'admin@akproleter.rs',
-      name: 'Admin User',
-      role: 'admin',
+    // For this demo, we'll get the first admin user from the database
+    const adminUser = await prisma.user.findFirst({
+      where: { role: 'ADMIN' },
+    });
+
+    if (!adminUser) {
+      return NextResponse.json({
+        authenticated: false,
+        error: 'No admin user found',
+      }, { status: 401 });
     }
-  });
+
+    // Map Prisma User to our User interface
+    const userResponse: User = {
+      id: adminUser.id,
+      email: adminUser.email,
+      name: adminUser.name,
+      role: adminUser.role.toLowerCase() as 'admin' | 'coach' | 'athlete' | 'viewer',
+    };
+
+    return NextResponse.json({
+      authenticated: true,
+      user: userResponse,
+    });
+  } catch (error) {
+    console.error('Error checking authentication:', error);
+    return NextResponse.json({
+      authenticated: false,
+      error: 'Authentication check failed',
+    }, { status: 500 });
+  }
 }

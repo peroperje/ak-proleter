@@ -9,12 +9,17 @@ export interface Athlete {
   gender: 'male' | 'female';
   email?: string;
   phone?: string;
-  address?: string;
+  address: string | null | undefined;
   emergencyContact?: string;
   joinDate: Date;
   active: boolean;
   categories?: string[]; // Age categories or competition categories
-  notes?: string;
+  notes: string | null | undefined;
+  coachNotes?: string | null | undefined;
+  training?: Training[];
+  results?: Result[];
+  events?: Event[];
+  coaches?: Coach[]
   photoUrl?: string;
 }
 
@@ -30,7 +35,7 @@ export interface Event {
   disciplines: Discipline[];
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   organizer?: string;
-  notes?: string;
+  notes: string | null | undefined;
 }
 
 // Discipline model (track and field events)

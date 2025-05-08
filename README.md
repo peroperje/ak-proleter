@@ -20,6 +20,7 @@ A Next.js application for tracking athlete results and performance for Athletic 
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: Custom components with Storybook
 - **Authentication**: Custom JWT-based authentication (demo implementation)
+- **Database**: PostgreSQL with Prisma ORM
 - **API**: Next.js API routes
 
 ## Getting Started
@@ -28,6 +29,7 @@ A Next.js application for tracking athlete results and performance for Athletic 
 
 - Node.js 18.17 or later
 - pnpm (recommended) or npm
+- Docker and Docker Compose (for local database)
 
 ### Installation
 
@@ -47,7 +49,20 @@ A Next.js application for tracking athlete results and performance for Athletic 
    pnpm dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+4. Start the local database:
+   ```bash
+   pnpm db:start
+   ```
+
+5. (Optional) Use Prisma Studio to view and edit the database:
+   ```bash
+   pnpm prisma:studio
+   ```
+   This will open Prisma Studio at [http://localhost:5555](http://localhost:5555)
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+For more details on database setup and configuration, see the [Database Documentation](./prisma/README.md).
 
 ## Project Structure
 
@@ -58,6 +73,7 @@ A Next.js application for tracking athlete results and performance for Athletic 
   - `ui`: UI components (buttons, inputs, etc.)
   - `views`: Page-specific components
   - `(routes)`: Page components for each route
+- `prisma`: Database configuration and Prisma ORM setup
 
 ## Demo Accounts
 
@@ -86,12 +102,39 @@ pnpm build
 
 ## Future Enhancements
 
-- Database integration (PostgreSQL, MongoDB, etc.)
 - File uploads for athlete photos and documents
 - Advanced analytics and visualization
 - Mobile application
 - Email notifications
 - Calendar integration
+- Prisma schema development for data models
+
+## Database Integration
+
+This project now uses a PostgreSQL database with Prisma ORM for data persistence. The mock data has been replaced with real database queries.
+
+### Database Setup
+
+1. Start the PostgreSQL database:
+   ```bash
+   pnpm db:start
+   ```
+
+2. Generate Prisma client:
+   ```bash
+   pnpm prisma:generate
+   ```
+
+3. Seed the database with initial data:
+   ```bash
+   pnpm prisma:seed
+   ```
+
+### Database Management
+
+- Start the database: `pnpm db:start`
+- Stop the database: `pnpm db:stop`
+- Open Prisma Studio to view/edit data: `pnpm prisma:studio`
 
 ## License
 

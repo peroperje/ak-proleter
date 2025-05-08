@@ -4,48 +4,41 @@ import Box from '@/app/views/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
+import prisma from '@/app/lib/prisma';
 
-// Mock data for demonstration
-const mockAthletes: Athlete[] = [
-  {
-    id: '1',
-    firstName: 'Marko',
-    lastName: 'Petrović',
-    dateOfBirth: new Date('1998-05-15'),
-    gender: 'male',
-    email: 'marko.petrovic@example.com',
-    phone: '+381 63 123 4567',
-    joinDate: new Date('2020-01-10'),
-    active: true,
-    categories: ['Senior', 'Long Distance'],
-  },
-  {
-    id: '2',
-    firstName: 'Ana',
-    lastName: 'Jovanović',
-    dateOfBirth: new Date('2000-08-22'),
-    gender: 'female',
-    email: 'ana.jovanovic@example.com',
-    phone: '+381 64 987 6543',
-    joinDate: new Date('2019-03-15'),
-    active: true,
-    categories: ['U23', 'Sprint'],
-  },
-  {
-    id: '3',
-    firstName: 'Nikola',
-    lastName: 'Đorđević',
-    dateOfBirth: new Date('1995-11-30'),
-    gender: 'male',
-    email: 'nikola.djordjevic@example.com',
-    phone: '+381 65 456 7890',
-    joinDate: new Date('2018-06-20'),
-    active: false,
-    categories: ['Senior', 'Throws'],
-  },
-];
+async function getAthletes(): Promise<Athlete[]> {
+  // Fetch users with MEMBER role from the database
+  const users = await prisma.user.findMany({
+    where: { role: 'MEMBER' },
+    include: {
+      profile: {
+        include: {
+          category: true
+        }
+      }
+    }
+  });
 
-export default function AthletesPage() {
+  // Transform the user data to match the Athlete interface
+  return users.map(user => ({
+    id: user.id,
+    firstName: user.name.split(' ')[0],
+    lastName: user.name.split(' ').slice(1).join(' '),
+    dateOfBirth: user.profile?.dateOfBirth || new Date(),
+    gender: 'male', // This information is not in the schema, defaulting to male
+    email: user.email,
+    phone: user.profile?.phoneNumber || undefined,
+    joinDate: user.createdAt,
+    active: true, // This information is not in the schema, defaulting to true
+    categories: user.profile?.category ? [user.profile.category.name] : [],
+    address: user.profile?.address,
+  }));
+}
+
+export default async function AthletesPage() {
+  // Fetch athletes from the database
+  const athletes = await getAthletes();
+
   const addAthleteButton = (
     <Link href="/athletes/new">
       <Button variant="submit">Add Athlete</Button>
@@ -85,7 +78,7 @@ export default function AthletesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-neutral-700">
-                  {mockAthletes.map((athlete) => {
+                  {athletes.map((athlete) => {
                     // Calculate age
                     const today = new Date();
                     const birthDate = new Date(athlete.dateOfBirth);
