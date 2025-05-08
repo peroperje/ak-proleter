@@ -30,6 +30,7 @@ enum UserRole {
   ADMIN
   COACH
   MEMBER
+  VISITOR
 }
 
 // Profile information for users
