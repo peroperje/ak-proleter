@@ -33,8 +33,12 @@ const athleteSchema = yup.object().shape({
   photoUrl: yup.string().url('Invalid URL format').optional(),
 });
 
-export async function createAthlete(formData: AthleteFormData) {
-  console.log('Creating athlete:', formData);
+/**
+ * @deprecated
+ * @param formData
+ */
+export async function createAthlete(formData: FormData) {
+  console.log('this is Creating athlete:', formData);
   try {
     // Server-side validation
     await athleteSchema.validate(formData, { abortEarly: false });

@@ -1,19 +1,17 @@
 import Box from '@/app/views/Box';
 import NewAthleteForm from './NewAthleteForm';
-import Logo from '@/app/components/Logo';
+
+import PageLayout from '@/app/components/PageLayout';
 
 export default function NewAthletePage() {
   return (
-    <main className="flex items-center justify-center md:h-screen bg-gray-50 dark:bg-neutral-800">
-      <div className="relative mx-auto flex w-full max-w-[800px] flex-col space-y-2.5 p-4 md:-mt-32">
-        <div className="flex justify-center mb-4">
-          <Logo />
-        </div>
+        <PageLayout
+          title={'New Athlete'}
+          currentPage="add athlete"
 
-        <Box title={'Add New Athlete'}>
+        >
+          <Box title={'Please fill out the form below to add a new athlete.'}>
           <NewAthleteForm />
-        </Box>
-      </div>
-    </main>
+        </Box></PageLayout>
   );
 }

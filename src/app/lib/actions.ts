@@ -31,12 +31,79 @@ const athleteSchema = yup.object().shape({
   emergencyContact: yup.string().optional(),
   categories: yup.array().of(yup.string()).optional(),
   notes: yup.string().optional(),
-  photoUrl: yup.string().url('Invalid URL format').optional(),
+  photoUrl: yup.string().url('Invalid URL format').required(),
 });
 
-export async function createAthlete(formData: AthleteFormData) {
-  console.log('Creating athlete:', formData);
+export type ActionState = {
+  errors: Record<string, string>;
+  message: string | null;
+};
+
+
+export async function createAthlete(state:ActionState,formData: FormData) {
+  console.log('Creating athlete in libs:', formData);
+  // Extract form data
+  const firstName = formData.get('firstName') as string;
+  const lastName = formData.get('lastName') as string;
+  const dateOfBirth = formData.get('dateOfBirth') as string;
+  const gender = formData.get('gender') as 'male' | 'female';
+  const email = (formData.get('email') as string) || undefined;
+  const phone = (formData.get('phone') as string) || undefined;
+  const address = (formData.get('address') as string) || undefined;
+  const emergencyContact =
+    (formData.get('emergencyContact') as string) || undefined;
+  const category = (formData.get('category') as string) || undefined;
+  const notes = (formData.get('notes') as string) || undefined;
+  const photoUrl = (formData.get('photoUrl') as string) || undefined;
+  // Prepare data for submission
+  const formattedData = {
+    firstName,
+    lastName,
+    dateOfBirth: new Date(dateOfBirth),
+    gender,
+    email,
+    phone,
+    address,
+    emergencyContact,
+    categories: category ? [category] : [],
+    notes,
+    photoUrl,
+  };
+  console.log('Creating athlete in libs prepared:', formattedData);
   try {
+    await athleteSchema.validate(formattedData, { abortEarly: false });
+    revalidatePath('/athletes');
+    return {
+      errors: {},
+      message: 'Athlete created successfully'
+    };
+
+  } catch (error) {
+    console.error('Error creating athlete:', error.inner);
+
+    if (error instanceof yup.ValidationError) {
+      // Return validation errors
+      /*return {
+        error: 'Validation failed',
+        validationErrors: error.inner.reduce((acc, err) => {
+          if (err.path) {
+            acc[err.path] = err.message;
+          }
+          return acc;
+        }, {} as Record<string, string>)
+      };*/
+      return { errors:error.inner.reduce((acc, err) => {
+          if (err.path) {
+            acc[err.path] = err.message;
+          }
+          return acc;
+        }, {} as Record<string, string>), message: 'An unexpected error occurred' };
+    }
+
+    return { errors:{}, message: 'An unexpected error occurred' };
+  }
+
+  /*try {
     // Server-side validation
     await athleteSchema.validate(formData, { abortEarly: false });
 
@@ -125,5 +192,5 @@ export async function createAthlete(formData: AthleteFormData) {
     }
 
     return { error: 'An unexpected error occurred' };
-  }
+  }*/
 }
