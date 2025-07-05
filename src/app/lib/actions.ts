@@ -21,7 +21,7 @@ interface AthleteFormData {
 
 // Define validation schema using yup
 const athleteSchema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
+  firstName: yup.string().required('First name is required').min(2, 'First name must be at least 2 characters long'),
   lastName: yup.string().required('Last name is required'),
   dateOfBirth: yup.date().required('Date of birth is required'),
   gender: yup.string().oneOf(['male', 'female'], 'Gender must be male or female').required('Gender is required'),
@@ -31,12 +31,13 @@ const athleteSchema = yup.object().shape({
   emergencyContact: yup.string().optional(),
   categories: yup.array().of(yup.string()).optional(),
   notes: yup.string().optional(),
-  photoUrl: yup.string().url('Invalid URL format').required(),
+  photoUrl: yup.string().url('Invalid URL format').optional(),
 });
 
 export type ActionState = {
   errors: Record<string, string>;
   message: string | null;
+  data?:AthleteFormData
 };
 
 
@@ -55,6 +56,7 @@ export async function createAthlete(state:ActionState,formData: FormData) {
   const category = (formData.get('category') as string) || undefined;
   const notes = (formData.get('notes') as string) || undefined;
   const photoUrl = (formData.get('photoUrl') as string) || undefined;
+
   // Prepare data for submission
   const formattedData = {
     firstName,
@@ -97,10 +99,13 @@ export async function createAthlete(state:ActionState,formData: FormData) {
             acc[err.path] = err.message;
           }
           return acc;
-        }, {} as Record<string, string>), message: 'An unexpected error occurred' };
+        }, {} as Record<string, string>),
+        message: 'An unexpected error occurred',
+        data:formattedData
+      };
     }
 
-    return { errors:{}, message: 'An unexpected error occurred' };
+    return { errors:{}, message: 'An unexpected error occurred', data:formattedData };
   }
 
   /*try {

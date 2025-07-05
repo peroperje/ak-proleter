@@ -72,7 +72,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='firstName'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.firstName,
+            })}
           >
             First Name
           </label>
@@ -80,14 +82,23 @@ console.log('state:', state);
             id='firstName'
             name='firstName'
             type='text'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.firstName,
+            })}
             required
           />
+          {
+          !!state.errors.firstName &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.firstName}
+          </p>
+          }
         </div>
         <div>
           <label
             htmlFor='lastName'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.lastName,
+            })}
           >
             Last Name
           </label>
@@ -95,9 +106,16 @@ console.log('state:', state);
             id='lastName'
             name='lastName'
             type='text'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.lastName,
+            })}
             required
           />
+          {
+          !!state.errors.lastName &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.lastName}
+          </p>
+          }
         </div>
       </div>
 
@@ -105,7 +123,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='dateOfBirth'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.dateOfBirth,
+            })}
           >
             Date of Birth
           </label>
@@ -113,26 +133,42 @@ console.log('state:', state);
             id='dateOfBirth'
             name='dateOfBirth'
             type='date'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.dateOfBirth,
+            })}
             required
           />
+          {
+          !!state.errors.dateOfBirth &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.dateOfBirth}
+          </p>
+          }
         </div>
         <div>
           <label
             htmlFor='gender'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.gender,
+            })}
           >
             Gender
           </label>
           <select
             id='gender'
             name='gender'
-            className='block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400', {
+              'border-red-500': !!state.errors.gender,
+            })}
             required
           >
             <option value='male'>Male</option>
             <option value='female'>Female</option>
           </select>
+          {
+          !!state.errors.gender &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.gender}
+          </p>
+          }
         </div>
       </div>
 
@@ -140,7 +176,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='email'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.email,
+            })}
           >
             Email
           </label>
@@ -148,13 +186,22 @@ console.log('state:', state);
             id='email'
             name='email'
             type='email'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.email,
+            })}
           />
+          {
+          !!state.errors.email &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.email}
+          </p>
+          }
         </div>
         <div>
           <label
             htmlFor='phone'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.phone,
+            })}
           >
             Phone
           </label>
@@ -162,8 +209,15 @@ console.log('state:', state);
             id='phone'
             name='phone'
             type='tel'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.phone,
+            })}
           />
+          {
+          !!state.errors.phone &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.phone}
+          </p>
+          }
         </div>
       </div>
 
@@ -171,7 +225,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='address'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.address,
+            })}
           >
             Address
           </label>
@@ -179,8 +235,15 @@ console.log('state:', state);
             id='address'
             name='address'
             type='text'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.address,
+            })}
           />
+          {
+          !!state.errors.address &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.address}
+          </p>
+          }
         </div>
       </div>
 
@@ -188,7 +251,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='emergencyContact'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.emergencyContact,
+            })}
           >
             Emergency Contact
           </label>
@@ -196,8 +261,15 @@ console.log('state:', state);
             id='emergencyContact'
             name='emergencyContact'
             type='text'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.emergencyContact,
+            })}
           />
+          {
+          !!state.errors.emergencyContact &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.emergencyContact}
+          </p>
+          }
         </div>
       </div>
 
@@ -205,7 +277,9 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='category'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.category,
+            })}
           >
             Category
           </label>
@@ -213,8 +287,15 @@ console.log('state:', state);
             id='category'
             name='category'
             type='text'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.category,
+            })}
           />
+          {
+          !!state.errors.category &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.category}
+          </p>
+          }
         </div>
       </div>
 
@@ -222,16 +303,25 @@ console.log('state:', state);
         <div>
           <label
             htmlFor='notes'
-            className='block text-sm font-bold dark:text-white'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.notes,
+            })}
           >
             Notes
           </label>
           <textarea
             id='notes'
             name='notes'
-            className='block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600'
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.notes,
+            })}
             rows={4}
           />
+          {
+          !!state.errors.notes &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.notes}
+          </p>
+          }
         </div>
       </div>
 
