@@ -1,5 +1,26 @@
-import React, { ReactElement } from 'react';
+import PageLayout from '@/app/components/PageLayout';
+import { getAthleteById } from '@/app/lib/actions';
+import { notFound } from 'next/navigation';
+import EditForm from '@/app/athletes/[id]/edit/EditForm';
 
-const Page: React.FC = (): ReactElement=><>Edit User profile</>
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-export default Page;
+export default async function EditAthletePage(props: Props) {
+  const params = await props.params;
+
+  const user = await getAthleteById(params.id);
+  if(!user){
+    notFound();
+  }
+
+  return (
+    <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
+
+
+        <EditForm user={user} />
+
+    </PageLayout>
+  );
+}

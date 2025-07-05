@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
 
 // Define the type for the form data
-interface AthleteFormData {
+export interface AthleteFormData {
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
@@ -154,47 +154,12 @@ export async function createAthlete(state:ActionState,payload
 
     return { errors:{} as ActionState['errors'], message: 'An unexpected error occurred. Please, check your data', data:formattedData, status:'error' as const };
   }
+}
 
-  /*try {
-    // Server-side validation
-    await athleteSchema.validate(formData, { abortEarly: false });
-
-    // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.dateOfBirth || !formData.gender) {
-      return { error: 'Missing required fields' };
-    }
-
-    // Find or create categories
-    const categoryIds = [];
-    if (formData.categories && formData.categories.length > 0) {
-      for (const categoryName of formData.categories) {
-        const category = await prisma.category.upsert({
-          where: { name: categoryName },
-          update: {},
-          create: { name: categoryName },
-        });
-        categoryIds.push(category.id);
-      }
-    }
-
-    // Create a new user with a profile
-    const newUser = await prisma.user.create({
-      data: {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email || `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@example.com`,
-        passwordHash: 'placeholder', // In a real app, this would be properly hashed
-        role: 'MEMBER',
-        profile: {
-          create: {
-            dateOfBirth: new Date(formData.dateOfBirth),
-            phoneNumber: formData.phone,
-            address: formData.address,
-            bio: formData.notes,
-            avatarUrl: formData.photoUrl,
-            categoryId: categoryIds.length > 0 ? categoryIds[0] : null,
-          }
-        }
-      },
+export async function getAthleteById(id: string): Promise<AthleteFormData | null> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
       include: {
         profile: {
           include: {
@@ -204,45 +169,31 @@ export async function createAthlete(state:ActionState,payload
       }
     });
 
-    // Transform the user data to match the Athlete interface
-    const newAthlete = {
-      id: newUser.id,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      dateOfBirth: new Date(formData.dateOfBirth),
-      gender: formData.gender,
-      email: newUser.email,
-      phone: newUser.profile?.phoneNumber || undefined,
-      joinDate: newUser.createdAt,
-      active: true,
-      categories: categoryIds.length > 0 ? formData.categories : [],
-      notes: formData.notes,
-      photoUrl: formData.photoUrl,
-      address: formData.address,
-      emergencyContact: formData.emergencyContact,
-    };
-
-    // Revalidate the athletes page to show the new athlete
-    revalidatePath('/athletes');
-
-    // Return success
-    return { success: true };
-  } catch (error) {
-    console.error('Error creating athlete:', error);
-
-    if (error instanceof yup.ValidationError) {
-      // Return validation errors
-      return {
-        error: 'Validation failed',
-        validationErrors: error.inner.reduce((acc, err) => {
-          if (err.path) {
-            acc[err.path] = err.message;
-          }
-          return acc;
-        }, {} as Record<string, string>)
-      };
+    if (!user || !user.profile) {
+      return null;
     }
 
-    return { error: 'An unexpected error occurred' };
-  }*/
+    // Extract category name if it exists
+    const categoryName = user.profile.category?.name;
+
+    // Format the data to match AthleteFormData structure
+    const athleteData: AthleteFormData = {
+      firstName: user.name.split(' ')[0],
+      lastName: user.name.split(' ').slice(1).join(' '),
+      dateOfBirth: new Date(user.profile.dateOfBirth as Date),
+      gender: user.profile.gender || 'male', // Default to male if not specified
+      email: user.email,
+      phone: user.profile.phoneNumber || undefined,
+      address: user.profile.address || undefined,
+      emergencyContact: user.profile.emergencyContact || undefined,
+      categories: categoryName ? [categoryName] : undefined,
+      notes: user.profile.bio || undefined,
+      photoUrl: user.profile.avatarUrl || undefined,
+    };
+
+    return athleteData;
+  } catch (error) {
+    console.error('Error fetching athlete:', error);
+    return null;
+  }
 }

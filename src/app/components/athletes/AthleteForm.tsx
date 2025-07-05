@@ -1,72 +1,16 @@
+'use client'
 import { useRouter } from 'next/navigation';
-import {  ActionState } from '@/app/lib/actions';
+import { ActionState } from '@/app/lib/actions';
 import clsx from 'clsx';
 
-interface NewAthleteFormProps {
+interface AthleteFormProps {
   formAction: (payload: FormData)=>void;
   isSubmitting: boolean;
-  state:ActionState;
+  state: ActionState;
 }
-export default function NewAthleteForm({formAction, state, isSubmitting}: NewAthleteFormProps) {
+
+export default function AthleteForm({formAction, state, isSubmitting}: AthleteFormProps) {
   const router = useRouter();
-  /*const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string>('');
-
-  async function handleFormAction(formData: FormData) {
-    setIsSubmitting(true);
-    setServerError('');
-
-    try {
-      // Extract form data
-      const firstName = formData.get('firstName') as string;
-      const lastName = formData.get('lastName') as string;
-      const dateOfBirth = formData.get('dateOfBirth') as string;
-      const gender = formData.get('gender') as 'male' | 'female';
-      const email = (formData.get('email') as string) || undefined;
-      const phone = (formData.get('phone') as string) || undefined;
-      const address = (formData.get('address') as string) || undefined;
-      const emergencyContact =
-        (formData.get('emergencyContact') as string) || undefined;
-      const category = (formData.get('category') as string) || undefined;
-      const notes = (formData.get('notes') as string) || undefined;
-      const photoUrl = (formData.get('photoUrl') as string) || undefined;
-
-      // Prepare data for submission
-      const formattedData = {
-        firstName,
-        lastName,
-        dateOfBirth: new Date(dateOfBirth),
-        gender,
-        email,
-        phone,
-        address,
-        emergencyContact,
-        categories: category ? [category] : [],
-        notes,
-        photoUrl,
-      };
-
-      // Call server action to create athlete
-      const result = await createAthlete(formattedData);
-
-      if (result.error) {
-        setServerError(result.error);
-      } else {
-        // Redirect to athletes page on success
-        router.push('/athletes');
-      }
-    } catch (err) {
-      setServerError('An unexpected error occurred. Please try again.');
-      console.error('Error submitting form:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }*/
-//  const initialState:ActionState = { message: null, errors: {} };
-
-//const [state, formAction, isSubmitting] = useActionState(createAthlete,initialState)
-// const serverError = '';
-
 
   return (
     <form action={formAction} className='space-y-6'>

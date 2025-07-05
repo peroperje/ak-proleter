@@ -1,28 +1,41 @@
 'use client';
 import Box from '@/app/views/Box';
+import { ActionState, AthleteFormData } from '@/app/lib/actions';
+import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 
-import PageLayout from '@/app/components/PageLayout';
-import { ActionState, createAthlete } from '@/app/lib/actions';
-import { useActionState, useEffect } from 'react';
+interface Props {
+  user: AthleteFormData;
+}
 
-export default function NewAthletePage() {
+export default  function EditForm({ user }: Props) {
+
+
+  // Fetch athlete data when the component mounts
+
   const initialState: ActionState = {
-    message: 'Please fill out the form below to add a new athlete.',
+    message: `Update ${user.firstName} ${user.lastName}  information below.`,
     errors: {},
     status: 'new' as const,
-    data: undefined,
+    data: user,
   };
 
   const [state, formAction, isSubmitting] = useActionState(
-    createAthlete,
+    async (formData: FormData) => {
+      // Here you would implement the update athlete function
+      // For now, we'll just return the initial state with the athlete data
+      return {
+        ...initialState,
+        message: 'Update functionality not implemented yet',
+        status: 'error' as const,
+        data: user,
+      };
+    },
     initialState,
   );
 
   useEffect(() => {
-    console.log(state.status);
     if (state.status === 'success' || state.status === 'error') {
-      console.log(state.status);
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
@@ -31,7 +44,7 @@ export default function NewAthletePage() {
   }, [state.status]);
 
   return (
-    <PageLayout title={'New Athlete'} currentPage='add athlete'>
+
       <Box
         title={state.message || initialState.message || ''}
         variants={((status) => {
@@ -51,6 +64,6 @@ export default function NewAthletePage() {
           isSubmitting={isSubmitting}
         />
       </Box>
-    </PageLayout>
+
   );
 }
