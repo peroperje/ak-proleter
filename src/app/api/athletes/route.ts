@@ -153,7 +153,6 @@ export async function POST(request: Request) {
       notes: body.notes,
       photoUrl: body.photoUrl,
       address: body.address,
-      emergencyContact: body.emergencyContact,
     };
 
     return NextResponse.json(newAthlete, { status: 201 });
@@ -255,7 +254,6 @@ export async function PUT(request: Request) {
       notes: body.notes,
       photoUrl: body.photoUrl,
       address: body.address,
-      emergencyContact: body.emergencyContact,
     };
 
     return NextResponse.json(updatedAthlete);

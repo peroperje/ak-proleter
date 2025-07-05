@@ -1,6 +1,6 @@
 // Navigation routes for the application
 // This file defines all the navigation routes used throughout the app
-import { icons, IconType } from './icons';
+import {  IconType } from './icons';
 
 export interface NavItem {
   name: string;

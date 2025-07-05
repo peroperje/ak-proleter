@@ -43,6 +43,7 @@ model Profile {
   address     String?
   bio         String?
   avatarUrl   String?
+  gender      String    @default("male")
   category    Category? @relation(fields: [categoryId], references: [id])
   categoryId  String?
 }

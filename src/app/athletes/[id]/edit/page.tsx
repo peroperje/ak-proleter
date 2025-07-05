@@ -19,7 +19,7 @@ export default async function EditAthletePage(props: Props) {
     <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
 
 
-        <EditForm user={user} />
+        <EditForm user={user} userId={params.id} />
 
     </PageLayout>
   );

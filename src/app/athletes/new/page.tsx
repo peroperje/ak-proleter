@@ -5,6 +5,7 @@ import AthleteForm from '@/app/components/athletes/AthleteForm';
 import PageLayout from '@/app/components/PageLayout';
 import { ActionState, createAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
+import { navItems } from '@/app/lib/routes';
 
 export default function NewAthletePage() {
   const initialState: ActionState = {
@@ -33,6 +34,7 @@ export default function NewAthletePage() {
   return (
     <PageLayout title={'New Athlete'} currentPage='add athlete'>
       <Box
+        icon={navItems.athletes.icon}
         title={state.message || initialState.message || ''}
         variants={((status) => {
           switch (status) {

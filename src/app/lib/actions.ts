@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
 
+
 // Define the type for the form data
 export interface AthleteFormData {
   firstName: string;
@@ -89,6 +90,8 @@ export async function createAthlete(state:ActionState,payload
     photoUrl,
   };
   console.log('Creating athlete in libs prepared:', formattedData);
+  console.log('gender',formattedData.gender)
+  console.log('gender',gender)
   try {
     await athleteSchema.validate(formattedData, { abortEarly: false });
     const categoryIds = [];
@@ -118,6 +121,7 @@ export async function createAthlete(state:ActionState,payload
             address: formattedData.address,
             bio: formattedData.notes,
             avatarUrl: formattedData.photoUrl,
+            gender: formattedData.gender,
             categoryId: categoryIds.length > 0 ? categoryIds[0] : null,
           }
         }
@@ -135,7 +139,7 @@ export async function createAthlete(state:ActionState,payload
       errors: {} as ActionState['errors'],
       message: 'Athlete created successfully',
       status:'success' as const,
-      data:formattedData,
+      data: undefined,
     };
 
   } catch (error) {
@@ -151,8 +155,108 @@ export async function createAthlete(state:ActionState,payload
         status:'error' as const,
       };
     }
-
+    console.log('Error creating athlete:', error);
     return { errors:{} as ActionState['errors'], message: 'An unexpected error occurred. Please, check your data', data:formattedData, status:'error' as const };
+  }
+}
+
+export async function updateAthlete(id:string, state: ActionState, payload: FormData) {
+  console.log('Updating athlete in libs:', payload);
+  // Extract form data
+  const firstName = payload.get('firstName') as string;
+  const lastName = payload.get('lastName') as string;
+  const dateOfBirth = payload.get('dateOfBirth') as string;
+  const gender = payload.get('gender') as 'male' | 'female';
+  const email = (payload.get('email') as string) || undefined;
+  const phone = (payload.get('phone') as string) || undefined;
+  const address = (payload.get('address') as string) || undefined;
+  const emergencyContact = (payload.get('emergencyContact') as string) || undefined;
+  const categories = (payload.get('categories') as string) || undefined;
+  const notes = (payload.get('notes') as string) || undefined;
+  const photoUrl = (payload.get('photoUrl') as string) || undefined;
+
+  // Prepare data for submission
+  const formattedData = {
+    firstName,
+    lastName,
+    dateOfBirth: new Date(dateOfBirth),
+    gender,
+    email,
+    phone,
+    address,
+    emergencyContact,
+    categories: categories ? [categories] : undefined,
+    notes,
+    photoUrl,
+  };
+  console.log('Updating athlete in libs prepared:', formattedData);
+  try {
+    await athleteSchema.validate(formattedData, { abortEarly: false });
+    const categoryIds = [];
+
+    // Find or create categories
+    if (formattedData.categories && formattedData.categories.length > 0) {
+      for (const categoryName of formattedData.categories) {
+        const category = await prisma.category.upsert({
+          where: { name: categoryName },
+          update: {},
+          create: { name: categoryName },
+        });
+        categoryIds.push(category.id);
+      }
+    }
+
+    // Update the existing user and profile
+    await prisma.user.update({
+      where: { id },
+      data: {
+        name: `${formattedData.firstName} ${formattedData.lastName}`,
+        email: formattedData.email || `${formattedData.firstName.toLowerCase()}.${formattedData.lastName.toLowerCase()}@example.com`,
+        profile: {
+          update: {
+            dateOfBirth: new Date(formattedData.dateOfBirth),
+            phoneNumber: formattedData.phone,
+            address: formattedData.address,
+            bio: formattedData.notes,
+            avatarUrl: formattedData.photoUrl,
+            gender: formattedData.gender,
+            categoryId: categoryIds.length > 0 ? categoryIds[0] : null,
+          }
+        }
+      },
+    });
+
+    revalidatePath('/athletes');
+    revalidatePath(`/athletes/${id}`);
+
+    return {
+      errors: {} as ActionState['errors'],
+      message: 'Athlete updated successfully',
+      status: 'success' as const,
+      data: formattedData,
+    };
+
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return {
+        errors: error.inner.reduce((acc, err) => {
+          if (err.path) {
+            acc[err.path as keyof ActionState['errors']] = err.message;
+          }
+          return acc;
+        }, {} as ActionState['errors']),
+        message: 'An unexpected error occurred',
+        data: formattedData,
+        status: 'error' as const,
+      };
+    }
+
+    return {
+      errors: {} as ActionState['errors'],
+      message: 'An unexpected error occurred. Please, check your data',
+      data: formattedData,
+      status: 'error' as const
+    };
   }
 }
 
@@ -181,11 +285,11 @@ export async function getAthleteById(id: string): Promise<AthleteFormData | null
       firstName: user.name.split(' ')[0],
       lastName: user.name.split(' ').slice(1).join(' '),
       dateOfBirth: new Date(user.profile.dateOfBirth as Date),
-      gender: user.profile.gender || 'male', // Default to male if not specified
+      gender: user.profile?.gender === 'male' ?'male' :'female' as const, // Default to male if not specified
       email: user.email,
       phone: user.profile.phoneNumber || undefined,
       address: user.profile.address || undefined,
-      emergencyContact: user.profile.emergencyContact || undefined,
+     // emergencyContact: user.profile.emergencyContact || undefined,
       categories: categoryName ? [categoryName] : undefined,
       notes: user.profile.bio || undefined,
       photoUrl: user.profile.avatarUrl || undefined,

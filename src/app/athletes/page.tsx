@@ -5,6 +5,7 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
+import { navItems } from '@/app/lib/routes';
 
 async function getAthletes(): Promise<Athlete[]> {
   // Fetch users with a MEMBER role from the database
@@ -25,7 +26,7 @@ async function getAthletes(): Promise<Athlete[]> {
     firstName: user.name.split(' ')[0],
     lastName: user.name.split(' ').slice(1).join(' '),
     dateOfBirth: user.profile?.dateOfBirth || new Date(),
-    gender: 'male', // This information is not in the schema, defaulting to male
+    gender: user.profile?.gender === 'male'?'male':'female', // This information is not in the schema, defaulting to male
     email: user.email,
     phone: user.profile?.phoneNumber || undefined,
     joinDate: user.createdAt,
@@ -53,7 +54,10 @@ export default async function AthletesPage() {
       action={addAthleteButton}
     >
 
-          <Box title="Athlete List">
+          <Box
+          icon={navItems.athletes.icon}
+            title="Athlete List"
+          >
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
                 <thead className="bg-gray-50 dark:bg-neutral-800">

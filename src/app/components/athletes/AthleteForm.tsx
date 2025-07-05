@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import { ActionState } from '@/app/lib/actions';
+import { navItems } from '@/app/lib/routes';
 import clsx from 'clsx';
 
 interface AthleteFormProps {
@@ -200,32 +201,7 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
         </div>
       </div>
 
-      <div className='grid grid-cols-1 gap-4'>
-        <div>
-          <label
-            htmlFor='emergencyContact'
-            className={clsx('block text-sm font-bold dark:text-white', {
-              'text-red-500': !!state.errors.emergencyContact,
-            })}
-          >
-            Emergency Contact
-          </label>
-          <input
-            id='emergencyContact'
-            name='emergencyContact'
-            type='text'
-            defaultValue={state.data?.emergencyContact}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.emergencyContact,
-            })}
-          />
-          {
-          !!state.errors.emergencyContact &&  <p className="text-sm text-red-500 dark:text-neutral-400">
-              {state.errors.emergencyContact}
-          </p>
-          }
-        </div>
-      </div>
+
 
       <div className='grid grid-cols-1 gap-4'>
         <div>
@@ -312,7 +288,7 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
       <div className='grid grid-cols-2 gap-4'>
         <button
           type='button'
-          onClick={() => router.push('/athletes')}
+          onClick={() => router.push(navItems.athletes.href())}
           className='inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white'
           disabled={isSubmitting}
         >

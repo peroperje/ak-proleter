@@ -24,13 +24,20 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
         <div className='flex items-center'>
           {IconComponent && (
             <IconComponent
-              className='mr-2 text-gray-500 dark:text-neutral-500'
+              className={clsx('mr-2 text-gray-500 dark:text-neutral-500',{
+                'text-red-500 dark:text-red-400': variants === 'error',
+              })}
               size={18}
             />
           )}
-          <p className={clsx('mt-1 text-sm text-gray-500 dark:text-neutral-500 text-center md:text-left',{
-            'text-red-500 dark:text-red-400': variants === 'error',
-          })}>
+          <p
+            className={clsx(
+              'mt-1 text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
+              {
+                'text-red-500 dark:text-red-400': variants === 'error',
+              },
+            )}
+          >
             {title}
           </p>
         </div>

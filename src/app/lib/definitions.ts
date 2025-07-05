@@ -10,7 +10,6 @@ export interface Athlete {
   email?: string;
   phone?: string;
   address: string | null | undefined;
-  emergencyContact?: string;
   joinDate: Date;
   active: boolean;
   categories?: string[]; // Age categories or competition categories
