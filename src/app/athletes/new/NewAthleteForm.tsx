@@ -62,9 +62,9 @@ export default function NewAthleteForm() {
   }*/
   const initialState:ActionState = { message: null, errors: {} };
 
-const [state, formAction] = useActionState(createAthlete,initialState)
+const [state, formAction, isSubmitting] = useActionState(createAthlete,initialState)
 const serverError = '';
-const isSubmitting = false;
+
 console.log('state:', state);
   return (
     <form action={formAction} className='space-y-6'>
@@ -82,6 +82,7 @@ console.log('state:', state);
             id='firstName'
             name='firstName'
             type='text'
+            defaultValue={state.data?.firstName}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.firstName,
             })}
@@ -106,6 +107,7 @@ console.log('state:', state);
             id='lastName'
             name='lastName'
             type='text'
+            defaultValue={state.data?.lastName}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.lastName,
             })}
@@ -133,6 +135,7 @@ console.log('state:', state);
             id='dateOfBirth'
             name='dateOfBirth'
             type='date'
+            defaultValue={state.data?.dateOfBirth ? state.data?.dateOfBirth.toISOString().split('T')[0] : undefined}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.dateOfBirth,
             })}
@@ -156,6 +159,7 @@ console.log('state:', state);
           <select
             id='gender'
             name='gender'
+            defaultValue={state.data?.gender}
             className={clsx('block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400', {
               'border-red-500': !!state.errors.gender,
             })}
@@ -186,6 +190,7 @@ console.log('state:', state);
             id='email'
             name='email'
             type='email'
+            defaultValue={state.data?.email}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.email,
             })}
@@ -209,6 +214,7 @@ console.log('state:', state);
             id='phone'
             name='phone'
             type='tel'
+            defaultValue={state.data?.phone}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.phone,
             })}
@@ -235,6 +241,7 @@ console.log('state:', state);
             id='address'
             name='address'
             type='text'
+            defaultValue={state.data?.address}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.address,
             })}
@@ -261,6 +268,7 @@ console.log('state:', state);
             id='emergencyContact'
             name='emergencyContact'
             type='text'
+            defaultValue={state.data?.emergencyContact}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.emergencyContact,
             })}
@@ -278,22 +286,23 @@ console.log('state:', state);
           <label
             htmlFor='category'
             className={clsx('block text-sm font-bold dark:text-white', {
-              'text-red-500': !!state.errors.category,
+              'text-red-500': !!state.errors.categories,
             })}
           >
             Category
           </label>
           <input
-            id='category'
-            name='category'
+            id='categories'
+            name='categories'
             type='text'
+            defaultValue={state.data?.categories}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.category,
+              'border-red-500': !!state.errors.categories,
             })}
           />
           {
-          !!state.errors.category &&  <p className="text-sm text-red-500 dark:text-neutral-400">
-              {state.errors.category}
+          !!state.errors.categories &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.categories}
           </p>
           }
         </div>
@@ -312,6 +321,7 @@ console.log('state:', state);
           <textarea
             id='notes'
             name='notes'
+            defaultValue={state.data?.notes}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.notes,
             })}
@@ -339,6 +349,7 @@ console.log('state:', state);
             id='photoUrl'
             name='photoUrl'
             type='url'
+            defaultValue={state.data?.photoUrl}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
               'border-red-500': !!state.errors.photoUrl,
             })}

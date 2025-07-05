@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
-import prisma from '@/app/lib/prisma';
 
 // Define the type for the form data
 interface AthleteFormData {
@@ -35,7 +34,10 @@ const athleteSchema = yup.object().shape({
 });
 
 export type ActionState = {
-  errors: Record<string, string>;
+  errors: {
+    [K in keyof AthleteFormData]?: string;
+  };
+
   message: string | null;
   data?:AthleteFormData
 };
@@ -53,7 +55,7 @@ export async function createAthlete(state:ActionState,formData: FormData) {
   const address = (formData.get('address') as string) || undefined;
   const emergencyContact =
     (formData.get('emergencyContact') as string) || undefined;
-  const category = (formData.get('category') as string) || undefined;
+  const categories = (formData.get('categories') as string) || undefined;
   const notes = (formData.get('notes') as string) || undefined;
   const photoUrl = (formData.get('photoUrl') as string) || undefined;
 
@@ -67,7 +69,7 @@ export async function createAthlete(state:ActionState,formData: FormData) {
     phone,
     address,
     emergencyContact,
-    categories: category ? [category] : [],
+    categories: categories ? [categories] : undefined,
     notes,
     photoUrl,
   };
@@ -76,12 +78,12 @@ export async function createAthlete(state:ActionState,formData: FormData) {
     await athleteSchema.validate(formattedData, { abortEarly: false });
     revalidatePath('/athletes');
     return {
-      errors: {},
+      errors: {} as ActionState['errors'],
       message: 'Athlete created successfully'
     };
 
   } catch (error) {
-    console.error('Error creating athlete:', error.inner);
+    // console.error('Error creating athlete:', error?.inner);
 
     if (error instanceof yup.ValidationError) {
       // Return validation errors
@@ -96,16 +98,16 @@ export async function createAthlete(state:ActionState,formData: FormData) {
       };*/
       return { errors:error.inner.reduce((acc, err) => {
           if (err.path) {
-            acc[err.path] = err.message;
+            acc[err.path as keyof ActionState['errors']] = err.message;
           }
           return acc;
-        }, {} as Record<string, string>),
+        }, {} as ActionState['errors']),
         message: 'An unexpected error occurred',
         data:formattedData
       };
     }
 
-    return { errors:{}, message: 'An unexpected error occurred', data:formattedData };
+    return { errors:{} as ActionState['errors'], message: 'An unexpected error occurred', data:formattedData };
   }
 
   /*try {
