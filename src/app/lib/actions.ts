@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
+import prisma from '@/app/lib/prisma';
 
 // Define the type for the form data
 interface AthleteFormData {
@@ -38,26 +39,40 @@ export type ActionState = {
     [K in keyof AthleteFormData]?: string;
   };
 
-  message: string | null;
+  message: string;
   data?:AthleteFormData
+  status:'success'|'error'|'validation' | 'new';
 };
 
 
-export async function createAthlete(state:ActionState,formData: FormData) {
-  console.log('Creating athlete in libs:', formData);
+export async function createAthlete(state:ActionState,payload
+: FormData) {
+  console.log('Creating athlete in libs:', payload
+);
   // Extract form data
-  const firstName = formData.get('firstName') as string;
-  const lastName = formData.get('lastName') as string;
-  const dateOfBirth = formData.get('dateOfBirth') as string;
-  const gender = formData.get('gender') as 'male' | 'female';
-  const email = (formData.get('email') as string) || undefined;
-  const phone = (formData.get('phone') as string) || undefined;
-  const address = (formData.get('address') as string) || undefined;
+  const firstName = payload
+.get('firstName') as string;
+  const lastName = payload
+.get('lastName') as string;
+  const dateOfBirth = payload
+.get('dateOfBirth') as string;
+  const gender = payload
+.get('gender') as 'male' | 'female';
+  const email = (payload
+.get('email') as string) || undefined;
+  const phone = (payload
+.get('phone') as string) || undefined;
+  const address = (payload
+.get('address') as string) || undefined;
   const emergencyContact =
-    (formData.get('emergencyContact') as string) || undefined;
-  const categories = (formData.get('categories') as string) || undefined;
-  const notes = (formData.get('notes') as string) || undefined;
-  const photoUrl = (formData.get('photoUrl') as string) || undefined;
+    (payload
+.get('emergencyContact') as string) || undefined;
+  const categories = (payload
+.get('categories') as string) || undefined;
+  const notes = (payload
+.get('notes') as string) || undefined;
+  const photoUrl = (payload
+.get('photoUrl') as string) || undefined;
 
   // Prepare data for submission
   const formattedData = {
@@ -76,26 +91,55 @@ export async function createAthlete(state:ActionState,formData: FormData) {
   console.log('Creating athlete in libs prepared:', formattedData);
   try {
     await athleteSchema.validate(formattedData, { abortEarly: false });
+    const categoryIds = [];
+
+    // Find or create categories
+    if (formattedData.categories && formattedData.categories.length > 0) {
+      for (const categoryName of formattedData.categories) {
+        const category = await prisma.category.upsert({
+          where: { name: categoryName },
+          update: {},
+          create: { name: categoryName },
+        });
+        categoryIds.push(category.id);
+      }
+    }
+    // Create a new user with a profile
+     await prisma.user.create({
+      data: {
+        name: `${formattedData.firstName} ${formattedData.lastName}`,
+        email: formattedData.email || `${formattedData.firstName.toLowerCase()}.${formattedData.lastName.toLowerCase()}@example.com`,
+        passwordHash: 'placeholder', // In a real app, this would be properly hashed
+        role: 'MEMBER',
+        profile: {
+          create: {
+            dateOfBirth: new Date(formattedData.dateOfBirth),
+            phoneNumber: formattedData.phone,
+            address: formattedData.address,
+            bio: formattedData.notes,
+            avatarUrl: formattedData.photoUrl,
+            categoryId: categoryIds.length > 0 ? categoryIds[0] : null,
+          }
+        }
+      },
+      include: {
+        profile: {
+          include: {
+            category: true
+          }
+        }
+      }
+    });
     revalidatePath('/athletes');
     return {
       errors: {} as ActionState['errors'],
-      message: 'Athlete created successfully'
+      message: 'Athlete created successfully',
+      status:'success' as const,
+      data:formattedData,
     };
 
   } catch (error) {
-    // console.error('Error creating athlete:', error?.inner);
-
     if (error instanceof yup.ValidationError) {
-      // Return validation errors
-      /*return {
-        error: 'Validation failed',
-        validationErrors: error.inner.reduce((acc, err) => {
-          if (err.path) {
-            acc[err.path] = err.message;
-          }
-          return acc;
-        }, {} as Record<string, string>)
-      };*/
       return { errors:error.inner.reduce((acc, err) => {
           if (err.path) {
             acc[err.path as keyof ActionState['errors']] = err.message;
@@ -103,11 +147,12 @@ export async function createAthlete(state:ActionState,formData: FormData) {
           return acc;
         }, {} as ActionState['errors']),
         message: 'An unexpected error occurred',
-        data:formattedData
+        data:formattedData,
+        status:'error' as const,
       };
     }
 
-    return { errors:{} as ActionState['errors'], message: 'An unexpected error occurred', data:formattedData };
+    return { errors:{} as ActionState['errors'], message: 'An unexpected error occurred. Please, check your data', data:formattedData, status:'error' as const };
   }
 
   /*try {

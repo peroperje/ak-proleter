@@ -1,29 +1,41 @@
 import React, { ReactElement, PropsWithChildren } from 'react';
 import { icons, IconType } from '@/app/lib/icons';
+import clsx from 'clsx';
 
 interface Props {
   title: string;
   icon?: IconType;
+  variants?: 'success' | 'error' | 'warning' | 'info' | 'default';
 }
 
-const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children}): ReactElement=> {
+const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variants}): ReactElement=> {
   const IconComponent = icon ? icons[icon] : null;
-
   return (
-    <div className="flex flex-col bg-white border border-gray-200 shadow-xs rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-      <div className="bg-gray-100 border border-gray-100 rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700">
-        <div className="flex items-center">
-          {IconComponent && <IconComponent className="mr-2 text-gray-500 dark:text-neutral-500" size={18} />}
-          <p className="mt-1 text-sm text-gray-500 dark:text-neutral-500">
+    <div className='flex flex-col rounded-xl border border-gray-200 bg-white shadow-xs dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-neutral-700/70'>
+      <div
+        className={clsx(
+          'rounded-t-xl border border-gray-100 bg-gray-100 px-2 py-1 md:px-5 md:py-4 dark:border-neutral-700 dark:bg-neutral-900',
+          {
+            'border-green-500 bg-green-100 dark:bg-green-400':
+              variants === 'success',
+          },
+        )}
+      >
+        <div className='flex items-center'>
+          {IconComponent && (
+            <IconComponent
+              className='mr-2 text-gray-500 dark:text-neutral-500'
+              size={18}
+            />
+          )}
+          <p className={clsx('mt-1 text-sm text-gray-500 dark:text-neutral-500 text-center md:text-left',{
+            'text-red-500 dark:text-red-400': variants === 'error',
+          })}>
             {title}
           </p>
         </div>
       </div>
-      <div className="p-4 md:p-5">
-        {
-          children
-        }
-      </div>
+      <div className='p-4 md:p-5'>{children}</div>
     </div>
   );
 }

@@ -1,11 +1,13 @@
-'use client'
 import { useRouter } from 'next/navigation';
-import { createAthlete, ActionState } from '@/app/lib/actions';
-import { useActionState } from 'react';
+import {  ActionState } from '@/app/lib/actions';
 import clsx from 'clsx';
 
-
-export default function NewAthleteForm() {
+interface NewAthleteFormProps {
+  formAction: (payload: FormData)=>void;
+  isSubmitting: boolean;
+  state:ActionState;
+}
+export default function NewAthleteForm({formAction, state, isSubmitting}: NewAthleteFormProps) {
   const router = useRouter();
   /*const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string>('');
@@ -60,12 +62,12 @@ export default function NewAthleteForm() {
       setIsSubmitting(false);
     }
   }*/
-  const initialState:ActionState = { message: null, errors: {} };
+//  const initialState:ActionState = { message: null, errors: {} };
 
-const [state, formAction, isSubmitting] = useActionState(createAthlete,initialState)
-const serverError = '';
+//const [state, formAction, isSubmitting] = useActionState(createAthlete,initialState)
+// const serverError = '';
 
-console.log('state:', state);
+
   return (
     <form action={formAction} className='space-y-6'>
       <div className='grid grid-cols-1 gap-4'>
@@ -362,17 +364,8 @@ console.log('state:', state);
         </div>
       </div>
 
-      {serverError && (
-        <div className='rounded-md bg-red-50 p-4 dark:bg-red-900/20'>
-          <div className='flex'>
-            <div className='text-sm text-red-700 dark:text-red-400'>
-              {serverError}
-            </div>
-          </div>
-        </div>
-      )}
 
-      <div className='flex justify-end gap-3'>
+      <div className='grid grid-cols-2 gap-4'>
         <button
           type='button'
           onClick={() => router.push('/athletes')}
