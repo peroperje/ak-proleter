@@ -86,6 +86,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  console.log('Athelts request',request.body)
   try {
     const body = await request.json();
 

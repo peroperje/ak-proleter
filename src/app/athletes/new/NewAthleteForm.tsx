@@ -1,121 +1,44 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/app/ui/button';
-import InputField from '@/app/ui/input-field';
-import * as yup from 'yup';
-import { createAthlete } from './actions';
-
-// Define validation schema using yup
-const athleteSchema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  dateOfBirth: yup.date().required('Date of birth is required'),
-  gender: yup.string().oneOf(['male', 'female'], 'Gender must be male or female').required('Gender is required'),
-  email: yup.string().email('Invalid email format').optional(),
-  phone: yup.string().optional(),
-  address: yup.string().optional(),
-  emergencyContact: yup.string().optional(),
-  categories: yup.array().of(yup.string()).optional(),
-  notes: yup.string().optional(),
-  photoUrl: yup.string().url('Invalid URL format').optional(),
-});
+import { createAthlete } from '@/app/athletes/new/actions';
 
 export default function NewAthleteForm() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: 'male',
-    email: '',
-    phone: '',
-    address: '',
-    emergencyContact: '',
-    categories: [''],
-    notes: '',
-    photoUrl: '',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serverError, setServerError] = useState('');
+  const [serverError, setServerError] = useState<string>('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error for this field when it's changed
-    if (errors[name]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
-
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const newCategories = [...formData.categories];
-    newCategories[index] = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      categories: newCategories
-    }));
-  };
-
-  const addCategory = () => {
-    setFormData(prev => ({
-      ...prev,
-      categories: [...prev.categories, '']
-    }));
-  };
-
-  const removeCategory = (index: number) => {
-    const newCategories = [...formData.categories];
-    newCategories.splice(index, 1);
-    setFormData(prev => ({
-      ...prev,
-      categories: newCategories.length ? newCategories : ['']
-    }));
-  };
-
-  const validateForm = async () => {
-    try {
-      await athleteSchema.validate(formData, { abortEarly: false });
-      return true;
-    } catch (error) {
-      if (error instanceof yup.ValidationError) {
-        const validationErrors: Record<string, string> = {};
-        error.inner.forEach(err => {
-          if (err.path) {
-            validationErrors[err.path] = err.message;
-          }
-        });
-        setErrors(validationErrors);
-      }
-      return false;
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function handleFormAction(formData: FormData) {
+    setIsSubmitting(true);
     setServerError('');
 
-    // Validate form
-    const isValid = await validateForm();
-    if (!isValid) return;
-
-    setIsSubmitting(true);
-
     try {
-      // Convert date string to Date object for validation
+      // Extract form data
+      const firstName = formData.get('firstName') as string;
+      const lastName = formData.get('lastName') as string;
+      const dateOfBirth = formData.get('dateOfBirth') as string;
+      const gender = formData.get('gender') as 'male' | 'female';
+      const email = formData.get('email') as string || undefined;
+      const phone = formData.get('phone') as string || undefined;
+      const address = formData.get('address') as string || undefined;
+      const emergencyContact = formData.get('emergencyContact') as string || undefined;
+      const category = formData.get('category') as string || undefined;
+      const notes = formData.get('notes') as string || undefined;
+      const photoUrl = formData.get('photoUrl') as string || undefined;
+
+      // Prepare data for submission
       const formattedData = {
-        ...formData,
-        dateOfBirth: new Date(formData.dateOfBirth),
-        // Filter out empty categories
-        categories: formData.categories.filter(cat => cat.trim() !== '')
+        firstName,
+        lastName,
+        dateOfBirth: new Date(dateOfBirth),
+        gender,
+        email,
+        phone,
+        address,
+        emergencyContact,
+        categories: category ? [category] : [],
+        notes,
+        photoUrl
       };
 
       // Call server action to create athlete
@@ -133,188 +56,189 @@ export default function NewAthleteForm() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-      {serverError && (
-        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {serverError}
-        </div>
-      )}
-
+    <form action={handleFormAction} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <InputField
-            type="text"
-            name="firstName"
-            title="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            error={errors.firstName}
-            required
-          />
-        </div>
-        <div>
-          <InputField
-            type="text"
-            name="lastName"
-            title="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            error={errors.lastName}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <InputField
-            type="date"
-            name="dateOfBirth"
-            title="Date of Birth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-            error={errors.dateOfBirth}
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Gender
-          </label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white"
-            required
-          >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          {errors.gender && (
-            <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <InputField
-            type="email"
-            name="email"
-            title="Email"
-            value={formData.email}
-            onChange={handleChange}
-            error={errors.email}
-          />
-        </div>
-        <div>
-          <InputField
-            type="tel"
-            name="phone"
-            title="Phone"
-            value={formData.phone}
-            onChange={handleChange}
-            error={errors.phone}
-          />
-        </div>
-      </div>
-
-      <InputField
-        type="text"
-        name="address"
-        title="Address"
-        value={formData.address}
-        onChange={handleChange}
-        error={errors.address}
-      />
-
-      <InputField
-        type="text"
-        name="emergencyContact"
-        title="Emergency Contact"
-        value={formData.emergencyContact}
-        onChange={handleChange}
-        error={errors.emergencyContact}
-      />
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Categories
-        </label>
-        {formData.categories.map((category, index) => (
-          <div key={index} className="flex items-center mb-2">
+          <div className="max-w-sm">
+            <label htmlFor="firstName" className="block text-sm font-bold dark:text-white">
+              First Name
+            </label>
             <input
+              id="firstName"
+              name="firstName"
               type="text"
-              value={category}
-              onChange={(e) => handleCategoryChange(e, index)}
-              className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white"
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+              required
             />
-            <button
-              type="button"
-              onClick={() => removeCategory(index)}
-              className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-              disabled={formData.categories.length === 1}
-            >
-              Remove
-            </button>
           </div>
-        ))}
-        <button
-          type="button"
-          onClick={addCategory}
-          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Add Category
-        </button>
-        {errors.categories && (
-          <p className="mt-1 text-sm text-red-600">{errors.categories}</p>
-        )}
+        </div>
+        <div>
+          <div className="max-w-sm">
+            <label htmlFor="lastName" className="block text-sm font-bold dark:text-white">
+              Last Name
+            </label>
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+              required
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div className="max-w-sm">
+            <label htmlFor="dateOfBirth" className="block text-sm font-bold dark:text-white">
+              Date of Birth
+            </label>
+            <input
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <div>
+            <label htmlFor="gender" className="block text-sm font-bold dark:text-white">
+              Gender
+            </label>
+            <select
+              id="gender"
+              name="gender"
+              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
+              required
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div className="max-w-sm">
+            <label htmlFor="email" className="block text-sm font-bold dark:text-white">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+            />
+          </div>
+        </div>
+        <div>
+          <div className="max-w-sm">
+            <label htmlFor="phone" className="block text-sm font-bold dark:text-white">
+              Phone
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-sm">
+        <label htmlFor="address" className="block text-sm font-bold dark:text-white">
+          Address
+        </label>
+        <input
+          id="address"
+          name="address"
+          type="text"
+          className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+        />
+      </div>
+
+      <div className="max-w-sm">
+        <label htmlFor="emergencyContact" className="block text-sm font-bold dark:text-white">
+          Emergency Contact
+        </label>
+        <input
+          id="emergencyContact"
+          name="emergencyContact"
+          type="text"
+          className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+        />
+      </div>
+
+      <div className="max-w-sm">
+        <label htmlFor="category" className="block text-sm font-bold dark:text-white">
+          Category
+        </label>
+        <input
+          id="category"
+          name="category"
+          type="text"
+          className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+        />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="notes" className="block text-sm font-bold dark:text-white">
           Notes
         </label>
         <textarea
+          id="notes"
           name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-neutral-700 dark:border-neutral-600 dark:text-white"
+          className="mt-1 block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+          rows={4}
         />
-        {errors.notes && (
-          <p className="mt-1 text-sm text-red-600">{errors.notes}</p>
-        )}
       </div>
 
-      <InputField
-        type="url"
-        name="photoUrl"
-        title="Photo URL"
-        value={formData.photoUrl}
-        onChange={handleChange}
-        error={errors.photoUrl}
-      />
+      <div className="max-w-sm">
+        <label htmlFor="photoUrl" className="block text-sm font-bold dark:text-white">
+          Photo URL
+        </label>
+        <input
+          id="photoUrl"
+          name="photoUrl"
+          type="url"
+          className="block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+        />
+      </div>
 
-      <div className="flex justify-between mt-4">
-        <Button
-          variant="secondary"
+      {serverError && (
+        <div className="rounded-md bg-red-50 p-4 dark:bg-red-900/20">
+          <div className="flex">
+            <div className="text-sm text-red-700 dark:text-red-400">
+              {serverError}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-end gap-3">
+        <button
           type="button"
           onClick={() => router.push('/athletes')}
+          className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white"
+          disabled={isSubmitting}
         >
           Cancel
-        </Button>
-        <Button
-          variant="submit"
+        </button>
+        <button
           type="submit"
+          className="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Saving...' : 'Save Athlete'}
-        </Button>
+        </button>
       </div>
     </form>
   );

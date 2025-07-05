@@ -7,7 +7,7 @@ import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 
 async function getAthletes(): Promise<Athlete[]> {
-  // Fetch users with MEMBER role from the database
+  // Fetch users with a MEMBER role from the database
   const users = await prisma.user.findMany({
     where: { role: 'MEMBER' },
     include: {
@@ -32,6 +32,7 @@ async function getAthletes(): Promise<Athlete[]> {
     active: true, // This information is not in the schema, defaulting to true
     categories: user.profile?.category ? [user.profile.category.name] : [],
     address: user.profile?.address,
+    notes: user.profile?.bio,
   }));
 }
 

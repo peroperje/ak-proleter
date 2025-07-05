@@ -34,6 +34,7 @@ const athleteSchema = yup.object().shape({
 });
 
 export async function createAthlete(formData: AthleteFormData) {
+  console.log('Creating athlete:', formData);
   try {
     // Server-side validation
     await athleteSchema.validate(formData, { abortEarly: false });
