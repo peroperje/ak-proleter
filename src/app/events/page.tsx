@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
-import { Event, Discipline } from '@/app/lib/definitions';
+import { Event } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 
 async function getEvents(): Promise<Event[]> {
@@ -11,20 +11,38 @@ async function getEvents(): Promise<Event[]> {
   const dbEvents = await prisma.event.findMany({
     include: {
       organizer: true,
-      category: true,
+      categories: true,
     }
   });
 
-  // Transform the database events to match the Event interface
   return dbEvents.map(event => {
-    // Create a mock discipline for each event since we don't have disciplines in the database
-    const mockDiscipline: Discipline = {
-      id: `d-${event.id}`,
-      name: event.category?.name || 'General',
-      category: 'sprint',
-      measurementUnit: 'time',
-      genderCategory: 'mixed',
-    };
+    // Determine event status based on dates
+    let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' = 'upcoming';
+    const now = new Date();
+
+    if (event.endDate && event.endDate < now) {
+      status = 'completed';
+    } else if (event.startDate > now) {
+      status = 'upcoming';
+    } else {
+      status = 'ongoing';
+    }
+
+    // Map event type from database enum to interface enum
+    let eventType: 'competition' | 'training' | 'camp' | 'other';
+    switch (event.type) {
+      case 'COMPETITION':
+        eventType = 'competition';
+        break;
+      case 'TRAINING':
+        eventType = 'training';
+        break;
+      case 'MEETING':
+        eventType = 'camp'; // Map MEETING to camp for interface compatibility
+        break;
+      default:
+        eventType = 'other';
+    }
 
     return {
       id: event.id,
@@ -33,12 +51,11 @@ async function getEvents(): Promise<Event[]> {
       location: event.location,
       startDate: event.startDate,
       endDate: event.endDate || event.startDate,
-      eventType: event.type.toLowerCase() as 'competition' | 'training' | 'camp' | 'other',
-      disciplines: [mockDiscipline],
-      status: event.endDate && event.endDate < new Date() ? 'completed' :
-              event.startDate > new Date() ? 'upcoming' : 'ongoing',
-      organizer: event.organizer.name,
-      notes:  '',
+      eventType,
+      category: event.categories || null,
+      status,
+      organizer: event.organizer?.name || 'Unknown',
+      notes: ''
     };
   });
 }
@@ -85,6 +102,9 @@ export default async function EventsPage() {
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
                       Type
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
+                      Categories
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
                       Status
@@ -143,6 +163,13 @@ export default async function EventsPage() {
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${typeStyles[event.eventType]}`}>
                             {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 dark:text-white">
+                            {event.category && event.category.length > 0
+                              ? event.category.map(cat => cat.name).join(', ')
+                              : 'All categories'}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusStyles[event.status]}`}>

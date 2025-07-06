@@ -1,6 +1,8 @@
 // Data model definitions for the athlete tracking application
 
 // Athlete model
+import { Category } from '@/app/lib/actions';
+
 export interface Athlete {
   id: string;
   firstName: string;
@@ -31,10 +33,10 @@ export interface Event {
   startDate: Date;
   endDate: Date;
   eventType: 'competition' | 'training' | 'camp' | 'other';
-  disciplines: Discipline[];
+  category: Category[] | null;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   organizer?: string;
-  notes: string | null | undefined;
+  notes?: string | null | undefined;
 }
 
 // Discipline model (track and field events)
