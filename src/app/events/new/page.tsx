@@ -6,7 +6,6 @@ import { navItems } from '@/app/lib/routes';
 import CloseBtn from '@/app/components/CloseBtn';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { createEvent } from '@/app/lib/actions/event';
 import LocationField from '@/app/events/new/LocationField';
 
@@ -115,8 +114,7 @@ function EventForm({ formAction, state, isSubmitting }: {
             Location
           </label>
           <LocationField
-            id='location'
-            name='location'
+
             type='text'
             defaultValue={state.data?.location}
             className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {

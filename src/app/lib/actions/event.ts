@@ -9,6 +9,8 @@ export interface EventFormData {
   title: string;
   description?: string;
   location: string;
+  lat?: number;
+  lng?: number;
   startDate: Date;
   endDate?: Date;
   type: 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
@@ -33,6 +35,8 @@ const eventSchema = yup.object().shape({
     .min(2, 'Title must be at least 2 characters long'),
   description: yup.string().optional(),
   location: yup.string().required('Location is required'),
+  lat: yup.number().optional(),
+  lng: yup.number().optional(),
   startDate: yup.date().required('Start date is required'),
   endDate: yup.date().optional(),
   type: yup
@@ -47,15 +51,23 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
   const title = payload.get('title') as string;
   const description = (payload.get('description') as string) || undefined;
   const location = payload.get('location') as string;
+  const latStr = payload.get('lat') as string;
+  const lngStr = payload.get('lng') as string;
   const startDate = payload.get('startDate') as string;
   const endDate = (payload.get('endDate') as string) || undefined;
   const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
   const categoryId = (payload.get('categoryId') as string) || undefined;
 
+  // Convert lat and lng to numbers if they exist
+  const lat = latStr ? parseFloat(latStr) : undefined;
+  const lng = lngStr ? parseFloat(lngStr) : undefined;
+
   return {
     title,
     description,
     location,
+    lat,
+    lng,
     startDate: new Date(startDate),
     endDate: endDate ? new Date(endDate) : undefined,
     type,
@@ -77,21 +89,14 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         title: formattedData.title,
         description: formattedData.description,
         location: formattedData.location,
+        lat: formattedData.lat,
+        lng: formattedData.lng,
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        categoryId: formattedData.categoryId || null, // Explicitly handle the optional field
+        // categoryId: formattedData.categoryId || null, // Explicitly handle the optional field
+        categoryId:  null, // Explicitly handle the optional field
         organizerId:'e7926135-1dd7-4422-a610-3777dbf3768a'
-
-
-        // For now, use a hardcoded organizer ID
-        // In a real app, this would be the current logged-in user
-        /*organizer: {
-          connect: {
-            // Find the first admin user
-            email: 'admin@akproleter.rs',
-          },
-        },*/
       },
     });
 
