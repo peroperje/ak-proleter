@@ -3,13 +3,15 @@ import { icons, IconType } from '@/app/lib/icons';
 import clsx from 'clsx';
 
 interface Props {
-  title: string;
+  title: string | (() => React.ReactNode);
   icon?: IconType;
   variants?: 'success' | 'error' | 'warning' | 'info' | 'default';
 }
 
 const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variants}): ReactElement=> {
   const IconComponent = icon ? icons[icon] : null;
+  const titleContent = typeof title === 'function' ? title() : title;
+
   return (
     <div className='flex flex-col rounded-xl border border-gray-200 bg-white shadow-xs dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-neutral-700/70'>
       <div
@@ -38,7 +40,7 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
               },
             )}
           >
-            {title}
+            {titleContent}
           </p>
         </div>
       </div>

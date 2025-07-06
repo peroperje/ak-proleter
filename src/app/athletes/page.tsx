@@ -8,6 +8,7 @@ import { icons } from '@/app/lib/icons';
 import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
 import Image from 'next/image';
+import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 
 const IconComponent = icons.addUser;
 
@@ -104,9 +105,7 @@ export default async function AthletesPage() {
                     return (
                       <tr key={athlete.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {
-                            !!athlete?.photoUrl && <Image src={athlete.photoUrl} alt={'profile picture'} width={40} height={40} />
-                          }
+                          <ProfilePhotos src={athlete?.photoUrl || ''} alt={`${athlete.firstName} ${athlete.lastName}`} className={'w-10 h-10 rounded-full object-cover'} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">

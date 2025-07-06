@@ -7,8 +7,11 @@ import {
   FiBriefcase,
   FiBarChart2,
   FiBox,
-  FiUserPlus
+  FiUserPlus,
+  FiMail
 } from 'react-icons/fi';
+
+import {FaRunning} from 'react-icons/fa'
 
 // Export all icons used in the application
 export const icons = {
@@ -21,6 +24,8 @@ export const icons = {
   coaches: FiBriefcase,
   reports: FiBarChart2,
   addUser: FiUserPlus,
+  running: FaRunning,
+  mail: FiMail,
   // Box component icon
   box: FiBox
 };

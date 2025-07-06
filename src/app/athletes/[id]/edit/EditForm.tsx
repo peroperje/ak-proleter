@@ -4,6 +4,7 @@ import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { navItems } from '@/app/lib/routes';
+import Link from 'next/link';
 
 interface Props {
   user: AthleteFormData;
@@ -36,27 +37,31 @@ export default function EditForm({ user, userId }: Props) {
   }, [state.status]);
 
   return (
+    <Box
+      icon={navItems.athletes.icon}
+      title={() => {
+        if (state.status === 'success') {
 
-      <Box
-        icon={navItems.athletes.icon}
-        title={state.message || initialState.message || ''}
-        variants={((status) => {
-          switch (status) {
-            case 'success':
-              return 'success';
-            case 'error':
-              return 'error';
-            default:
-              return undefined;
-          }
-        })(state.status)}
-      >
-        <AthleteForm
-          state={state}
-          formAction={formAction}
-          isSubmitting={isSubmitting}
-        />
-      </Box>
-
+          return <>Athlete <Link className={'font-bold underline text-blue-500'} href={navItems.athletes.href({id:userId})}>{user.firstName} {user.lastName}</Link>  updated successfully. </>
+        }
+        return state.message || initialState.message || '';
+      }}
+      variants={((status) => {
+        switch (status) {
+          case 'success':
+            return 'success';
+          case 'error':
+            return 'error';
+          default:
+            return undefined;
+        }
+      })(state.status)}
+    >
+      <AthleteForm
+        state={state}
+        formAction={formAction}
+        isSubmitting={isSubmitting}
+      />
+    </Box>
   );
 }
