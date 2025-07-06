@@ -14,7 +14,7 @@ export interface EventFormData {
   startDate: Date;
   endDate?: Date;
   type: 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
-  categoryId?: string;
+  categoryIds?: string[];
 }
 
 // Define the type for the action state
@@ -43,7 +43,7 @@ const eventSchema = yup.object().shape({
     .string()
     .oneOf(['COMPETITION', 'TRAINING', 'MEETING', 'OTHER'], 'Invalid event type')
     .required('Event type is required'),
-  categoryId: yup.string().optional(),
+  categoryIds: yup.array().of(yup.string()).optional(),
 });
 
 // Function to convert FormData to EventFormData
@@ -56,7 +56,9 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
   const startDate = payload.get('startDate') as string;
   const endDate = (payload.get('endDate') as string) || undefined;
   const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
-  const categoryId = (payload.get('categoryId') as string) || undefined;
+
+  // Get all selected categories
+  const categoryIds = payload.getAll('categoryIds').map(value => value as string);
 
   // Convert lat and lng to numbers if they exist
   const lat = latStr ? parseFloat(latStr) : undefined;
@@ -71,7 +73,7 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
     startDate: new Date(startDate),
     endDate: endDate ? new Date(endDate) : undefined,
     type,
-    categoryId,
+    categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
   };
 }
 
@@ -94,13 +96,20 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        // categoryId: formattedData.categoryId || null, // Explicitly handle the optional field
-        categoryId:  null, // Explicitly handle the optional field
-        organizerId:'e7926135-1dd7-4422-a610-3777dbf3768a'
+        organizerId:'e7926135-1dd7-4422-a610-3777dbf3768a',
+        // Connect categories if provided
+        ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
+          ? {
+              categories: {
+                connect: formattedData.categoryIds.map(id => ({ id })),
+              },
+            }
+          : {}),
       },
     });
 
     revalidatePath('/events');
+    revalidatePath('/events/new');
 
     return {
       errors: {} as EventActionState['errors'],
@@ -135,3 +144,5 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
     };
   }
 }
+
+export type CreateEvent = typeof createEvent;

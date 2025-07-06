@@ -56,12 +56,12 @@ model Category {
   minAge      Int       @map("min_age")
   maxAge      Int?      @map("max_age")
   profiles    Profile[]
-  events      Event[]
+  events      Event[]   @relation("EventToCategory")
 }
 
 // Events (competitions, training sessions, etc.)
 model Event {
-  id           String    @id @default(uuid())
+  id           String     @id @default(uuid())
   title        String
   description  String?
   location     String
@@ -71,12 +71,11 @@ model Event {
   endDate      DateTime?
   type         EventType
   organizerId  String
-  organizer    User      @relation("organizer", fields: [organizerId], references: [id])
-  participants User[]    @relation("participants")
-  categoryId   String?
-  category     Category? @relation(fields: [categoryId], references: [id])
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  organizer    User       @relation("organizer", fields: [organizerId], references: [id])
+  participants User[]     @relation("participants")
+  categories   Category[] @relation("EventToCategory")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
   results      Result[]
 }
 

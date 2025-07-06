@@ -137,7 +137,7 @@ export default async function EventsPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900 dark:text-white">{event.location}</div>
+                          <div className="text-sm text-gray-900 dark:text-white max-w-[200px] truncate" title={event.location}>{event.location}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${typeStyles[event.eventType]}`}>
