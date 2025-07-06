@@ -2,6 +2,7 @@ import PageLayout from '@/app/components/PageLayout';
 import { getAthleteById } from '@/app/lib/actions';
 import { notFound } from 'next/navigation';
 import EditForm from '@/app/athletes/[id]/edit/EditForm';
+import CloseBtn from '@/app/components/CloseBtn';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -17,11 +18,7 @@ export default async function EditAthletePage(props: Props) {
 
   return (
     <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
-      <div className="flex items-center justify-center md:h-screen bg-gray-50 dark:bg-neutral-800">
-        <button>
-
-        </button>
-      </div>
+      <CloseBtn />
 
         <EditForm user={user} userId={params.id} />
 

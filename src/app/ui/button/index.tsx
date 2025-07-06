@@ -1,4 +1,5 @@
 import React, { ReactElement, ButtonHTMLAttributes } from 'react';
+import RoundedCloseButton from './RoundedCloseButton';
 
 interface Props
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
@@ -35,4 +36,5 @@ const Button: React.FC<Props> = ({
   );
 };
 
+export { RoundedCloseButton };
 export default Button;
