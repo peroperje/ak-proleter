@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { ActionState } from '@/app/lib/actions';
 import { navItems } from '@/app/lib/routes';
 import clsx from 'clsx';
+import ProfileUrlInputField from '@/app/components/athletes/AthleteForm/ProfileUrlInputField';
 
 interface AthleteFormProps {
   formAction: (payload: FormData)=>void;
@@ -15,6 +16,32 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
 
   return (
     <form action={formAction} className='space-y-6'>
+      <div className='grid grid-cols-1 gap-4'>
+        <div>
+          <label
+            htmlFor='photoUrl'
+            className={clsx('block text-sm font-bold dark:text-white', {
+              'text-red-500': !!state.errors.photoUrl,
+            })}
+          >
+            Photo URL
+          </label>
+          <ProfileUrlInputField
+            id='photoUrl'
+            name='photoUrl'
+            type='text'
+            defaultValue={state.data?.photoUrl}
+            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
+              'border-red-500': !!state.errors.photoUrl,
+            })}
+          />
+          {
+            !!state.errors.photoUrl &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+              {state.errors.photoUrl}
+            </p>
+          }
+        </div>
+      </div>
       <div className='grid grid-cols-1 gap-4'>
         <div>
           <label
@@ -257,32 +284,7 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
         </div>
       </div>
 
-      <div className='grid grid-cols-1 gap-4'>
-        <div>
-          <label
-            htmlFor='photoUrl'
-            className={clsx('block text-sm font-bold dark:text-white', {
-              'text-red-500': !!state.errors.photoUrl,
-            })}
-          >
-            Photo URL
-          </label>
-          <input
-            id='photoUrl'
-            name='photoUrl'
-            type='url'
-            defaultValue={state.data?.photoUrl}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.photoUrl,
-            })}
-          />
-          {
-          !!state.errors.photoUrl &&  <p className="text-sm text-red-500 dark:text-neutral-400">
-              {state.errors.photoUrl}
-          </p>
-          }
-        </div>
-      </div>
+
 
 
       <div className='grid grid-cols-2 gap-4'>

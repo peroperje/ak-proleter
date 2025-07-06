@@ -21,9 +21,7 @@ export default function NewAthletePage() {
   );
 
   useEffect(() => {
-    console.log(state.status);
     if (state.status === 'success' || state.status === 'error') {
-      console.log(state.status);
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',

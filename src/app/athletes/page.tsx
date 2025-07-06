@@ -6,6 +6,7 @@ import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
+import Image from 'next/image';
 
 async function getAthletes(): Promise<Athlete[]> {
   // Fetch users with a MEMBER role from the database
@@ -34,6 +35,7 @@ async function getAthletes(): Promise<Athlete[]> {
     categories: user.profile?.category ? [user.profile.category.name] : [],
     address: user.profile?.address,
     notes: user.profile?.bio,
+    photoUrl: user.profile?.avatarUrl || undefined,
   }));
 }
 
@@ -62,6 +64,8 @@ export default async function AthletesPage() {
               <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
                 <thead className="bg-gray-50 dark:bg-neutral-800">
                   <tr>
+                    <th scope="col" className="px-6 py-3 text-left  tracking-wider" />
+
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
                       Name
                     </th>
@@ -93,6 +97,11 @@ export default async function AthletesPage() {
 
                     return (
                       <tr key={athlete.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {
+                            !!athlete?.photoUrl && <Image src={athlete.photoUrl} alt={'profile picture'} width={40} height={40} />
+                          }
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div>

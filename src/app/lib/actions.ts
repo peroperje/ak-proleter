@@ -32,7 +32,7 @@ const athleteSchema = yup.object().shape({
   emergencyContact: yup.string().optional(),
   categories: yup.array().of(yup.string()).optional(),
   notes: yup.string().optional(),
-  photoUrl: yup.string().url('Invalid URL format').optional(),
+  photoUrl: yup.string().required(),
 });
 
 export type ActionState = {

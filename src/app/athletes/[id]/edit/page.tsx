@@ -17,7 +17,11 @@ export default async function EditAthletePage(props: Props) {
 
   return (
     <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
+      <div className="flex items-center justify-center md:h-screen bg-gray-50 dark:bg-neutral-800">
+        <button>
 
+        </button>
+      </div>
 
         <EditForm user={user} userId={params.id} />
 
