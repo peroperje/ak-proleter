@@ -11,7 +11,7 @@ async function getEvents(): Promise<Event[]> {
   const dbEvents = await prisma.event.findMany({
     include: {
       organizer: true,
-      categories: true,
+      category: true,
     }
   });
 
@@ -52,7 +52,7 @@ async function getEvents(): Promise<Event[]> {
       startDate: event.startDate,
       endDate: event.endDate || event.startDate,
       eventType,
-      category: event.categories || null,
+      category: event.category && event.category.length > 0 ? event.category : null,
       status,
       organizer: event.organizer?.name || 'Unknown',
       notes: ''
