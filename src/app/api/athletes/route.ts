@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 
+/**
+ * @deprecated
+ * @param request
+ * @constructor
+ */
 export async function GET(request: Request) {
   try {
     // Get search params from URL
@@ -85,6 +90,11 @@ export async function GET(request: Request) {
   }
 }
 
+/**
+ * @deprecated
+ * @param request
+ * @constructor
+ */
 export async function POST(request: Request) {
   console.log('Athelts request',request.body)
   try {
@@ -98,16 +108,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find or create categories
+    // Find categories from the predefined list
     const categoryIds = [];
     if (body.categories && body.categories.length > 0) {
       for (const categoryName of body.categories) {
-        const category = await prisma.category.upsert({
+        const category = await prisma.category.findUnique({
           where: { name: categoryName },
-          update: {},
-          create: { name: categoryName },
         });
-        categoryIds.push(category.id);
+        if (category) {
+          categoryIds.push(category.id);
+        }
       }
     }
 
@@ -165,6 +175,11 @@ export async function POST(request: Request) {
   }
 }
 
+/**
+ * @deprecated
+ * @param request
+ * @constructor
+ */
 export async function PUT(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -192,15 +207,15 @@ export async function PUT(request: Request) {
       );
     }
 
-    // Find or create categories
+    // Find categories from the predefined list
     let categoryId = null;
     if (body.categories && body.categories.length > 0) {
-      const category = await prisma.category.upsert({
+      const category = await prisma.category.findUnique({
         where: { name: body.categories[0] },
-        update: {},
-        create: { name: body.categories[0] },
       });
-      categoryId = category.id;
+      if (category) {
+        categoryId = category.id;
+      }
     }
 
     // Update user and profile
@@ -266,6 +281,11 @@ export async function PUT(request: Request) {
   }
 }
 
+/**
+ * @deprecated
+ * @param request
+ * @constructor
+ */
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

@@ -118,11 +118,6 @@ export default async function Page({ params }: { params: { id: string } }) {
               <div className="mr-4 mb-4 md:mb-0">
                 <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center">
                   {athlete.photoUrl ? (
-                    /*<img
-                      src={athlete.photoUrl}
-                      alt={`${athlete.firstName} ${athlete.lastName}`}
-                      className="w-full h-full object-cover"
-                    />*/
                     <ProfilePhotos src={athlete?.photoUrl} alt={`${athlete.firstName} ${athlete.lastName}`} className="w-full h-full object-cover" />
                   ) : (
                     <div className="text-4xl text-gray-400">
@@ -185,7 +180,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             icon={'mail'}
           >
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex justify-between flex-wrap gap-4 md:gap-6">
 
 
 

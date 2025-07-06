@@ -48,11 +48,13 @@ model Profile {
   categoryId  String?
 }
 
-// Categories/Teams
+// Age Categories
 model Category {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  description String?
+  id          String    @id @default(uuid()) @map("id")
+  name        String    @unique @map("name")
+  description String    @map("description")
+  minAge      Int       @map("min_age")
+  maxAge      Int?      @map("max_age")
   profiles    Profile[]
   events      Event[]
 }

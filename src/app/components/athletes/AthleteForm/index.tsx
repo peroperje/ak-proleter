@@ -230,32 +230,7 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
 
 
 
-      <div className='grid grid-cols-1 gap-4'>
-        <div>
-          <label
-            htmlFor='category'
-            className={clsx('block text-sm font-bold dark:text-white', {
-              'text-red-500': !!state.errors.categories,
-            })}
-          >
-            Category
-          </label>
-          <input
-            id='categories'
-            name='categories'
-            type='text'
-            defaultValue={state.data?.categories}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.categories,
-            })}
-          />
-          {
-          !!state.errors.categories &&  <p className="text-sm text-red-500 dark:text-neutral-400">
-              {state.errors.categories}
-          </p>
-          }
-        </div>
-      </div>
+
 
       <div className='grid grid-cols-1 gap-4'>
         <div>
