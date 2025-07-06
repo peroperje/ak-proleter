@@ -5,9 +5,7 @@ import AthleteForm from '@/app/components/athletes/AthleteForm';
 import PageLayout from '@/app/components/PageLayout';
 import { ActionState, createAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
-import { navItems } from '@/app/lib/routes';
 import CloseBtn from '@/app/components/CloseBtn';
-import { icons } from '@/app/lib/icons';
 
 export default function NewAthletePage() {
   const initialState: ActionState = {

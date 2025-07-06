@@ -1,0 +1,132 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import * as yup from 'yup';
+import prisma from '@/app/lib/prisma';
+
+// Define the type for the form data
+export interface EventFormData {
+  title: string;
+  description?: string;
+  location: string;
+  startDate: Date;
+  endDate?: Date;
+  type: 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
+  categoryId?: string;
+}
+
+// Define the type for the action state
+export type EventActionState = {
+  errors: {
+    [K in keyof EventFormData]?: string;
+  };
+  message: string;
+  data?: EventFormData;
+  status: 'success' | 'error' | 'validation' | 'new';
+};
+
+// Define validation schema using yup
+const eventSchema = yup.object().shape({
+  title: yup
+    .string()
+    .required('Title is required')
+    .min(2, 'Title must be at least 2 characters long'),
+  description: yup.string().optional(),
+  location: yup.string().required('Location is required'),
+  startDate: yup.date().required('Start date is required'),
+  endDate: yup.date().optional(),
+  type: yup
+    .string()
+    .oneOf(['COMPETITION', 'TRAINING', 'MEETING', 'OTHER'], 'Invalid event type')
+    .required('Event type is required'),
+  categoryId: yup.string().optional(),
+});
+
+// Function to convert FormData to EventFormData
+function getEventObjectFromFormData(payload: FormData): EventFormData {
+  const title = payload.get('title') as string;
+  const description = (payload.get('description') as string) || undefined;
+  const location = payload.get('location') as string;
+  const startDate = payload.get('startDate') as string;
+  const endDate = (payload.get('endDate') as string) || undefined;
+  const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
+  const categoryId = (payload.get('categoryId') as string) || undefined;
+
+  return {
+    title,
+    description,
+    location,
+    startDate: new Date(startDate),
+    endDate: endDate ? new Date(endDate) : undefined,
+    type,
+    categoryId,
+  };
+}
+
+// Server action to create an event
+export async function createEvent(_state: EventActionState, payload: FormData) {
+  // Prepare data for submission
+  const formattedData = getEventObjectFromFormData(payload);
+
+  try {
+    await eventSchema.validate(formattedData, { abortEarly: false });
+
+    // Create a new event
+    await prisma.event.create({
+      data: {
+        title: formattedData.title,
+        description: formattedData.description,
+        location: formattedData.location,
+        startDate: formattedData.startDate,
+        endDate: formattedData.endDate,
+        type: formattedData.type,
+        categoryId: formattedData.categoryId || null, // Explicitly handle the optional field
+        organizerId:'e7926135-1dd7-4422-a610-3777dbf3768a'
+
+
+        // For now, use a hardcoded organizer ID
+        // In a real app, this would be the current logged-in user
+        /*organizer: {
+          connect: {
+            // Find the first admin user
+            email: 'admin@akproleter.rs',
+          },
+        },*/
+      },
+    });
+
+    revalidatePath('/events');
+
+    return {
+      errors: {} as EventActionState['errors'],
+      message: 'Event created successfully',
+      status: 'success' as const,
+      data: undefined,
+    };
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return {
+        errors: error.inner.reduce(
+          (acc, err) => {
+            if (err.path) {
+              acc[err.path as keyof EventActionState['errors']] = err.message;
+            }
+            return acc;
+          },
+          {} as EventActionState['errors'],
+        ),
+        message: 'Please correct the errors below',
+        data: formattedData,
+        status: 'error' as const,
+      };
+    }
+
+    console.log('Error creating event:', error);
+    return {
+      errors: {} as EventActionState['errors'],
+      message: 'An unexpected error occurred. Please, check your data',
+      data: formattedData,
+      status: 'error' as const,
+    };
+  }
+}

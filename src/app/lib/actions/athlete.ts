@@ -17,7 +17,7 @@ export interface AthleteFormData {
   photoUrl?: string;
 }
 
-// Define validation schema using yup
+
 const athleteSchema = yup.object().shape({
   firstName: yup
     .string()

@@ -7,7 +7,7 @@ import CloseBtn from '@/app/components/CloseBtn';
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { createEvent } from '@/app/lib/eventActions';
+import { createEvent } from '@/app/lib/actions/event';
 
 // Define the type for the form data
 export interface EventFormData {
