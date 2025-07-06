@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Box from "@/app/views/Box";
+import Box from "@/app/components/Box";
 import Button from "@/app/ui/button";
 import PageLayout from "@/app/components/PageLayout";
 import { navItems } from "@/app/lib/routes";

@@ -1,4 +1,4 @@
-import Box from '@/app/views/Box';
+import Box from '@/app/components/Box';
 import LoginForm from './LoginForm';
 import Logo from '@/app/components/Logo';
 

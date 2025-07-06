@@ -1,5 +1,5 @@
 'use client'
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement,  useState } from 'react';
 import Image from 'next/image';
 
 const AVATAR_IMAGES = [
@@ -19,36 +19,44 @@ const AVATAR_IMAGES = [
 type Props =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 
 const ProfileUrlInputField: React.FC<Props> = (props): ReactElement=> {
-  const initialValue = props.value || props.defaultValue || '';
-  const [value, setValue] = useState(initialValue);
 
-  // Only select a random avatar if no initial value is provided
-  useEffect(() => {
-    if (!initialValue) {
-      const randomIndex = Math.floor(Math.random() * AVATAR_IMAGES.length);
-      const randomAvatar = AVATAR_IMAGES[randomIndex];
-      setValue(randomAvatar);
-    }
-  }, [initialValue]);
+  const { defaultValue, ...restInputProps } = props;
+  const [value, setValue] = useState(defaultValue || AVATAR_IMAGES[0]);
 
 
   return (
     <div className={'flex gap-4'}>
-      {
-        value && <Image
-        loader={({ src }) => src}
+      {value && (
+        <Image
+          loader={({ src }) => src}
           width={150}
           height={150}
           src={value as string}
           alt={'profile image'}
           priority={true}
         />
-      }
-      <input
-        {...props}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
+      )}
+      <div className={'flex flex-col gap-4'}>
+        <input
+          {...restInputProps}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <div className={'flex flex-wrap gap-4'}>
+          {AVATAR_IMAGES.map((avatar, index) => (
+            <Image
+              key={`${avatar}-${index}`}
+              width={50}
+              height={50}
+              src={avatar}
+              alt={'avatar option'}
+              onClick={() => setValue(avatar)}
+              className={'cursor-pointer'}
+              priority={true}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

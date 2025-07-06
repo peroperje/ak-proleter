@@ -1,5 +1,5 @@
 'use client';
-import Box from '@/app/views/Box';
+import Box from '@/app/components/Box';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 
 import PageLayout from '@/app/components/PageLayout';
@@ -7,6 +7,7 @@ import { ActionState, createAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import { navItems } from '@/app/lib/routes';
 import CloseBtn from '@/app/components/CloseBtn';
+import { icons } from '@/app/lib/icons';
 
 export default function NewAthletePage() {
   const initialState: ActionState = {
@@ -34,7 +35,7 @@ export default function NewAthletePage() {
     <PageLayout title={'New Athlete'} currentPage='add athlete'>
       <CloseBtn />
       <Box
-        icon={navItems.athletes.icon}
+        icon={'addUser'}
         title={state.message || initialState.message || ''}
         variants={((status) => {
           switch (status) {

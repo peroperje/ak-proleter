@@ -1,12 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
-import Box from '@/app/views/Box';
+import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
+import { icons } from '@/app/lib/icons';
 import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
 import Image from 'next/image';
+
+const IconComponent = icons.addUser;
 
 async function getAthletes(): Promise<Athlete[]> {
   // Fetch users with a MEMBER role from the database
@@ -45,7 +48,10 @@ export default async function AthletesPage() {
 
   const addAthleteButton = (
     <Link href="/athletes/new">
-      <Button variant="submit">Add Athlete</Button>
+      <Button variant="submit">
+        <IconComponent size={20}  />
+        Add Athlete
+      </Button>
     </Link>
   );
 

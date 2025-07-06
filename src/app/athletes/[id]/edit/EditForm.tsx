@@ -1,5 +1,5 @@
 'use client';
-import Box from '@/app/views/Box';
+import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';

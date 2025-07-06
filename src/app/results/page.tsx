@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import Box from '@/app/views/Box';
+import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Result, Athlete, Event, Discipline } from '@/app/lib/definitions';

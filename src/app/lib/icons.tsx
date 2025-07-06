@@ -6,7 +6,8 @@ import {
   FiActivity,
   FiBriefcase,
   FiBarChart2,
-  FiBox
+  FiBox,
+  FiUserPlus
 } from 'react-icons/fi';
 
 // Export all icons used in the application
@@ -19,7 +20,7 @@ export const icons = {
   training: FiActivity,
   coaches: FiBriefcase,
   reports: FiBarChart2,
-
+  addUser: FiUserPlus,
   // Box component icon
   box: FiBox
 };
