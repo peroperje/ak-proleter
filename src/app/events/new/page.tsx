@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { createEvent } from '@/app/lib/actions/event';
+import LocationField from '@/app/events/new/LocationField';
 
 // Define the type for the form data
 export interface EventFormData {
@@ -113,7 +114,7 @@ function EventForm({ formAction, state, isSubmitting }: {
           >
             Location
           </label>
-          <input
+          <LocationField
             id='location'
             name='location'
             type='text'
