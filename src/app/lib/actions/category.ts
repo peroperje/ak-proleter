@@ -3,13 +3,24 @@
 import prisma from '@/app/lib/prisma';
 
 /**
+ * Type definition for Category
+ */
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  minAge: number | null;
+  maxAge?: number | null;
+}
+
+/**
  * Fetches all categories from the database
  *
  * @returns An array of category objects with id and name
  */
-export async function getCategories() {
+export async function getCategories(): Promise<Category[]> {
   try {
-    const categories = await prisma.category.findMany({
+    return await prisma.category.findMany({
       select: {
         id: true,
         name: true,
@@ -21,8 +32,6 @@ export async function getCategories() {
         name: 'asc',
       },
     });
-
-    return categories;
   } catch (error) {
     console.error('Error fetching categories:', error);
     throw new Error('Failed to fetch categories');

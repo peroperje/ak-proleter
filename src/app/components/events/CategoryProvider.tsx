@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { getCategories } from '@/app/lib/actions';
+import { getCategories, Category } from '@/app/lib/actions';
 
 // Loading component for Suspense fallback
 function CategoryLoading() {
@@ -12,7 +12,7 @@ function CategoryLoading() {
 }
 
 // Server component that fetches categories
-async function CategoryData({ children }: { children: (categories: any[]) => React.ReactNode }) {
+async function CategoryData({ children }: { children: (categories: Category[]) => React.ReactNode }) {
   // Fetch categories from the server
   const categories = await getCategories();
 
@@ -21,7 +21,7 @@ async function CategoryData({ children }: { children: (categories: any[]) => Rea
 }
 
 // Provider component that wraps the CategoryData with Suspense
-export function CategoryProvider({ children }: { children: (categories: any[]) => React.ReactNode }) {
+export function CategoryProvider({ children }: { children: (categories: Category[]) => React.ReactNode }) {
   return (
     <Suspense fallback={<CategoryLoading />}>
       <CategoryData>{children}</CategoryData>
