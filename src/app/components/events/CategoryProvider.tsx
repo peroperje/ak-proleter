@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { getCategories, Category } from '@/app/lib/actions';
 
 // Loading component for Suspense fallback
