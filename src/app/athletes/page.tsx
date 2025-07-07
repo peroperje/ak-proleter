@@ -7,7 +7,6 @@ import { Athlete } from '@/app/lib/definitions';
 import { icons } from '@/app/lib/icons';
 import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
-import Image from 'next/image';
 import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 
 const IconComponent = icons.addUser;
