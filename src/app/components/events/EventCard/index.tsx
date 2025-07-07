@@ -43,7 +43,16 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className='flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
       <div className='flex h-full flex-col p-4'>
-        <div className='mb-4 flex flex-wrap gap-2'>
+        <div className='mb-4 flex items-center flex-wrap gap-2'>
+          <div className='relative mb-4 h-15 w-15'>
+            <Image
+              src={`/event-img/${event.type.toUpperCase()}.png`}
+              alt={`${event.type} event`}
+              fill
+              style={{ objectFit: 'cover' }}
+              className='rounded-md'
+            />
+          </div>
           <span
             className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold lowercase first-letter:uppercase ${typeStyles[event.type]}`}
           >
@@ -65,15 +74,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           </p>
         </div>
         {/* Event type image */}
-        <div className='relative mb-4 h-40 w-full'>
-          <Image
-            src={`/event-img/${event.type.toUpperCase()}.png`}
-            alt={`${event.type} event`}
-            fill
-            style={{ objectFit: 'cover' }}
-            className='rounded-md'
-          />
-        </div>
+
 
         {/* Location text */}
         <div className='mb-4 text-sm'>
