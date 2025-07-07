@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,45 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model for members, coaches, administrators
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
+  id            String   @id @default(uuid())
+  email         String   @unique
   name          String
-  role          UserRole  @default(MEMBER)
+  role          UserRole @default(MEMBER)
   passwordHash  String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  eventsCreated Event[]  @relation("organizer")
+  newsItems     News[]   @relation("author")
   profile       Profile?
-  newsItems     News[]    @relation("author")
-  eventsCreated Event[]   @relation("organizer")
-  eventsJoined  Event[]   @relation("participants")
   results       Result[]
+  eventsJoined  Event[]  @relation("participants")
 }
 
-enum UserRole {
-  ADMIN
-  COACH
-  MEMBER
-  VISITOR
-}
-
-// Profile information for users
 model Profile {
   id          String    @id @default(uuid())
   userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   dateOfBirth DateTime?
   phoneNumber String?
   address     String?
   bio         String?
   avatarUrl   String?
+  categoryId  String?
   gender      String    @default("male")
   category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Age Categories
 model Category {
   id          String    @id @default(uuid()) @map("id")
   name        String    @unique @map("name")
@@ -59,24 +46,55 @@ model Category {
   events      Event[]   @relation("EventToCategory")
 }
 
-// Events (competitions, training sessions, etc.)
 model Event {
   id           String     @id @default(uuid())
   title        String
   description  String?
   location     String
-  lat          Float?
-  lng          Float?
   startDate    DateTime
   endDate      DateTime?
   type         EventType
   organizerId  String
-  organizer    User       @relation("organizer", fields: [organizerId], references: [id])
-  participants User[]     @relation("participants")
-  categories   Category[] @relation("EventToCategory")
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  lat          Float?
+  lng          Float?
+  organizer    User       @relation("organizer", fields: [organizerId], references: [id])
   results      Result[]
+  categories   Category[] @relation("EventToCategory")
+  participants User[]     @relation("participants")
+}
+
+model News {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  authorId  String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  imageUrl  String?
+  author    User     @relation("author", fields: [authorId], references: [id])
+}
+
+model Result {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  position  Int?
+  score     String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  COACH
+  MEMBER
+  VISITOR
 }
 
 enum EventType {
@@ -84,32 +102,5 @@ enum EventType {
   TRAINING
   MEETING
   OTHER
-}
-
-// News and announcements
-// Maybe we don't need it - Candidate for depracted
-model News {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  authorId  String
-  author    User     @relation("author", fields: [authorId], references: [id])
-  published Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  imageUrl  String?
-}
-
-// Results and achievements
-model Result {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id])
-  position  Int?
-  score     String?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  CAMP
 }

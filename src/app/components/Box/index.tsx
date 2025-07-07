@@ -13,7 +13,7 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
   const titleContent = typeof title === 'function' ? title() : title;
 
   return (
-    <div className='flex flex-col rounded-xl border border-gray-200 bg-white shadow-xs dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-neutral-700/70'>
+    <div className='flex flex-col rounded-xl border border-gray-200 bg-white shadow-md dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-neutral-700/70'>
       <div
         className={clsx(
           'rounded-t-xl border border-gray-100 bg-gray-100 px-2 py-1 md:px-5 md:py-4 dark:border-neutral-700 dark:bg-neutral-900',

@@ -15,7 +15,7 @@ export interface EventFormData {
   location: string;
   startDate: Date;
   endDate?: Date;
-  type: 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
+  type: 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER';
   categoryIds?: string[];
 }
 
@@ -257,6 +257,7 @@ export default function EventForm({
             >
               <option value="COMPETITION">Competition</option>
               <option value="TRAINING">Training</option>
+              <option value="CAMP">Camp</option>
               <option value="MEETING">Meeting</option>
               <option value="OTHER">Other</option>
             </select>

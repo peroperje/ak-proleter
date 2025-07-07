@@ -13,7 +13,7 @@ export interface EventFormData {
   lng?: number;
   startDate: Date;
   endDate?: Date;
-  type: 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
+  type: 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER';
   categoryIds?: string[];
 }
 
@@ -41,7 +41,7 @@ const eventSchema = yup.object().shape({
   endDate: yup.date().optional(),
   type: yup
     .string()
-    .oneOf(['COMPETITION', 'TRAINING', 'MEETING', 'OTHER'], 'Invalid event type')
+    .oneOf(['COMPETITION', 'TRAINING', 'CAMP', 'MEETING', 'OTHER'], 'Invalid event type')
     .required('Event type is required'),
   categoryIds: yup.array().of(yup.string()).optional(),
 });
@@ -55,7 +55,7 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
   const lngStr = payload.get('lng') as string;
   const startDate = payload.get('startDate') as string;
   const endDate = (payload.get('endDate') as string) || undefined;
-  const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'MEETING' | 'OTHER';
+  const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER';
 
   // Get all selected categories
   const categoryIds = payload.getAll('categoryIds').map(value => value as string);

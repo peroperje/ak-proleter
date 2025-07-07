@@ -8,7 +8,8 @@ import {
   FiBarChart2,
   FiBox,
   FiUserPlus,
-  FiMail
+  FiMail,
+  FiEdit
 } from 'react-icons/fi';
 
 import {FaRunning} from 'react-icons/fa'
@@ -26,8 +27,9 @@ export const icons = {
   addUser: FiUserPlus,
   running: FaRunning,
   mail: FiMail,
-  // Box component icon
-  box: FiBox
+
+  box: FiBox,
+  edit: FiEdit
 };
 
 // Export icon types
