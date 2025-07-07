@@ -32,7 +32,7 @@ export interface Event {
   location: string;
   startDate: Date;
   endDate: Date;
-  eventType: 'competition' | 'training' | 'camp' | 'other';
+  type: 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER'; // These match the enum case
   category: Category[] | null;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   organizer?: string;

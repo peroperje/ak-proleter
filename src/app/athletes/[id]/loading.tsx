@@ -20,7 +20,7 @@ export default function LoadingAthletePage() {
             <div className="flex flex-col md:flex-row items-start mb-6">
               <div className="mr-4 mb-4 md:mb-0">
                 {/* Avatar skeleton */}
-                <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-neutral-700 animate-pulse"></div>
+                <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-200 dark:bg-neutral-700 animate-pulse"></div>
                 <div className="mt-2 text-center">
                   {/* Status badge skeleton */}
                   <div className="h-5 w-16 bg-gray-200 dark:bg-neutral-700 rounded-full mx-auto animate-pulse"></div>

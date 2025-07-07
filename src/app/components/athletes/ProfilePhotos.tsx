@@ -6,7 +6,9 @@ const ProfilePhotos: React.FC<ImageProps> = (props): ReactElement => (
   <>
     {
       !!props.src && <Image
-        loader={(props) => props.src}
+        loader={({ src, width, quality }) => {
+          return `${src}?w=${width}&q=${quality || 75}`
+        }}
         width={40}
         height={40}
         {...props}

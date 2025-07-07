@@ -71,9 +71,10 @@ function formatDate(date: Date): string {
   });
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   // Fetch athlete data
-  const athlete = await getAthleteById(params.id);
+  const { id } = await params;
+  const athlete = await getAthleteById(id);
 
   if (!athlete) {
     return (
@@ -118,7 +119,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               <div className="mr-4 mb-4 md:mb-0">
                 <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center">
                   {athlete.photoUrl ? (
-                    <ProfilePhotos src={athlete?.photoUrl} alt={`${athlete.firstName} ${athlete.lastName}`} className="w-full h-full object-cover" />
+                    <ProfilePhotos property="true" src={athlete?.photoUrl} alt={`${athlete.firstName} ${athlete.lastName}`} className="w-full h-full object-cover" />
                   ) : (
                     <div className="text-4xl text-gray-400">
                       {athlete.firstName.charAt(0)}{athlete.lastName.charAt(0)}

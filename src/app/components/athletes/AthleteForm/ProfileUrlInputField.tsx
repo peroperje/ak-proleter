@@ -29,7 +29,9 @@ const ProfileUrlInputField: React.FC<Props> = (props): ReactElement=> {
     <div className={'flex gap-4'}>
       {value && (
         <Image
-          loader={({ src }) => src}
+          loader={({ src, width, quality }) => {
+            return `${src}?w=${width}&q=${quality || 75}`
+          }}
           width={150}
           height={150}
           src={value as string}

@@ -30,24 +30,6 @@ async function getEvents(): Promise<Event[]> {
       status = 'ongoing';
     }
 
-    // Map event type from database enum to interface enum
-    let eventType: 'competition' | 'training' | 'camp' | 'other';
-    switch (event.type) {
-      case 'COMPETITION':
-        eventType = 'competition';
-        break;
-      case 'TRAINING':
-        eventType = 'training';
-        break;
-      case 'CAMP':
-        eventType = 'camp';
-        break;
-      case 'MEETING':
-        eventType = 'camp'; // Keep backward compatibility for existing data
-        break;
-      default:
-        eventType = 'other';
-    }
 
     return {
       id: event.id,
@@ -56,21 +38,12 @@ async function getEvents(): Promise<Event[]> {
       location: event.location,
       startDate: event.startDate,
       endDate: event.endDate || event.startDate,
-      eventType,
+      type: event.type,
       category: event.categories && event.categories.length > 0 ? event.categories : null,
       status,
       organizer: event.organizer?.name || 'Unknown',
       notes: ''
     };
-  });
-}
-
-// Helper function to format date
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
   });
 }
 
