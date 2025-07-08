@@ -182,7 +182,6 @@ const LocationField: React.FC<
       if (data && data.length > 0) {
         // Get the first result
         const result = data[0];
-        console.log(result)
         const lat = parseFloat(result.lat);
         const lng = parseFloat(result.lon);
 
@@ -215,13 +214,13 @@ const LocationField: React.FC<
   };
 
   return (
-    <div className="w-full flex flex-col gap-2">
-      <input type="hidden" name={'lng'} value={position[1]} />
-      <input type="hidden" name={'lat'} value={position[0]} />
-      <input type="hidden" name={'location'} value={locationValue} />
-      <div className="flex gap-2">
+    <div className='flex w-full flex-col gap-2'>
+      <input type='hidden' name={'lng'} value={position[1]} />
+      <input type='hidden' name={'lat'} value={position[0]} />
+      <input type='hidden' name={'location'} value={locationValue} />
+      <div className='flex gap-2'>
         <input
-          {...props}
+          {...{ ...props, defaultValue:undefined}}
           id='location-search'
           name='location-search'
           value={locationValue}
@@ -229,7 +228,7 @@ const LocationField: React.FC<
           onKeyDown={handleKeyPress}
         />
         <Button
-          type="button"
+          type='button'
           onClick={searchLocation}
           disabled={isSearching || readOnly}
           variant={'outline'}
@@ -239,44 +238,55 @@ const LocationField: React.FC<
         </Button>
       </div>
 
-        {isMounted && position[0] !== 0 && position[1] !== 0 && (
-          <>
-            <div className="w-full h-[400px]">
-              <LeafletCSS />
-              <MapContainer
-                center={position}
-                zoom={13}
-                scrollWheelZoom={false}
-                className="h-full w-full"
-                style={{ height: '100%', width: '100%' }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {iconLoaded && (
-                  <Marker position={position} icon={customIconRef.current as L.Icon}>
-                    <Popup>Event location</Popup>
-                  </Marker>
-                )}
-                {!readOnly && <MapEvents onLocationSelect={handleLocationSelect} />}
-                <MapRef setMapRef={setMapReference} />
-              </MapContainer>
+      {isMounted && position[0] !== 0 && position[1] !== 0 && (
+        <>
+          <div className='h-[400px] w-full'>
+            <LeafletCSS />
+            <MapContainer
+              center={position}
+              zoom={13}
+              scrollWheelZoom={false}
+              className='h-full w-full'
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+              />
+              {iconLoaded && (
+                <Marker
+                  position={position}
+                  icon={customIconRef.current as L.Icon}
+                >
+                  <Popup>Event location</Popup>
+                </Marker>
+              )}
+              {!readOnly && (
+                <MapEvents onLocationSelect={handleLocationSelect} />
+              )}
+              <MapRef setMapRef={setMapReference} />
+            </MapContainer>
+          </div>
+          <div className='flex justify-end gap-2'>
+            <div className={'flex items-end gap-2'}>
+              <h3 className='text-sm font-medium text-gray-500 dark:text-neutral-400'>
+                lat
+              </h3>
+              <p className='mt-1 text-sm text-gray-900 dark:text-white'>
+                {position[0]}
+              </p>
             </div>
-            <div className="flex justify-end gap-2">
-              <div className={'flex  items-end gap-2'}>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">lat</h3>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white">{position[0]}</p>
-              </div>
-              <div className={'flex items-end gap-2'}>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">lng</h3>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white">{position[1]}</p>
-              </div>
+            <div className={'flex items-end gap-2'}>
+              <h3 className='text-sm font-medium text-gray-500 dark:text-neutral-400'>
+                lng
+              </h3>
+              <p className='mt-1 text-sm text-gray-900 dark:text-white'>
+                {position[1]}
+              </p>
             </div>
-          </>
-        )}
-
-
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -32,16 +32,22 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
               size={18}
             />
           )}
-          <p
-            className={clsx(
-              'mt-1 w-full text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
-              {
-                'text-red-500 dark:text-red-400': variants === 'error',
-              },
-            )}
-          >
-            {titleContent}
-          </p>
+          {
+            typeof title === 'string' ? (
+              <p
+                className={clsx(
+                  'mt-1 w-full text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
+                  {
+                    'text-red-500 dark:text-red-400': variants === 'error',
+                  },
+                )}
+              >
+                {titleContent}
+              </p>
+            ):(
+              titleContent
+            )
+          }
         </div>
       </div>
       <div className='p-4 md:p-5'>{children}</div>

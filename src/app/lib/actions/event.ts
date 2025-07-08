@@ -145,4 +145,83 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
   }
 }
 
+// Server action to update an event
+export async function updateEvent(
+  id: string,
+  _state: EventActionState,
+  payload: FormData
+) {
+  // Prepare data for submission
+  const formattedData = getEventObjectFromFormData(payload);
+
+  try {
+    await eventSchema.validate(formattedData, { abortEarly: false });
+
+    // Update the existing event
+    await prisma.event.update({
+      where: { id },
+      data: {
+        title: formattedData.title,
+        description: formattedData.description,
+        location: formattedData.location,
+        lat: formattedData.lat,
+        lng: formattedData.lng,
+        startDate: formattedData.startDate,
+        endDate: formattedData.endDate,
+        type: formattedData.type,
+        // Update categories if provided
+        ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
+          ? {
+              categories: {
+                set: [], // Remove all existing connections
+                connect: formattedData.categoryIds.map(id => ({ id })), // Connect new ones
+              },
+            }
+          : {
+              categories: {
+                set: [], // Remove all if none provided
+              },
+            }),
+      },
+    });
+
+    revalidatePath('/events');
+    revalidatePath(`/events/${id}`);
+    revalidatePath(`/events/${id}/edit`);
+
+    return {
+      errors: {} as EventActionState['errors'],
+      message: 'Event updated successfully',
+      status: 'success' as const,
+      data: undefined,
+    };
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return {
+        errors: error.inner.reduce(
+          (acc, err) => {
+            if (err.path) {
+              acc[err.path as keyof EventActionState['errors']] = err.message;
+            }
+            return acc;
+          },
+          {} as EventActionState['errors'],
+        ),
+        message: 'Please correct the errors below',
+        data: formattedData,
+        status: 'error' as const,
+      };
+    }
+
+    console.log('Error updating event:', error);
+    return {
+      errors: {} as EventActionState['errors'],
+      message: 'An unexpected error occurred. Please, check your data',
+      data: formattedData,
+      status: 'error' as const,
+    };
+  }
+}
+
 export type CreateEvent = typeof createEvent;
+export type UpdateEvent = typeof updateEvent;

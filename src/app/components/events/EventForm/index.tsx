@@ -1,13 +1,11 @@
-'use client'
+'use client';
 // Define the type for the form data
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import LocationField from '@/app/components/events/EventForm/LocationField';
 import { navItems } from '@/app/lib/routes';
 import Box from '@/app/components/Box';
-import { useActionState, useEffect } from 'react';
-import { CreateEvent } from '@/app/lib/actions';
-
+import React, { useActionState, useEffect } from 'react';
 
 export interface EventFormData {
   title: string;
@@ -19,7 +17,7 @@ export interface EventFormData {
   categoryIds?: string[];
 }
 
-// Define the type for the action state
+
 export type EventActionState = {
   errors: {
     [K in keyof EventFormData]?: string;
@@ -29,22 +27,14 @@ export type EventActionState = {
   status: 'success' | 'error' | 'validation' | 'new';
 };
 
-// EventForm component
-export default function EventForm({
-  action,
-
-  categories,
-}: {
-  action: CreateEvent;
+interface EventFormProps {
+  action:  (state: Awaited<EventActionState>, data:FormData) => (Promise<EventActionState> | EventActionState);
   categories: { id: string; name: string }[];
-}) {
+  initialState: EventActionState
+}
+
+const EventForm:React.FC<EventFormProps>=({action, categories, initialState })=>{
   const router = useRouter();
-  const initialState: EventActionState = {
-    message: 'Please fill out the form below to create a new event.',
-    errors: {},
-    status: 'new' as const,
-    data: undefined,
-  };
 
   const [state, formAction, isSubmitting] = useActionState(
     action,
@@ -59,7 +49,6 @@ export default function EventForm({
       });
     }
   }, [state.status]);
-
 
   return (
     <Box
@@ -76,111 +65,111 @@ export default function EventForm({
         }
       })(state.status)}
     >
-      <form action={formAction} className="space-y-6">
-        <div className="grid grid-cols-1 gap-4">
+      <form action={formAction} className='space-y-6'>
+        <div className='grid grid-cols-1 gap-4'>
           <div>
             <label
-              htmlFor="title"
+              htmlFor='title'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.title
+                'text-red-500': !!state.errors.title,
               })}
             >
               Title
             </label>
             <input
-              id="title"
-              name="title"
-              type="text"
+              id='title'
+              name='title'
+              type='text'
               defaultValue={state.data?.title}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
                 {
-                  'border-red-500': !!state.errors.title
-                }
+                  'border-red-500': !!state.errors.title,
+                },
               )}
               required
             />
             {!!state.errors.title && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.title}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className='grid grid-cols-1 gap-4'>
           <div>
             <label
-              htmlFor="description"
+              htmlFor='description'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.description
+                'text-red-500': !!state.errors.description,
               })}
             >
               Description
             </label>
             <textarea
-              id="description"
-              name="description"
+              id='description'
+              name='description'
               defaultValue={state.data?.description}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
                 {
-                  'border-red-500': !!state.errors.description
-                }
+                  'border-red-500': !!state.errors.description,
+                },
               )}
               rows={4}
             />
             {!!state.errors.description && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.description}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
+        <div className='grid grid-cols-1 gap-4'>
           <div>
             <label
-              htmlFor="location"
+              htmlFor='location'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.location
+                'text-red-500': !!state.errors.location,
               })}
             >
               Location
             </label>
             <LocationField
-              type="text"
+              type='text'
               defaultValue={state.data?.location}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
                 {
-                  'border-red-500': !!state.errors.location
-                }
+                  'border-red-500': !!state.errors.location,
+                },
               )}
               required
             />
             {!!state.errors.location && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.location}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className='grid grid-cols-2 gap-4'>
           <div>
             <label
-              htmlFor="startDate"
+              htmlFor='startDate'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.startDate
+                'text-red-500': !!state.errors.startDate,
               })}
             >
               Start Date
             </label>
             <input
-              id="startDate"
-              name="startDate"
-              type="datetime-local"
+              id='startDate'
+              name='startDate'
+              type='datetime-local'
               defaultValue={
                 state.data?.startDate
                   ? state.data?.startDate.toISOString().slice(0, 16)
@@ -189,30 +178,30 @@ export default function EventForm({
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
                 {
-                  'border-red-500': !!state.errors.startDate
-                }
+                  'border-red-500': !!state.errors.startDate,
+                },
               )}
               required
             />
             {!!state.errors.startDate && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.startDate}
               </p>
             )}
           </div>
           <div>
             <label
-              htmlFor="endDate"
+              htmlFor='endDate'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.endDate
+                'text-red-500': !!state.errors.endDate,
               })}
             >
               End Date
             </label>
             <input
-              id="endDate"
-              name="endDate"
-              type="datetime-local"
+              id='endDate'
+              name='endDate'
+              type='datetime-local'
               defaultValue={
                 state.data?.endDate
                   ? state.data?.endDate.toISOString().slice(0, 16)
@@ -221,75 +210,74 @@ export default function EventForm({
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
                 {
-                  'border-red-500': !!state.errors.endDate
-                }
+                  'border-red-500': !!state.errors.endDate,
+                },
               )}
             />
             {!!state.errors.endDate && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.endDate}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className='grid grid-cols-2 gap-4'>
           <div>
             <label
-              htmlFor="type"
+              htmlFor='type'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.type
+                'text-red-500': !!state.errors.type,
               })}
             >
               Event Type
             </label>
             <select
-              id="type"
-              name="type"
+              id='type'
+              name='type'
               defaultValue={state.data?.type}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
                 {
-                  'border-red-500': !!state.errors.type
-                }
+                  'border-red-500': !!state.errors.type,
+                },
               )}
               required
             >
-              <option value="COMPETITION">Competition</option>
-              <option value="TRAINING">Training</option>
-              <option value="CAMP">Camp</option>
-              <option value="MEETING">Meeting</option>
-              <option value="OTHER">Other</option>
+              <option value='COMPETITION'>Competition</option>
+              <option value='TRAINING'>Training</option>
+              <option value='CAMP'>Camp</option>
+              <option value='MEETING'>Meeting</option>
+              <option value='OTHER'>Other</option>
             </select>
             {!!state.errors.type && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.type}
               </p>
             )}
           </div>
           <div>
             <label
-              htmlFor="categoryId"
+              htmlFor='categoryId'
               className={clsx('block text-sm font-bold dark:text-white', {
-                'text-red-500': !!state.errors.categoryIds
+                'text-red-500': !!state.errors.categoryIds,
               })}
             >
               Category
             </label>
             <select
-              id="categoryId"
-              name="categoryId"
+              id='categoryId'
+              name='categoryId'
               defaultValue={state.data?.categoryIds}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
                 {
-                  'border-red-500': !!state.errors.categoryIds
-                }
+                  'border-red-500': !!state.errors.categoryIds,
+                },
               )}
               multiple
-
             >
-              <option value="">Select a category</option>
+              <option value=''>Select a category</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -297,25 +285,25 @@ export default function EventForm({
               ))}
             </select>
             {!!state.errors.categoryIds && (
-              <p className="text-sm text-red-500 dark:text-neutral-400">
+              <p className='text-sm text-red-500 dark:text-neutral-400'>
                 {state.errors.categoryIds}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className='grid grid-cols-2 gap-4'>
           <button
-            type="button"
+            type='button'
             onClick={() => router.push(navItems.events.href())}
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white"
+            className='inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white'
             disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
-            type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-800"
+            type='submit'
+            className='inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none dark:focus:ring-offset-gray-800'
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Saving...' : 'Save Event'}
@@ -325,3 +313,5 @@ export default function EventForm({
     </Box>
   );
 }
+
+export default EventForm;
