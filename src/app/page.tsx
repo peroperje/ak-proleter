@@ -6,7 +6,7 @@ import { navItems } from "@/app/lib/routes";
 
 export default function Dashboard() {
   return (
-    <PageLayout title="Dashboard" currentPage="dashboard">
+    <PageLayout title="Dashboard">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {Object.values(navItems)
           .filter(item => item.name !== 'Dashboard')

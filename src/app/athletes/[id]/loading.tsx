@@ -7,7 +7,6 @@ export default function LoadingAthletePage() {
   return (
     <PageLayout
       title={''}
-      currentPage="athletes"
       action={<CloseBtn />}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

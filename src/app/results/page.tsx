@@ -120,7 +120,6 @@ export default async function ResultsPage() {
   return (
     <PageLayout
       title="Results"
-      currentPage="results"
       action={addResultButton}
     >
 

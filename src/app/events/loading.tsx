@@ -8,7 +8,6 @@ export default function LoadingEventsPage() {
   return (
     <PageLayout
       title="Events"
-      currentPage="events"
     >
       <Box
         icon={navItems.events.icon}

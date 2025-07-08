@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, use } from 'react';
 import Link from 'next/link';
 import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
@@ -7,7 +7,8 @@ import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
 import CloseBtn from '@/app/components/CloseBtn';
-import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
+import ProfileInfoBoxContent from '@/app/components/athletes/ProfileInfoBoxContent';
+import ContactBoxContent from '@/app/components/athletes/ContactBoxContent';
 
 // Function to fetch athlete by ID
 async function getAthleteById(id: string): Promise<Athlete | null> {
@@ -15,15 +16,15 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
   const user = await prisma.user.findUnique({
     where: {
       id: id,
-      role: 'MEMBER'
+      role: 'MEMBER',
     },
     include: {
       profile: {
         include: {
-          category: true
-        }
-      }
-    }
+          category: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -48,49 +49,25 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
   };
 }
 
-// Calculate age from date of birth
-function calculateAge(dateOfBirth: Date): number {
-  const today = new Date();
-  const birthDate = new Date(dateOfBirth);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  return age;
-}
-
-// Format date to a readable string
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   // Fetch athlete data
-  const { id } = await params;
-  const athlete = await getAthleteById(id);
+  const { id } = use(params);
+  const athlete = use(getAthleteById(id));
 
   if (!athlete) {
     return (
-      <PageLayout
-        title="Athlete Not Found"
-        currentPage="athletes"
-      >
-        <Box
-          icon={navItems.athletes.icon}
-          title="Error"
-          variants="error"
-        >
-          <p className="text-red-500">The athlete you are looking for does not exist.</p>
-          <div className="mt-4">
-            <Link href="/athletes">
-              <Button variant="outline">Back to Athletes</Button>
+      <PageLayout title='Athlete Not Found'>
+        <Box icon={navItems.athletes.icon} title='Error' variants='error'>
+          <p className='text-red-500'>
+            The athlete you are looking for does not exist.
+          </p>
+          <div className='mt-4'>
+            <Link href='/athletes'>
+              <Button variant='outline'>Back to Athletes</Button>
             </Link>
           </div>
         </Box>
@@ -98,111 +75,27 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     );
   }
 
-  // Calculate age
-  const age = calculateAge(athlete.dateOfBirth);
-
-
   return (
-    <PageLayout
-      title={''}
-      currentPage="athletes"
-      action={<CloseBtn />}
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <PageLayout title={''} action={<CloseBtn />}>
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
         {/* Profile Information */}
-        <div className="md:col-span-1">
-          <Box
-            icon={'running'}
-            title="Profile Information"
-          >
-            <div className="flex flex-col md:flex-row items-start  mb-6">
-              <div className="mr-4 mb-4 md:mb-0">
-                <div className="w-24 h-24 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center">
-                  {athlete.photoUrl ? (
-                    <ProfilePhotos property="true" src={athlete?.photoUrl} alt={`${athlete.firstName} ${athlete.lastName}`} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="text-4xl text-gray-400">
-                      {athlete.firstName.charAt(0)}{athlete.lastName.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <div className="mt-2 text-center">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    athlete.active 
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                  }`}>
-                    {athlete.active ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-              </div>
-              <div className={'flex flex-col  flex-auto gap-3'}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {athlete.firstName} {athlete.lastName}
-                </h2>
-                <div className="flex flex-wrap gap-4">
-                  <div className={'flex flex-col flex-auto gap-0'}>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Age</h3>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">{age} years</p>
-                  </div>
-                  <div className={'flex flex-col flex-auto gap-0'}>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Gender</h3>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {athlete.gender === 'male' ? 'Male' : 'Female'}
-                    </p>
-                  </div>
-                  <div className={'flex flex-col flex-auto gap-0'}>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Date of Birth</h3>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">{formatDate(athlete.dateOfBirth)}</p>
-                  </div>
-
-
-
-                  <div className={'flex flex-col flex-auto gap-0'}>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Categories</h3>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {athlete.categories && athlete.categories.length > 0
-                        ? athlete.categories.join(', ')
-                        : 'None'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
+        <div className='md:col-span-1'>
+          <Box icon={'running'} title='Profile Information'>
+            <Suspense fallback={<>Loading</>}>
+              <ProfileInfoBoxContent {...athlete} />
+            </Suspense>
           </Box>
         </div>
 
         {/* Contacts  */}
-        <div className="md:col-span-1">
-          <Box
-            title="Contacts"
-            icon={'mail'}
-          >
-
-            <div className="flex justify-between flex-wrap gap-4 md:gap-6">
-
-
-
-
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Phone</h3>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white">{athlete.phone || 'Not provided'}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Email</h3>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white">{athlete.email || 'Not provided'}</p>
-              </div>
-              <div className="md:col-span-2">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">Address</h3>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white">{athlete.address || 'Not provided'}</p>
-              </div>
-            </div>
+        <div className='md:col-span-1'>
+          <Box title='Contacts' icon={'mail'}>
+            <Suspense fallback={<>loding...</>}>
+              <ContactBoxContent {...athlete} />
+            </Suspense>
           </Box>
         </div>
       </div>
-
     </PageLayout>
   );
 }

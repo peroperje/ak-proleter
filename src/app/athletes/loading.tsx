@@ -8,7 +8,6 @@ export default function LoadingAthletesPage() {
   return (
     <PageLayout
       title="Athletes"
-      currentPage="athletes"
     >
       <Box
         icon={navItems.athletes.icon}

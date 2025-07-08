@@ -125,7 +125,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
   );
 
   return (
-    <PageLayout title={event.name} currentPage='events' action={editButton}>
+    <PageLayout title={event.name} action={editButton}>
       <Box
         icon={navItems.events.icon}
         title={() => {

@@ -5,7 +5,7 @@ import FormContainer from '@/app/events/new/FormContainer';
 // Page component
 export default function NewEventPage() {
   return (
-    <PageLayout title={'New Event'} currentPage='add event'>
+    <PageLayout title={'New Event'}>
       <CloseBtn />
         <FormContainer />
     </PageLayout>

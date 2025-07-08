@@ -17,7 +17,7 @@ export default async function EditAthletePage(props: Props) {
   }
 
   return (
-    <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
+    <PageLayout title={'Edit Athlete'}>
       <CloseBtn />
 
         <EditForm user={user} userId={params.id} />

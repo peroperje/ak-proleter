@@ -6,7 +6,7 @@ import CloseBtn from '@/app/components/CloseBtn';
 
 export default function LoadingEditAthletePage() {
   return (
-    <PageLayout title={'Edit Athlete'} currentPage='edit athlete'>
+    <PageLayout title={'Edit Athlete'}>
       <CloseBtn />
       <Box
         icon={navItems.athletes.icon}

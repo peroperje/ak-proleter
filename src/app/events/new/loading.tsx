@@ -8,7 +8,6 @@ export default function LoadingNewEventPage() {
   return (
     <PageLayout
       title={'New Event'}
-      currentPage='add event'
       action={<CloseBtn />}
     >
       <Box

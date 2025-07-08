@@ -60,7 +60,6 @@ export default async function EventsPage() {
   return (
     <PageLayout
       title="Events"
-      currentPage="events"
       action={addEventButton}
     >
 

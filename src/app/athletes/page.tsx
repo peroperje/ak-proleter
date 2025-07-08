@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, use } from 'react';
 import Link from 'next/link';
 import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
@@ -10,6 +10,23 @@ import { navItems } from '@/app/lib/routes';
 import AthletesCard from '@/app/components/athletes/AthletesCard';
 
 const IconComponent = icons.addUser;
+
+// Add generateStaticParams to pre-render static paths
+export async function generateStaticParams() {
+  const athletes = await prisma.user.findMany({
+    where: { role: 'MEMBER' },
+    select: { id: true }
+  });
+
+  return athletes.map((athlete) => ({
+    id: athlete.id,
+  }));
+}
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 
 async function getAthletes(): Promise<Athlete[]> {
   // Fetch users with a MEMBER role from the database
@@ -42,35 +59,42 @@ async function getAthletes(): Promise<Athlete[]> {
   }));
 }
 
-export default async function AthletesPage() {
-  // Fetch athletes from the database
-  const athletes = await getAthletes();
+const AthleteList = ({athletes}: { athletes: Athlete[] })=>{
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {athletes.map((athlete) => (
+        <AthletesCard key={athlete.id} athlete={athlete} />
+      ))}
+    </div>
+  )
 
-  const addAthleteButton = (
-    <Link href="/athletes/new">
-      <Button variant="submit">
-        <IconComponent size={20}  />
-        Add Athlete
-      </Button>
-    </Link>
-  );
+}
+
+export default function AthletesPage() {
+  // Fetch athletes from the database
+  const athletes =  use(getAthletes());
+
 
   return (
     <PageLayout
       title="Athletes"
-      currentPage="athletes"
-      action={addAthleteButton}
+      action={
+        <Link href="/athletes/new">
+          <Button variant="submit">
+            <IconComponent size={20}  />
+            Add Athlete
+          </Button>
+        </Link>
+      }
     >
 
           <Box
             icon={navItems.athletes.icon}
             title="Athlete List"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {athletes.map((athlete) => (
-                <AthletesCard key={athlete.id} athlete={athlete} />
-              ))}
-            </div>
+            <Suspense fallback={<>Loading athletes...</>}>
+              <AthleteList athletes={athletes} />
+            </Suspense>
           </Box>
     </PageLayout>
   );

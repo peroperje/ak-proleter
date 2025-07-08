@@ -6,7 +6,7 @@ import CloseBtn from '@/app/components/CloseBtn';
 
 export default function LoadingNewAthletePage() {
   return (
-    <PageLayout title={'New Athlete'} currentPage='add athlete'>
+    <PageLayout title={'New Athlete'}>
       <CloseBtn />
       <Box
         icon={'addUser'}

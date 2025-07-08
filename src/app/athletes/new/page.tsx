@@ -30,7 +30,7 @@ export default function NewAthletePage() {
   }, [state.status]);
 
   return (
-    <PageLayout title={'New Athlete'} currentPage='add athlete'>
+    <PageLayout title={'New Athlete'}>
       <CloseBtn />
       <Box
         icon={'addUser'}

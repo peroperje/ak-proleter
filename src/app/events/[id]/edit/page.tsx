@@ -68,7 +68,7 @@ export default async function EditEventPage(props: Props) {
   }
 
   return (
-    <PageLayout title={'Edit Event'} currentPage='edit event'>
+    <PageLayout title={'Edit Event'}>
       <CloseBtn />
       <CategoryProvider>
         {(categories) => (
