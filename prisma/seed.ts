@@ -21,6 +21,7 @@ async function main() {
     data: {
       name: 'Senior',
       description: 'Senior athletes category',
+      minAge: 23,
     },
   });
 
@@ -28,6 +29,7 @@ async function main() {
     data: {
       name: 'U23',
       description: 'Under 23 athletes category',
+      minAge: 18,
     },
   });
 
@@ -35,6 +37,7 @@ async function main() {
     data: {
       name: 'Sprint',
       description: 'Sprint disciplines',
+      minAge: 0,
     },
   });
 
@@ -42,6 +45,7 @@ async function main() {
     data: {
       name: 'Long Distance',
       description: 'Long distance disciplines',
+      minAge: 0,
     },
   });
 
@@ -49,6 +53,7 @@ async function main() {
     data: {
       name: 'Throws',
       description: 'Throwing disciplines',
+      minAge: 0,
     },
   });
 
@@ -167,7 +172,7 @@ async function main() {
           { id: nikolaUser.id },
         ],
       },
-      category: {
+      categories: {
         connect: {
           id: seniorCategory.id,
         },
@@ -193,7 +198,7 @@ async function main() {
           { id: anaUser.id },
         ],
       },
-      category: {
+      categories: {
         connect: {
           id: sprintCategory.id,
         },

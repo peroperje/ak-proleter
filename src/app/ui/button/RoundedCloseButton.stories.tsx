@@ -1,10 +1,12 @@
 import React from 'react';
 import { RoundedCloseButton } from './index';
 
-export default {
+const meta = {
   title: 'UI/Button/RoundedCloseButton',
   component: RoundedCloseButton,
 };
+
+export default meta;
 
 export const Default = () => {
   return (

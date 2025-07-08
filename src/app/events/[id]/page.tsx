@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Box from '@/app/components/Box';
@@ -92,9 +92,17 @@ async function fetchEventById(id: string): Promise<Event | null> {
   };
 }
 
-export default async function EventPage({ params }: { params: { id: string } }) {
+type EventPageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default function EventPage({ params }: EventPageProps) {
+  const {id} = use(params);
   // Fetch event from the database by ID
-  const event = await fetchEventById(params.id);
+  const event = use(fetchEventById(id));
 
   // If event not found, return 404
   if (!event) {

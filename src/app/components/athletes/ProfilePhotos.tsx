@@ -12,6 +12,7 @@ const ProfilePhotos: React.FC<ImageProps> = (props): ReactElement => (
         width={40}
         height={40}
         {...props}
+        alt={'Profile photo'}
       />
     }
   </>

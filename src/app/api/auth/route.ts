@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 }
 
 // Route to check if a user is authenticated
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // In a real application, you would:
     // 1. Get the token from the Authorization header or cookies

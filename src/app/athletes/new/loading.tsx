@@ -1,7 +1,6 @@
 import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
-import { navItems } from '@/app/lib/routes';
 import CloseBtn from '@/app/components/CloseBtn';
 
 export default function LoadingNewAthletePage() {
