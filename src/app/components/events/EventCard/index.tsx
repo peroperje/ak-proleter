@@ -1,10 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
 import { navItems } from '@/app/lib/routes';
 import { icons } from '@/app/lib/icons';
 
 const IconComponent = icons.edit;
+const LocationIcon = icons.location;
+const DateFromIcon = icons.dateFrom;
+const DateToIcon = icons.dateTo;
+const CategoriesIcon = icons.categories;
 
 interface EventCardProps {
   event: Event;
@@ -57,71 +62,87 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <div className='relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
       <Link
-        className={'absolute top-3 right-3 z-20 p-3'}
+        className={'absolute top-1 right-1 z-20 p-3'}
         href={`${navItems.events.href({ id })}/edit`}
         passHref={true}
       >
         <IconComponent />
       </Link>
       <Link href={navItems.events.href({ id })}>
-        <div className='flex h-full flex-col p-4'>
-          <div className='mb-4 flex flex-wrap items-center gap-2'>
-            <span
-              className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${typeStyles[type]}`}
-            >
-              {type.charAt(0) + type.toLowerCase().slice(1)}
-            </span>
-            <span
-              className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${statusStyles[status]}`}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </span>
-          </div>
+        <div className='flex h-full flex-col'>
 
-          <div className='mb-4'>
-            <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
-              {name}
-            </h3>
-            <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
-              {organizer}
-            </p>
-          </div>
-
-          {/* Location text */}
-          <div className='mb-4 text-sm'>
-            <span className='text-gray-500 dark:text-neutral-400'>
-              Location:
-            </span>
-            <span
-              className='ml-1 block truncate text-xs font-bold text-gray-500 dark:text-neutral-400'
-              title={location}
-            >
-              {location}
-            </span>
-          </div>
-
-          <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
-            <div className='flex flex-col gap-0 text-sm'>
-              <span className='text-gray-500 dark:text-neutral-400'>From:</span>
-              <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                {formatDate(startDate)}
+          <div className='p-4'>
+            <div className='mb-4 py-2  flex flex-wrap  items-center gap-2'>
+              <div className='relative  w-10 h-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
+                <Image
+                  src={`/event-img/${type}.png`}
+                  alt={`${type} event`}
+                  fill
+                  className='object-contain p-1'
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
+              <span
+                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${typeStyles[type]}`}
+              >
+                {type.charAt(0) + type.toLowerCase().slice(1)}
+              </span>
+              <span
+                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${statusStyles[status]}`}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
             </div>
-            <div className='flex flex-col gap-0 text-sm'>
-              <span className='text-gray-500 dark:text-neutral-400'>To:</span>
-              <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                {formatDate(endDate)}
+
+            <div className='mb-4'>
+              <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
+                {name}
+              </h3>
+              <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
+                {organizer}
+              </p>
+            </div>
+
+            {/* Location text */}
+            <div className='mb-4 text-sm'>
+              <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
+                <LocationIcon className="mr-1" size={16} /> Location:
+              </span>
+              <span
+                className='ml-1 block truncate text-xs font-bold text-gray-500 dark:text-neutral-400'
+                title={location}
+              >
+                {location}
               </span>
             </div>
-            <div className='flex flex-col text-sm'>
-              <span className='text-gray-500 dark:text-neutral-400'>
-                Categories:
-              </span>
-              <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
-                {category && category.length > 0
-                  ? category.map((cat) => cat.name).join(', ')
-                  : 'All categories'}
-              </span>
+
+            <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
+              <div className='flex flex-col gap-0 text-sm'>
+                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
+                  <DateFromIcon className="mr-1" size={16} /> From:
+                </span>
+                <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                  {formatDate(startDate)}
+                </span>
+              </div>
+              <div className='flex flex-col gap-0 text-sm'>
+                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
+                  <DateToIcon className="mr-1" size={16} /> To:
+                </span>
+                <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                  {formatDate(endDate)}
+                </span>
+              </div>
+              <div className='flex flex-col text-sm'>
+                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
+                  <CategoriesIcon className="mr-1" size={16} /> Categories:
+                </span>
+                <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
+                  {category && category.length > 0
+                    ? category.map((cat) => cat.name).join(', ')
+                    : 'All categories'}
+                </span>
+              </div>
             </div>
           </div>
         </div>

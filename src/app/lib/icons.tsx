@@ -9,7 +9,10 @@ import {
   FiBox,
   FiUserPlus,
   FiMail,
-  FiEdit
+  FiEdit,
+  FiMapPin,
+  FiClock,
+  FiTag
 } from 'react-icons/fi';
 
 import {FaRunning} from 'react-icons/fa'
@@ -29,7 +32,13 @@ export const icons = {
   mail: FiMail,
 
   box: FiBox,
-  edit: FiEdit
+  edit: FiEdit,
+
+  // Event card icons
+  location: FiMapPin,
+  dateFrom: FiCalendar,
+  dateTo: FiClock,
+  categories: FiTag
 };
 
 // Export icon types
