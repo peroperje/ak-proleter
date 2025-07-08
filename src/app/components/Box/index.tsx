@@ -23,7 +23,7 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
           },
         )}
       >
-        <div className='flex items-center'>
+        <div className='flex  items-center'>
           {IconComponent && (
             <IconComponent
               className={clsx('mr-2 text-gray-500 dark:text-neutral-500',{
@@ -34,7 +34,7 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
           )}
           <p
             className={clsx(
-              'mt-1 text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
+              'mt-1 w-full text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
               {
                 'text-red-500 dark:text-red-400': variants === 'error',
               },

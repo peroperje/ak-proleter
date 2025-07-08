@@ -36,7 +36,6 @@ export interface Event {
   category: Category[] | null;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   organizer?: string;
-  notes?: string | null | undefined;
 }
 
 // Discipline model (track and field events)
