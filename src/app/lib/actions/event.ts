@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
+import { Prisma } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 // Define the type for the form data
 export interface EventFormData {
@@ -41,7 +43,10 @@ const eventSchema = yup.object().shape({
   endDate: yup.date().optional(),
   type: yup
     .string()
-    .oneOf(['COMPETITION', 'TRAINING', 'CAMP', 'MEETING', 'OTHER'], 'Invalid event type')
+    .oneOf(
+      ['COMPETITION', 'TRAINING', 'CAMP', 'MEETING', 'OTHER'],
+      'Invalid event type',
+    )
     .required('Event type is required'),
   categoryIds: yup.array().of(yup.string()).optional(),
 });
@@ -55,10 +60,17 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
   const lngStr = payload.get('lng') as string;
   const startDate = payload.get('startDate') as string;
   const endDate = (payload.get('endDate') as string) || undefined;
-  const type = payload.get('type') as 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER';
+  const type = payload.get('type') as
+    | 'COMPETITION'
+    | 'TRAINING'
+    | 'CAMP'
+    | 'MEETING'
+    | 'OTHER';
 
   // Get all selected categories
-  const categoryIds = payload.getAll('categoryIds').map(value => value as string);
+  const categoryIds = payload
+    .getAll('categoryIds')
+    .map((value) => value as string);
 
   // Convert lat and lng to numbers if they exist
   const lat = latStr ? parseFloat(latStr) : undefined;
@@ -77,7 +89,6 @@ function getEventObjectFromFormData(payload: FormData): EventFormData {
   };
 }
 
-// Server action to create an event
 export async function createEvent(_state: EventActionState, payload: FormData) {
   // Prepare data for submission
   const formattedData = getEventObjectFromFormData(payload);
@@ -96,12 +107,12 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        organizerId:'e7926135-1dd7-4422-a610-3777dbf3768a',
+        organizerId: 'e7926135-1dd7-4422-a610-3777dbf3768a',
         // Connect categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
               categories: {
-                connect: formattedData.categoryIds.map(id => ({ id })),
+                connect: formattedData.categoryIds.map((id) => ({ id })),
               },
             }
           : {}),
@@ -135,7 +146,6 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
       };
     }
 
-    console.log('Error creating event:', error);
     return {
       errors: {} as EventActionState['errors'],
       message: 'An unexpected error occurred. Please, check your data',
@@ -145,11 +155,10 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
   }
 }
 
-// Server action to update an event
 export async function updateEvent(
   id: string,
   _state: EventActionState,
-  payload: FormData
+  payload: FormData,
 ) {
   // Prepare data for submission
   const formattedData = getEventObjectFromFormData(payload);
@@ -174,7 +183,7 @@ export async function updateEvent(
           ? {
               categories: {
                 set: [], // Remove all existing connections
-                connect: formattedData.categoryIds.map(id => ({ id })), // Connect new ones
+                connect: formattedData.categoryIds.map((id) => ({ id })), // Connect new ones
               },
             }
           : {
@@ -221,6 +230,22 @@ export async function updateEvent(
       status: 'error' as const,
     };
   }
+}
+
+export async function getEventById(
+  id: string,
+  options: {
+    select?: Prisma.EventSelect<DefaultArgs> | null | undefined;
+    omit?: Prisma.EventOmit<DefaultArgs> | null | undefined;
+    include?: Prisma.EventInclude<DefaultArgs> | null | undefined;
+  },
+) {
+  return await prisma.event.findUnique({
+    ...options,
+    ...{
+      where: { id },
+    },
+  });
 }
 
 export type CreateEvent = typeof createEvent;

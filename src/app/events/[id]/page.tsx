@@ -5,9 +5,9 @@ import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
-import prisma from '@/app/lib/prisma';
 import { navItems } from '@/app/lib/routes';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
+import { getEventById, Category } from '@/app/lib/actions';
 
 
 // Helper function to format date
@@ -21,15 +21,46 @@ function formatDate(date: Date): string {
   });
 }
 
-async function getEventById(id: string): Promise<Event | null> {
+// Define a type for the database event with included relations
+type DbEventWithRelations = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  description: string | null;
+  location: string;
+  startDate: Date;
+  endDate: Date | null;
+  type: 'COMPETITION' | 'TRAINING' | 'CAMP' | 'MEETING' | 'OTHER';
+  organizerId: string;
+  lat: number | null;
+  lng: number | null;
+  organizer: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    passwordHash: string;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
+  categories: {
+    id: string;
+    name: string;
+    description: string;
+    minAge: number;
+    maxAge: number | null;
+  }[];
+};
+
+async function fetchEventById(id: string): Promise<Event | null> {
   // Fetch event from the database by ID
-  const dbEvent = await prisma.event.findUnique({
-    where: { id },
+  const dbEvent = await getEventById(id,{
     include: {
       organizer: true,
       categories: true,
     }
-  });
+  }) as DbEventWithRelations | null;
 
   if (!dbEvent) {
     return null;
@@ -63,7 +94,7 @@ async function getEventById(id: string): Promise<Event | null> {
 
 export default async function EventPage({ params }: { params: { id: string } }) {
   // Fetch event from the database by ID
-  const event = await getEventById(params.id);
+  const event = await fetchEventById(params.id);
 
   // If event not found, return 404
   if (!event) {
@@ -175,7 +206,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
               </h3>
               <p className='text-base text-gray-900 dark:text-white'>
                 {event.category && event.category.length > 0
-                  ? event.category.map((cat) => cat.name).join(', ')
+                  ? event.category.map((cat: Category) => cat.name).join(', ')
                   : 'All categories'}
               </p>
             </div>
