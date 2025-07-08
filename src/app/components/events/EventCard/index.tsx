@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Button from '@/app/ui/button';
 import { Event } from '@/app/lib/definitions';
 
@@ -19,7 +18,19 @@ function formatDate(date: Date): string {
   });
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({
+  event: {
+    id,
+    name,
+    status,
+    type,
+    organizer,
+    category,
+    location,
+    startDate,
+    endDate,
+  },
+}) => {
   // Status badge styling
   const statusStyles = {
     upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -43,47 +54,36 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className='flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
       <div className='flex h-full flex-col p-4'>
-        <div className='mb-4 flex items-center flex-wrap gap-2'>
-          <div className='relative mb-4 h-15 w-15'>
-            <Image
-              src={`/event-img/${event.type.toUpperCase()}.png`}
-              alt={`${event.type} event`}
-              fill
-              style={{ objectFit: 'cover' }}
-              className='rounded-md'
-            />
-          </div>
+        <div className='mb-4 flex flex-wrap items-center gap-2'>
           <span
-            className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold lowercase first-letter:uppercase ${typeStyles[event.type]}`}
+            className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold lowercase first-letter:uppercase ${typeStyles[type]}`}
           >
-            {event.type}
+            {type}
           </span>
           <span
-            className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${statusStyles[event.status]}`}
+            className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${statusStyles[status]}`}
           >
-            {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+            {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
         </div>
 
         <div className='mb-4'>
           <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
-            {event.name}
+            {name}
           </h3>
           <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
-            {event.organizer}
+            {organizer}
           </p>
         </div>
-        {/* Event type image */}
-
 
         {/* Location text */}
         <div className='mb-4 text-sm'>
           <span className='text-gray-500 dark:text-neutral-400'>Location:</span>
           <span
             className='ml-1 block truncate text-xs text-gray-900 dark:text-white'
-            title={event.location}
+            title={location}
           >
-            {event.location}
+            {location}
           </span>
         </div>
 
@@ -91,13 +91,13 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <div className='flex flex-col gap-0 text-sm'>
             <span className='text-gray-500 dark:text-neutral-400'>From:</span>
             <span className='ml-1 text-xs text-gray-900 dark:text-white'>
-              {formatDate(event.startDate)}
+              {formatDate(startDate)}
             </span>
           </div>
           <div className='flex flex-col gap-0 text-sm'>
             <span className='text-gray-500 dark:text-neutral-400'>To:</span>
             <span className='ml-1 text-xs text-gray-900 dark:text-white'>
-              {formatDate(event.endDate)}
+              {formatDate(endDate)}
             </span>
           </div>
           <div className='flex flex-col text-sm'>
@@ -105,20 +105,20 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
               Categories:
             </span>
             <span className='ml-1 text-gray-900 dark:text-white'>
-              {event.category && event.category.length > 0
-                ? event.category.map((cat) => cat.name).join(', ')
+              {category && category.length > 0
+                ? category.map((cat) => cat.name).join(', ')
                 : 'All categories'}
             </span>
           </div>
         </div>
 
         <div className='flex justify-center space-x-2'>
-          <Link href={`/events/${event.id}`}>
+          <Link href={`/events/${id}`}>
             <Button size='small' variant='outline'>
               View
             </Button>
           </Link>
-          <Link href={`/events/${event.id}/edit`}>
+          <Link href={`/events/${id}/edit`}>
             <Button size='small' variant='outline'>
               Edit
             </Button>
