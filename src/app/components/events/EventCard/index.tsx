@@ -55,8 +55,8 @@ const EventCard: React.FC<EventCardProps> = ({
       'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     TRAINING: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
     CAMP: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
-    OTHER: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-    MEETING: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    OTHER: 'bg-amber-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    MEETING: 'bg-cyan-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
   };
 
   return (
@@ -70,16 +70,15 @@ const EventCard: React.FC<EventCardProps> = ({
       </Link>
       <Link href={navItems.events.href({ id })}>
         <div className='flex h-full flex-col'>
-
           <div className='p-4'>
-            <div className='mb-4 py-2  flex flex-wrap  items-center gap-2'>
-              <div className='relative  w-10 h-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
+            <div className='mb-4 flex flex-wrap items-center gap-2 py-2'>
+              <div className='relative h-10 w-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
                 <Image
                   src={`/event-img/${type}.png`}
                   alt={`${type} event`}
                   fill
                   className='object-contain p-1'
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />
               </div>
               <span
@@ -94,7 +93,7 @@ const EventCard: React.FC<EventCardProps> = ({
               </span>
             </div>
 
-            <div className='mb-4'>
+            <div className={`mb-4 rounded-lg  p-2 ${typeStyles[type]}`}>
               <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
                 {name}
               </h3>
@@ -105,8 +104,8 @@ const EventCard: React.FC<EventCardProps> = ({
 
             {/* Location text */}
             <div className='mb-4 text-sm'>
-              <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
-                <LocationIcon className="mr-1" size={16} /> Location:
+              <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                <LocationIcon className='mr-1' size={16} /> Location:
               </span>
               <span
                 className='ml-1 block truncate text-xs font-bold text-gray-500 dark:text-neutral-400'
@@ -118,24 +117,24 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
               <div className='flex flex-col gap-0 text-sm'>
-                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
-                  <DateFromIcon className="mr-1" size={16} /> From:
+                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                  <DateFromIcon className='mr-1' size={16} /> From:
                 </span>
                 <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
                   {formatDate(startDate)}
                 </span>
               </div>
               <div className='flex flex-col gap-0 text-sm'>
-                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
-                  <DateToIcon className="mr-1" size={16} /> To:
+                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                  <DateToIcon className='mr-1' size={16} /> To:
                 </span>
                 <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
                   {formatDate(endDate)}
                 </span>
               </div>
               <div className='flex flex-col text-sm'>
-                <span className='text-gray-500 dark:text-neutral-400 flex items-center'>
-                  <CategoriesIcon className="mr-1" size={16} /> Categories:
+                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                  <CategoriesIcon className='mr-1' size={16} /> Categories:
                 </span>
                 <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
                   {category && category.length > 0

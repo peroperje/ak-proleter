@@ -1,15 +1,13 @@
 import React, { use } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Box from '@/app/components/Box';
-import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
-import { navItems } from '@/app/lib/routes';
 import { icons } from '@/app/lib/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
 import { getEventById, Category } from '@/app/lib/actions';
+import CloseBtn from '@/app/components/CloseBtn';
 
 const LocationIcon = icons.location;
 const DateFromIcon = icons.dateFrom;
@@ -126,21 +124,17 @@ export default function EventPage({ params }: EventPageProps) {
 
   // Event type badge styling
   const typeStyles = {
-    COMPETITION: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+    COMPETITION:
+      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     TRAINING: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
     CAMP: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
-    OTHER: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-    MEETING: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    OTHER: 'bg-amber-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    MEETING: 'bg-cyan-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
   };
 
-  const editButton = (
-    <Link href={`${navItems.events.href({id: event.id})}/edit`}>
-      <Button variant="submit">Edit Event</Button>
-    </Link>
-  );
 
   return (
-    <PageLayout title={event.name} action={editButton}>
+    <PageLayout title={event.name} action={<CloseBtn />}>
       <Box
 
         title={() => {
@@ -171,15 +165,16 @@ export default function EventPage({ params }: EventPageProps) {
       >
         <div className='flex flex-col space-y-6'>
           {/* Header section with name, organizer, and badges */}
-          <div className='mb-4 flex flex-col items-center space-y-4'>
+          <div className='mb-4 flex flex-col items-center space-y-0'>
 
             <h1 className='text-center text-2xl font-bold text-gray-900 dark:text-white'>
               {event.name}
             </h1>
-            <p className='text-center text-lg text-gray-600 dark:text-neutral-400'>
+            <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
               Organized by: {event.organizer}
             </p>
-
+          </div>
+          <div className='mb-4 flex flex-col items-center space-y-0'>
             <p className='text-sm font-bold text-gray-500 dark:text-neutral-400 flex items-center justify-center'>
               <LocationIcon className="mr-1" size={16} /> {event.location}
             </p>
@@ -216,34 +211,19 @@ export default function EventPage({ params }: EventPageProps) {
                   <p className='text-sm text-gray-500 dark:text-neutral-400 flex items-center'>
                     <CategoriesIcon className="mr-1" size={16} /> Categories
                   </p>
-                  <p className='text-sm text-center font-bold text-gray-500 dark:text-neutral-400'>
+                  <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
                     {event.category && event.category.length > 0
                       ? event.category.map((cat: Category) => cat.name).join(', ')
                       : 'All categories'}
                   </p>
                 </div>
               </div>
-
-
-
-
-
             {/* Description section */}
             <div className='flex flex-col space-y-2 md:col-span-2  p-3 rounded-md'>
               <p className='text-sm whitespace-pre-wrap text-gray-500 dark:text-neutral-400'>
                 {event.description || 'No description provided.'}
               </p>
             </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className='mt-6 flex justify-center space-x-4'>
-            <Link href={navItems.events.href()}>
-              <Button variant='outline'>Back to Events</Button>
-            </Link>
-            <Link href={`${navItems.events.href({ id: event.id })}/edit`}>
-              <Button variant='submit'>Edit Event</Button>
-            </Link>
           </div>
         </div>
       </Box>
