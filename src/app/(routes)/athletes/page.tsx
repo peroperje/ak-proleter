@@ -76,7 +76,7 @@ export default function AthletesPage() {
     <PageLayout
       title='Athletes'
       action={
-        <Link href='/src/app/(routes)/athletes/new'>
+        <Link href='athletes/new' passHref>
           <Button variant='submit'>
             <IconComponent size={20} />
             Add Athlete

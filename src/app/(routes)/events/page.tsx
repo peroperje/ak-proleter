@@ -54,7 +54,7 @@ export default async function EventsPage() {
   const events = await getEvents();
 
   const addEventButton = (
-    <Link href='/src/app/(routes)/events/new'>
+    <Link href='/events/new'>
       <Button variant='submit'>Add Event</Button>
     </Link>
   );
