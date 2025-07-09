@@ -266,8 +266,8 @@ const EventForm:React.FC<EventFormProps>=({action, categories, initialState })=>
               Category
             </label>
             <select
-              id='categoryId'
-              name='categoryId'
+              id='categoryIds'
+              name='categoryIds'
               defaultValue={state.data?.categoryIds}
               className={clsx(
                 'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',

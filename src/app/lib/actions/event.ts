@@ -96,6 +96,7 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
   try {
     await eventSchema.validate(formattedData, { abortEarly: false });
 
+
     // Create a new event
     await prisma.event.create({
       data: {
@@ -165,7 +166,6 @@ export async function updateEvent(
 
   try {
     await eventSchema.validate(formattedData, { abortEarly: false });
-
     // Update the existing event
     await prisma.event.update({
       where: { id },
@@ -222,7 +222,6 @@ export async function updateEvent(
       };
     }
 
-    console.log('Error updating event:', error);
     return {
       errors: {} as EventActionState['errors'],
       message: 'An unexpected error occurred. Please, check your data',
