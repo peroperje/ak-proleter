@@ -21,6 +21,12 @@ function formatDate(date: Date): string {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
+  });
+}
+
+// Helper function to format time
+function formatTime(date: Date): string {
+  return new Date(date).toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -172,19 +178,29 @@ export default function EventPage({ params }: EventPageProps) {
 
             <div className='flex w-full flex-wrap gap-4'>
               <div className={'flex-auto rounded-md bg-gray-50 p-3'}>
-                <p className='flex items-center text-sm text-gray-500 dark:text-neutral-400'>
-                  <DateFromIcon className='mr-1' size={16} /> Start:
+                <p className='text-sm text-gray-500 dark:text-neutral-400'>
+                  Start:
                 </p>
-                <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                <p className='flex items-center text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                  <DateFromIcon className='mr-1' size={16} />{' '}
                   {formatDate(event.startDate)}
+                </p>
+                <p className='flex items-center text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                  <DateToIcon className='mr-1' size={16} />{' '}
+                  {formatTime(event.startDate)}
                 </p>
               </div>
               <div className={'flex-auto rounded-md bg-gray-50 p-3'}>
                 <p className='flex items-center text-sm text-gray-500 dark:text-neutral-400'>
-                  <DateToIcon className='mr-1' size={16} /> End:
+                  End:
                 </p>
-                <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                <p className='flex items-center text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                  <DateFromIcon className='mr-1' size={16} />{' '}
                   {formatDate(event.endDate)}
+                </p>
+                <p className='flex items-center text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                  <DateToIcon className='mr-1' size={16} />{' '}
+                  {formatTime(event.endDate)}
                 </p>
               </div>
 

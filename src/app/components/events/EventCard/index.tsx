@@ -22,6 +22,15 @@ function formatDate(date: Date): string {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
+    /*hour: '2-digit',
+    minute: '2-digit',*/
+  });
+}
+function formatTime(date: Date): string {
+  return new Date(date).toLocaleTimeString('en-GB', {
+    /*day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',*/
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -117,20 +126,28 @@ const EventCard: React.FC<EventCardProps> = ({
 
             <NoteBoxBg type={type}>
               <div className='grid w-full flex-grow grid-cols-2 gap-2'>
-                <div className='flex flex-col gap-0 text-sm'>
-                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                    <DateFromIcon className='mr-1' size={16} /> From:
+                <div className='flex flex-col gap-1 text-sm'>
+                  <span className=' text-gray-500 dark:text-neutral-400'>
+                  From:
                   </span>
-                  <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                    {formatDate(startDate)}
+                  <span className='flex items-center text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    <DateFromIcon className='mr-1' size={16} /> {formatDate(startDate)}
                   </span>
+                  <span className='flex items-center text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    <DateToIcon className='mr-1' size={16} /> {formatTime(startDate)}
+                  </span>
+
                 </div>
-                <div className='flex flex-col gap-0 text-sm'>
-                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                    <DateToIcon className='mr-1' size={16} /> To:
+                <div className='flex flex-col gap-1 text-sm'>
+                  <span className='text-gray-500 dark:text-neutral-400'>
+                  To:
                   </span>
-                  <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                    {formatDate(endDate)}
+
+                  <span className='flex items-center ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    <DateFromIcon className='mr-1' size={16} /> {formatDate(endDate)}
+                  </span>
+                  <span className='flex items-center ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    <DateToIcon className='mr-1' size={16} /> {formatTime(endDate)}
                   </span>
                 </div>
               </div>
