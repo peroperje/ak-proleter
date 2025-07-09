@@ -1,7 +1,7 @@
 import PageLayout from '@/app/components/PageLayout';
 import { getAthleteById } from '@/app/lib/actions';
 import { notFound } from 'next/navigation';
-import EditForm from '@/app/athletes/[id]/edit/EditForm';
+import EditForm from '@/app/(routes)/athletes/[id]/edit/EditForm';
 import CloseBtn from '@/app/components/CloseBtn';
 
 interface Props {

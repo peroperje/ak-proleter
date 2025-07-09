@@ -203,7 +203,7 @@ export default async function ResultsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <Link href={`/results/${result.id}`}>
+                          <Link href={`/src/app/(routes)/results/${result.id}`}>
                             <Button size="small" variant="outline">View</Button>
                           </Link>
                           <Link href={`/results/${result.id}/edit`}>

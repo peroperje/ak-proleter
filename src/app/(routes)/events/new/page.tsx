@@ -1,6 +1,6 @@
 import PageLayout from '@/app/components/PageLayout';
 import CloseBtn from '@/app/components/CloseBtn';
-import FormContainer from '@/app/events/new/FormContainer';
+import FormContainer from '@/app/(routes)/events/new/FormContainer';
 
 // Page component
 export default function NewEventPage() {

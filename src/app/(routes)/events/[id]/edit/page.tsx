@@ -1,6 +1,6 @@
 import PageLayout from '@/app/components/PageLayout';
 import { notFound } from 'next/navigation';
-import EditForm from '@/app/events/[id]/edit/EditForm';
+import EditForm from '@/app/(routes)/events/[id]/edit/EditForm';
 import CloseBtn from '@/app/components/CloseBtn';
 import { CategoryProvider } from '@/app/components/events';
 import { EventFormData, getEventById } from '@/app/lib/actions/event';
