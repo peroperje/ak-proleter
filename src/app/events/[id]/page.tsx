@@ -8,6 +8,7 @@ import { icons } from '@/app/lib/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
 import { getEventById, Category } from '@/app/lib/actions';
 import CloseBtn from '@/app/components/CloseBtn';
+import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
 const LocationIcon = icons.location;
 const DateFromIcon = icons.dateFrom;
@@ -113,26 +114,6 @@ export default function EventPage({ params }: EventPageProps) {
   if (!event) {
     notFound();
   }
-
-  // Status badge styling
-  const statusStyles = {
-    upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    ongoing: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-  };
-
-  // Event type badge styling
-  const typeStyles = {
-    COMPETITION:
-      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    TRAINING: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
-    CAMP: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
-    OTHER: 'bg-amber-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-    MEETING: 'bg-cyan-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-  };
-
-
   return (
     <PageLayout title={event.name} action={<CloseBtn />}>
       <Box
@@ -150,12 +131,12 @@ export default function EventPage({ params }: EventPageProps) {
             </div>
 
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${typeStyles[event.type]}`}
+                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${eventTypeStyles[event.type]}`}
               >
                 {event.type.charAt(0) + event.type.toLowerCase().slice(1)}
               </span>
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${statusStyles[event.status]}`}
+                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${eventStatusStyles[event.status]}`}
               >
                 {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
               </span>

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
 import { navItems } from '@/app/lib/routes';
 import { icons } from '@/app/lib/icons';
+import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
 const IconComponent = icons.edit;
 const LocationIcon = icons.location;
@@ -39,25 +40,6 @@ const EventCard: React.FC<EventCardProps> = ({
     endDate,
   },
 }) => {
-  // Status badge styling
-  const statusStyles = {
-    upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    ongoing:
-      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    completed:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-  };
-
-  // Event type badge styling
-  const typeStyles = {
-    COMPETITION:
-      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    TRAINING: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
-    CAMP: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
-    OTHER: 'bg-amber-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-    MEETING: 'bg-cyan-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-  };
 
   return (
     <div className='relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
@@ -82,18 +64,18 @@ const EventCard: React.FC<EventCardProps> = ({
                 />
               </div>
               <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${typeStyles[type]}`}
+                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${eventTypeStyles[type]}`}
               >
                 {type.charAt(0) + type.toLowerCase().slice(1)}
               </span>
               <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${statusStyles[status]}`}
+                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${eventStatusStyles[status]}`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
             </div>
 
-            <div className={`mb-4 rounded-lg  p-2 ${typeStyles[type]}`}>
+            <div className={`mb-4 rounded-lg  p-2 ${eventTypeStyles[type]}`}>
               <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
                 {name}
               </h3>
