@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
-import { navItems } from '@/app/lib/routes';
+import { routes } from '@/app/lib/routes/index';
 import { icons } from '@/app/lib/icons';
 import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
@@ -72,12 +72,12 @@ const EventCard: React.FC<EventCardProps> = ({
     <div className='relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
       <Link
         className={'absolute top-1 right-1 z-20 p-3'}
-        href={`${navItems.events.href({ id })}/edit`}
+        href={routes.events.edit(id)}
         passHref={true}
       >
         <IconComponent />
       </Link>
-      <Link href={navItems.events.href({ id })}>
+      <Link href={routes.events.detail(id)}>
         <div className='flex h-full flex-col'>
           <div className='p-4'>
             <div className='mb-4 flex flex-wrap items-center gap-2 py-2'>

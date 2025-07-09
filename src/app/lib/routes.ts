@@ -35,10 +35,11 @@ export const navItems: NavItems = {
   events: {
     name: 'Events',
     href: (params?: Record<string, string>) => {
-      if (params?.id) {
-        return `/events/${params.id}`;
-      }
-      return '/events';
+      if (!params) return '/events';
+      const { id, action } = params;
+      if (!id) return '/events';
+      if (action) return `/events/${id}/${action}`;
+      return `/events/${id}`;
     },
     description: 'Manage competitions, training sessions, and other events.',
     icon: 'events',
