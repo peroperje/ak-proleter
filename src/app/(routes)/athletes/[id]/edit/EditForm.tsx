@@ -12,8 +12,6 @@ interface Props {
 }
 
 export default function EditForm({ user, userId }: Props) {
-
-
   // Fetch athlete data when the component mounts
 
   const initialState: ActionState = {
@@ -41,8 +39,18 @@ export default function EditForm({ user, userId }: Props) {
       icon={navItems.athletes.icon}
       title={() => {
         if (state.status === 'success') {
-
-          return <>Athlete <Link className={'font-bold underline text-blue-500'} href={navItems.athletes.href({id:userId})}>{user.firstName} {user.lastName}</Link>  updated successfully. </>
+          return (
+            <>
+              Athlete{' '}
+              <Link
+                className={'font-bold text-blue-500 underline'}
+                href={navItems.athletes.href({ id: userId })}
+              >
+                {user.firstName} {user.lastName}
+              </Link>{' '}
+              updated successfully.{' '}
+            </>
+          );
         }
         return state.message || initialState.message || '';
       }}

@@ -6,14 +6,9 @@ import AthletesCardSkeleton from '@/app/components/athletes/AthletesCard/Athlete
 
 export default function LoadingAthletesPage() {
   return (
-    <PageLayout
-      title="Athletes"
-    >
-      <Box
-        icon={navItems.athletes.icon}
-        title="Athlete List"
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <PageLayout title='Athletes'>
+      <Box icon={navItems.athletes.icon} title='Athlete List'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
           {[...Array(8)].map((_, index) => (
             <AthletesCardSkeleton key={index} />
           ))}

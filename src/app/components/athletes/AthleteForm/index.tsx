@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useRouter } from 'next/navigation';
 import { ActionState } from '@/app/lib/actions';
 import { navItems } from '@/app/lib/routes';
@@ -6,12 +6,16 @@ import clsx from 'clsx';
 import ProfileUrlInputField from '@/app/components/athletes/AthleteForm/ProfileUrlInputField';
 
 interface AthleteFormProps {
-  formAction: (payload: FormData)=>void;
+  formAction: (payload: FormData) => void;
   isSubmitting: boolean;
   state: ActionState;
 }
 
-export default function AthleteForm({formAction, state, isSubmitting}: AthleteFormProps) {
+export default function AthleteForm({
+  formAction,
+  state,
+  isSubmitting,
+}: AthleteFormProps) {
   const router = useRouter();
 
   return (
@@ -31,15 +35,18 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='photoUrl'
             type='text'
             defaultValue={state.data?.photoUrl}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.photoUrl,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.photoUrl,
+              },
+            )}
           />
-          {
-            !!state.errors.photoUrl &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.photoUrl && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.photoUrl}
             </p>
-          }
+          )}
         </div>
       </div>
       <div className='grid grid-cols-1 gap-4'>
@@ -57,16 +64,19 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='firstName'
             type='text'
             defaultValue={state.data?.firstName}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.firstName,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.firstName,
+              },
+            )}
             required
           />
-          {
-          !!state.errors.firstName &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.firstName && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.firstName}
-          </p>
-          }
+            </p>
+          )}
         </div>
         <div>
           <label
@@ -82,16 +92,19 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='lastName'
             type='text'
             defaultValue={state.data?.lastName}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.lastName,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.lastName,
+              },
+            )}
             required
           />
-          {
-          !!state.errors.lastName &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.lastName && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.lastName}
-          </p>
-          }
+            </p>
+          )}
         </div>
       </div>
 
@@ -109,17 +122,24 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             id='dateOfBirth'
             name='dateOfBirth'
             type='date'
-            defaultValue={state.data?.dateOfBirth ? state.data?.dateOfBirth.toISOString().split('T')[0] : undefined}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.dateOfBirth,
-            })}
+            defaultValue={
+              state.data?.dateOfBirth
+                ? state.data?.dateOfBirth.toISOString().split('T')[0]
+                : undefined
+            }
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.dateOfBirth,
+              },
+            )}
             required
           />
-          {
-          !!state.errors.dateOfBirth &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.dateOfBirth && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.dateOfBirth}
-          </p>
-          }
+            </p>
+          )}
         </div>
         <div>
           <label
@@ -134,19 +154,22 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             id='gender'
             name='gender'
             defaultValue={state.data?.gender}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400', {
-              'border-red-500': !!state.errors.gender,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
+              {
+                'border-red-500': !!state.errors.gender,
+              },
+            )}
             required
           >
             <option value='male'>Male</option>
             <option value='female'>Female</option>
           </select>
-          {
-          !!state.errors.gender &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.gender && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.gender}
-          </p>
-          }
+            </p>
+          )}
         </div>
       </div>
 
@@ -165,15 +188,18 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='email'
             type='email'
             defaultValue={state.data?.email}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.email,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.email,
+              },
+            )}
           />
-          {
-          !!state.errors.email &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.email && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.email}
-          </p>
-          }
+            </p>
+          )}
         </div>
         <div>
           <label
@@ -189,15 +215,18 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='phone'
             type='tel'
             defaultValue={state.data?.phone}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.phone,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.phone,
+              },
+            )}
           />
-          {
-          !!state.errors.phone &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.phone && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.phone}
-          </p>
-          }
+            </p>
+          )}
         </div>
       </div>
 
@@ -216,21 +245,20 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             name='address'
             type='text'
             defaultValue={state.data?.address}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.address,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.address,
+              },
+            )}
           />
-          {
-          !!state.errors.address &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.address && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.address}
-          </p>
-          }
+            </p>
+          )}
         </div>
       </div>
-
-
-
-
 
       <div className='grid grid-cols-1 gap-4'>
         <div>
@@ -246,21 +274,21 @@ export default function AthleteForm({formAction, state, isSubmitting}: AthleteFo
             id='notes'
             name='notes'
             defaultValue={state.data?.notes}
-            className={clsx('block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600', {
-              'border-red-500': !!state.errors.notes,
-            })}
+            className={clsx(
+              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
+              {
+                'border-red-500': !!state.errors.notes,
+              },
+            )}
             rows={4}
           />
-          {
-          !!state.errors.notes &&  <p className="text-sm text-red-500 dark:text-neutral-400">
+          {!!state.errors.notes && (
+            <p className='text-sm text-red-500 dark:text-neutral-400'>
               {state.errors.notes}
-          </p>
-          }
+            </p>
+          )}
         </div>
       </div>
-
-
-
 
       <div className='grid grid-cols-2 gap-4'>
         <button

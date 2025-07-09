@@ -8,7 +8,12 @@ interface Props {
   variants?: 'success' | 'error' | 'warning' | 'info' | 'default';
 }
 
-const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variants}): ReactElement=> {
+const Box: React.FC<PropsWithChildren<Props>> = ({
+  title,
+  icon,
+  children,
+  variants,
+}): ReactElement => {
   const IconComponent = icon ? icons[icon] : null;
   const titleContent = typeof title === 'function' ? title() : title;
 
@@ -23,36 +28,34 @@ const Box: React.FC<PropsWithChildren<Props>> = ({title, icon, children, variant
           },
         )}
       >
-        <div className='flex  items-center'>
+        <div className='flex items-center'>
           {IconComponent && (
             <IconComponent
-              className={clsx('mr-2 text-gray-500 dark:text-neutral-500',{
+              className={clsx('mr-2 text-gray-500 dark:text-neutral-500', {
                 'text-red-500 dark:text-red-400': variants === 'error',
               })}
               size={18}
             />
           )}
-          {
-            typeof title === 'string' ? (
-              <p
-                className={clsx(
-                  'mt-1 w-full text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
-                  {
-                    'text-red-500 dark:text-red-400': variants === 'error',
-                  },
-                )}
-              >
-                {titleContent}
-              </p>
-            ):(
-              titleContent
-            )
-          }
+          {typeof title === 'string' ? (
+            <p
+              className={clsx(
+                'mt-1 w-full text-center text-sm text-gray-500 md:text-left dark:text-neutral-500',
+                {
+                  'text-red-500 dark:text-red-400': variants === 'error',
+                },
+              )}
+            >
+              {titleContent}
+            </p>
+          ) : (
+            titleContent
+          )}
         </div>
       </div>
       <div className='p-4 md:p-5'>{children}</div>
     </div>
   );
-}
+};
 
 export default Box;

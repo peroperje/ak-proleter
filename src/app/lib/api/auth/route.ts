@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     if (!body.email || !body.password) {
       return NextResponse.json(
         { error: 'Email and password are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,11 +32,14 @@ export async function POST(request: Request) {
     // In a real app, you would use bcrypt.compare
     // For this demo, we'll just check if the password matches the hashed password
     // This is not secure and should not be used in production
-    const passwordMatches = await bcrypt.compare(body.password, user.passwordHash);
+    const passwordMatches = await bcrypt.compare(
+      body.password,
+      user.passwordHash,
+    );
     if (!passwordMatches) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -57,7 +60,7 @@ export async function POST(request: Request) {
     console.error('Error authenticating user:', error);
     return NextResponse.json(
       { error: 'Authentication failed' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,10 +79,13 @@ export async function GET() {
     });
 
     if (!adminUser) {
-      return NextResponse.json({
-        authenticated: false,
-        error: 'No admin user found',
-      }, { status: 401 });
+      return NextResponse.json(
+        {
+          authenticated: false,
+          error: 'No admin user found',
+        },
+        { status: 401 },
+      );
     }
 
     // Map Prisma User to our User interface
@@ -87,7 +93,11 @@ export async function GET() {
       id: adminUser.id,
       email: adminUser.email,
       name: adminUser.name,
-      role: adminUser.role.toLowerCase() as 'admin' | 'coach' | 'athlete' | 'viewer',
+      role: adminUser.role.toLowerCase() as
+        | 'admin'
+        | 'coach'
+        | 'athlete'
+        | 'viewer',
     };
 
     return NextResponse.json({
@@ -96,9 +106,12 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error checking authentication:', error);
-    return NextResponse.json({
-      authenticated: false,
-      error: 'Authentication check failed',
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        authenticated: false,
+        error: 'Authentication check failed',
+      },
+      { status: 500 },
+    );
   }
 }

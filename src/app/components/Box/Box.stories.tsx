@@ -7,7 +7,10 @@ export default {
   component: Box,
   argTypes: {
     title: { control: 'text', description: 'The title of the box.' },
-    children: { control: 'text', description: 'Content to display inside the box.' },
+    children: {
+      control: 'text',
+      description: 'Content to display inside the box.',
+    },
   },
 } as Meta<typeof Box>;
 

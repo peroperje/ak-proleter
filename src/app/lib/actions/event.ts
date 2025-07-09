@@ -96,7 +96,6 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
   try {
     await eventSchema.validate(formattedData, { abortEarly: false });
 
-
     // Create a new event
     await prisma.event.create({
       data: {

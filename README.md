@@ -1,4 +1,3 @@
-
 # AK Proleter - Athlete Tracking Application
 
 A Next.js application for tracking athlete results and performance for Athletic Club Proleter Zrenjanin.
@@ -34,30 +33,36 @@ A Next.js application for tracking athlete results and performance for Athletic 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/ak-proleter.git
    cd ak-proleter
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Run the development server:
+
    ```bash
    pnpm dev
    ```
 
 4. Start the local database:
+
    ```bash
    pnpm db:start
    ```
 
 5. (Optional) Use Prisma Studio to view and edit the database:
+
    ```bash
    pnpm prisma:studio
    ```
+
    This will open Prisma Studio at [http://localhost:5555](http://localhost:5555)
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
@@ -116,11 +121,13 @@ This project now uses a PostgreSQL database with Prisma ORM for data persistence
 ### Database Setup
 
 1. Start the PostgreSQL database:
+
    ```bash
    pnpm db:start
    ```
 
 2. Generate Prisma client:
+
    ```bash
    pnpm prisma:generate
    ```

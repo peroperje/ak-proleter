@@ -46,9 +46,9 @@ Disabled.args = {
 
 // Example of a radio group
 export const RadioGroup = () => (
-  <div className="space-y-2">
-    <Radio label="Option 1" name="radio-group-example" defaultChecked />
-    <Radio label="Option 2" name="radio-group-example" />
-    <Radio label="Option 3" name="radio-group-example" />
+  <div className='space-y-2'>
+    <Radio label='Option 1' name='radio-group-example' defaultChecked />
+    <Radio label='Option 2' name='radio-group-example' />
+    <Radio label='Option 3' name='radio-group-example' />
   </div>
 );

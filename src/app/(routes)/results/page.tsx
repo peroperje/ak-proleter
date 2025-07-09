@@ -7,9 +7,9 @@ import { Result, Athlete, Event, Discipline } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 
 type ResultWithRelations = Result & {
-  athlete: Pick<Athlete, 'id' | 'firstName' | 'lastName'>,
-  event: Pick<Event, 'id' | 'name'>,
-  discipline: Pick<Discipline, 'id' | 'name' | 'measurementUnit'>
+  athlete: Pick<Athlete, 'id' | 'firstName' | 'lastName'>;
+  event: Pick<Event, 'id' | 'name'>;
+  discipline: Pick<Discipline, 'id' | 'name' | 'measurementUnit'>;
 };
 
 async function getResults(): Promise<ResultWithRelations[]> {
@@ -18,11 +18,11 @@ async function getResults(): Promise<ResultWithRelations[]> {
     include: {
       user: true,
       event: true,
-    }
+    },
   });
 
   // Transform the database results to match the Result interface
-  return dbResults.map(result => {
+  return dbResults.map((result) => {
     // Parse the score to a number if possible
     let value = 0;
     if (result.score) {
@@ -38,11 +38,12 @@ async function getResults(): Promise<ResultWithRelations[]> {
     }
 
     // Create a mock discipline since we don't have disciplines in the database
-    const mockDiscipline: Pick<Discipline, 'id' | 'name' | 'measurementUnit'> = {
-      id: `d-${result.id}`,
-      name: result.event.title.includes('Sprint') ? 'Sprint' : 'General',
-      measurementUnit: result.score?.includes('m') ? 'distance' : 'time',
-    };
+    const mockDiscipline: Pick<Discipline, 'id' | 'name' | 'measurementUnit'> =
+      {
+        id: `d-${result.id}`,
+        name: result.event.title.includes('Sprint') ? 'Sprint' : 'General',
+        measurementUnit: result.score?.includes('m') ? 'distance' : 'time',
+      };
 
     // Split user name into first and last name
     const nameParts = result.user.name.split(' ');
@@ -66,13 +67,13 @@ async function getResults(): Promise<ResultWithRelations[]> {
       athlete: {
         id: result.userId,
         firstName,
-        lastName
+        lastName,
       },
       event: {
         id: result.eventId,
-        name: result.event.title
+        name: result.event.title,
       },
-      discipline: mockDiscipline
+      discipline: mockDiscipline,
     };
   });
 }
@@ -112,111 +113,140 @@ export default async function ResultsPage() {
   const results = await getResults();
 
   const addResultButton = (
-    <Link href="/results/new">
-      <Button variant="submit">Add Result</Button>
+    <Link href='/results/new'>
+      <Button variant='submit'>Add Result</Button>
     </Link>
   );
 
   return (
-    <PageLayout
-      title="Results"
-      action={addResultButton}
-    >
-
-          <Box title="Result List">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-                <thead className="bg-gray-50 dark:bg-neutral-800">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Athlete
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Event
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Discipline
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Result
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Position
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Records
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200 dark:bg-neutral-900 dark:divide-neutral-700">
-                  {results.map((result) => (
-                    <tr key={result.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {result.athlete.firstName} {result.athlete.lastName}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {result.event.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {result.discipline.name}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {formatResultValue(result.value, result.discipline.measurementUnit)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {result.position ? `${result.position}${getOrdinalSuffix(result.position)}` : '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 dark:text-white">
-                          {formatDate(result.date)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex space-x-1">
-                          {result.personalBest && (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                              PB
-                            </span>
-                          )}
-                          {result.seasonBest && (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              SB
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <Link href={`/src/app/(routes)/results/${result.id}`}>
-                            <Button size="small" variant="outline">View</Button>
-                          </Link>
-                          <Link href={`/results/${result.id}/edit`}>
-                            <Button size="small" variant="outline">Edit</Button>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Box>
+    <PageLayout title='Results' action={addResultButton}>
+      <Box title='Result List'>
+        <div className='overflow-x-auto'>
+          <table className='min-w-full divide-y divide-gray-200 dark:divide-neutral-700'>
+            <thead className='bg-gray-50 dark:bg-neutral-800'>
+              <tr>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Athlete
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Event
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Discipline
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Result
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Position
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Date
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Records
+                </th>
+                <th
+                  scope='col'
+                  className='px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-neutral-400'
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-gray-200 bg-white dark:divide-neutral-700 dark:bg-neutral-900'>
+              {results.map((result) => (
+                <tr key={result.id}>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm font-medium text-gray-900 dark:text-white'>
+                      {result.athlete.firstName} {result.athlete.lastName}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm text-gray-900 dark:text-white'>
+                      {result.event.name}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm text-gray-900 dark:text-white'>
+                      {result.discipline.name}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm font-medium text-gray-900 dark:text-white'>
+                      {formatResultValue(
+                        result.value,
+                        result.discipline.measurementUnit,
+                      )}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm text-gray-900 dark:text-white'>
+                      {result.position
+                        ? `${result.position}${getOrdinalSuffix(result.position)}`
+                        : '-'}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='text-sm text-gray-900 dark:text-white'>
+                      {formatDate(result.date)}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap'>
+                    <div className='flex space-x-1'>
+                      {result.personalBest && (
+                        <span className='inline-flex rounded-full bg-blue-100 px-2 text-xs leading-5 font-semibold text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
+                          PB
+                        </span>
+                      )}
+                      {result.seasonBest && (
+                        <span className='inline-flex rounded-full bg-green-100 px-2 text-xs leading-5 font-semibold text-green-800 dark:bg-green-900 dark:text-green-200'>
+                          SB
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className='px-6 py-4 text-sm font-medium whitespace-nowrap'>
+                    <div className='flex space-x-2'>
+                      <Link href={`/src/app/(routes)/results/${result.id}`}>
+                        <Button size='small' variant='outline'>
+                          View
+                        </Button>
+                      </Link>
+                      <Link href={`/results/${result.id}/edit`}>
+                        <Button size='small' variant='outline'>
+                          Edit
+                        </Button>
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Box>
     </PageLayout>
   );
 }

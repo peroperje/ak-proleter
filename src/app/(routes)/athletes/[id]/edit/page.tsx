@@ -12,7 +12,7 @@ export default async function EditAthletePage(props: Props) {
   const params = await props.params;
 
   const user = await getAthleteById(params.id);
-  if(!user){
+  if (!user) {
     notFound();
   }
 
@@ -20,8 +20,7 @@ export default async function EditAthletePage(props: Props) {
     <PageLayout title={'Edit Athlete'}>
       <CloseBtn />
 
-        <EditForm user={user} userId={params.id} />
-
+      <EditForm user={user} userId={params.id} />
     </PageLayout>
   );
 }

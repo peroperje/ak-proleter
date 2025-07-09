@@ -20,16 +20,16 @@ export async function GET(request: Request) {
         include: {
           profile: {
             include: {
-              category: true
-            }
-          }
-        }
+              category: true,
+            },
+          },
+        },
       });
 
       if (!user || user.role !== 'MEMBER') {
         return NextResponse.json(
           { error: 'Athlete not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -58,14 +58,14 @@ export async function GET(request: Request) {
       include: {
         profile: {
           include: {
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
 
     // Transform the user data to match the Athlete interface
-    const athletes: Athlete[] = users.map(user => ({
+    const athletes: Athlete[] = users.map((user) => ({
       id: user.id,
       firstName: user.name.split(' ')[0],
       lastName: user.name.split(' ').slice(1).join(' '),
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
     console.error('Error fetching athletes:', error);
     return NextResponse.json(
       { error: 'Failed to fetch athletes' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -96,15 +96,20 @@ export async function GET(request: Request) {
  * @constructor
  */
 export async function POST(request: Request) {
-  console.log('Athelts request',request.body)
+  console.log('Athelts request', request.body);
   try {
     const body = await request.json();
 
     // Validate required fields
-    if (!body.firstName || !body.lastName || !body.dateOfBirth || !body.gender) {
+    if (
+      !body.firstName ||
+      !body.lastName ||
+      !body.dateOfBirth ||
+      !body.gender
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -125,7 +130,9 @@ export async function POST(request: Request) {
     const newUser = await prisma.user.create({
       data: {
         name: `${body.firstName} ${body.lastName}`,
-        email: body.email || `${body.firstName.toLowerCase()}.${body.lastName.toLowerCase()}@example.com`,
+        email:
+          body.email ||
+          `${body.firstName.toLowerCase()}.${body.lastName.toLowerCase()}@example.com`,
         passwordHash: 'placeholder', // In a real app, this would be properly hashed
         role: 'MEMBER',
         profile: {
@@ -136,16 +143,16 @@ export async function POST(request: Request) {
             bio: body.notes,
             avatarUrl: body.photoUrl,
             categoryId: categoryIds.length > 0 ? categoryIds[0] : null,
-          }
-        }
+          },
+        },
       },
       include: {
         profile: {
           include: {
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
 
     // Transform the user data to match the Athlete interface
@@ -170,7 +177,7 @@ export async function POST(request: Request) {
     console.error('Error creating athlete:', error);
     return NextResponse.json(
       { error: 'Failed to create athlete' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -188,7 +195,7 @@ export async function PUT(request: Request) {
     if (!id) {
       return NextResponse.json(
         { error: 'Athlete ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -197,14 +204,11 @@ export async function PUT(request: Request) {
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
       where: { id },
-      include: { profile: true }
+      include: { profile: true },
     });
 
     if (!existingUser || existingUser.role !== 'MEMBER') {
-      return NextResponse.json(
-        { error: 'Athlete not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Athlete not found' }, { status: 404 });
     }
 
     // Find categories from the predefined list
@@ -241,17 +245,17 @@ export async function PUT(request: Request) {
               bio: body.notes,
               avatarUrl: body.photoUrl,
               categoryId: categoryId,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       include: {
         profile: {
           include: {
-            category: true
-          }
-        }
-      }
+            category: true,
+          },
+        },
+      },
     });
 
     // Transform the user data to match the Athlete interface
@@ -265,7 +269,9 @@ export async function PUT(request: Request) {
       phone: updatedUser.profile?.phoneNumber || undefined,
       joinDate: body.joinDate ? new Date(body.joinDate) : updatedUser.createdAt,
       active: body.active,
-      categories: updatedUser.profile?.category ? [updatedUser.profile.category.name] : [],
+      categories: updatedUser.profile?.category
+        ? [updatedUser.profile.category.name]
+        : [],
       notes: body.notes,
       photoUrl: body.photoUrl,
       address: body.address,
@@ -276,7 +282,7 @@ export async function PUT(request: Request) {
     console.error('Error updating athlete:', error);
     return NextResponse.json(
       { error: 'Failed to update athlete' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -294,7 +300,7 @@ export async function DELETE(request: Request) {
     if (!id) {
       return NextResponse.json(
         { error: 'Athlete ID is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -304,10 +310,7 @@ export async function DELETE(request: Request) {
     });
 
     if (!existingUser || existingUser.role !== 'MEMBER') {
-      return NextResponse.json(
-        { error: 'Athlete not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Athlete not found' }, { status: 404 });
     }
 
     // Delete the user (this will cascade delete the profile due to the onDelete: Cascade in the schema)
@@ -320,7 +323,7 @@ export async function DELETE(request: Request) {
     console.error('Error deleting athlete:', error);
     return NextResponse.json(
       { error: 'Failed to delete athlete' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

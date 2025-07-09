@@ -15,7 +15,7 @@ const IconComponent = icons.addUser;
 export async function generateStaticParams() {
   const athletes = await prisma.user.findMany({
     where: { role: 'MEMBER' },
-    select: { id: true }
+    select: { id: true },
   });
 
   return athletes.map((athlete) => ({
@@ -23,10 +23,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-export const fetchCache = 'force-no-store'
-
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 async function getAthletes(): Promise<Athlete[]> {
   // Fetch users with a MEMBER role from the database
@@ -35,19 +34,19 @@ async function getAthletes(): Promise<Athlete[]> {
     include: {
       profile: {
         include: {
-          category: true
-        }
-      }
-    }
+          category: true,
+        },
+      },
+    },
   });
 
   // Transform the user data to match the Athlete interface
-  return users.map(user => ({
+  return users.map((user) => ({
     id: user.id,
     firstName: user.name.split(' ')[0],
     lastName: user.name.split(' ').slice(1).join(' '),
     dateOfBirth: user.profile?.dateOfBirth || new Date(),
-    gender: user.profile?.gender === 'male'?'male':'female', // This information is not in the schema, defaulting to male
+    gender: user.profile?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
     email: user.email,
     phone: user.profile?.phoneNumber || undefined,
     joinDate: user.createdAt,
@@ -59,43 +58,37 @@ async function getAthletes(): Promise<Athlete[]> {
   }));
 }
 
-const AthleteList = ({athletes}: { athletes: Athlete[] })=>{
+const AthleteList = ({ athletes }: { athletes: Athlete[] }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
       {athletes.map((athlete) => (
         <AthletesCard key={athlete.id} athlete={athlete} />
       ))}
     </div>
-  )
-
-}
+  );
+};
 
 export default function AthletesPage() {
   // Fetch athletes from the database
-  const athletes =  use(getAthletes());
-
+  const athletes = use(getAthletes());
 
   return (
     <PageLayout
-      title="Athletes"
+      title='Athletes'
       action={
-        <Link href="/src/app/(routes)/athletes/new">
-          <Button variant="submit">
-            <IconComponent size={20}  />
+        <Link href='/src/app/(routes)/athletes/new'>
+          <Button variant='submit'>
+            <IconComponent size={20} />
             Add Athlete
           </Button>
         </Link>
       }
     >
-
-          <Box
-            icon={navItems.athletes.icon}
-            title="Athlete List"
-          >
-            <Suspense fallback={<>Loading athletes...</>}>
-              <AthleteList athletes={athletes} />
-            </Suspense>
-          </Box>
+      <Box icon={navItems.athletes.icon} title='Athlete List'>
+        <Suspense fallback={<>Loading athletes...</>}>
+          <AthleteList athletes={athletes} />
+        </Suspense>
+      </Box>
     </PageLayout>
   );
 }

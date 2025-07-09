@@ -12,10 +12,10 @@ import {
   FiEdit,
   FiMapPin,
   FiClock,
-  FiTag
+  FiTag,
 } from 'react-icons/fi';
 
-import {FaRunning} from 'react-icons/fa'
+import { FaRunning } from 'react-icons/fa';
 
 // Export all icons used in the application
 export const icons = {
@@ -38,7 +38,7 @@ export const icons = {
   location: FiMapPin,
   dateFrom: FiCalendar,
   dateTo: FiClock,
-  categories: FiTag
+  categories: FiTag,
 };
 
 // Export icon types

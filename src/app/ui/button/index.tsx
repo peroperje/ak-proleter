@@ -31,7 +31,7 @@ const Button: React.FC<Props> = ({
     <button
       disabled={disabled}
       {...restProps}
-      className={`${sizes[size]} ${variants[variant]} justify-center inline-flex items-center gap-x-2 rounded-lg border font-bold disabled:pointer-events-none disabled:opacity-50`}
+      className={`${sizes[size]} ${variants[variant]} inline-flex items-center justify-center gap-x-2 rounded-lg border font-bold disabled:pointer-events-none disabled:opacity-50`}
     />
   );
 };

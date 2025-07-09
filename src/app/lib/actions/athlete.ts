@@ -17,7 +17,6 @@ export interface AthleteFormData {
   photoUrl?: string;
 }
 
-
 const athleteSchema = yup.object().shape({
   firstName: yup
     .string()
@@ -58,7 +57,7 @@ export type ActionState = {
  * 3. Converts the dateOfBirth string to Date object
  * 4. Returns a properly structured AthleteFormData object for use in athlete creation/update operations
  */
-function getAthleteObjectFromFormData(payload: FormData):AthleteFormData {
+function getAthleteObjectFromFormData(payload: FormData): AthleteFormData {
   const firstName = payload.get('firstName') as string;
   const lastName = payload.get('lastName') as string;
   const dateOfBirth = payload.get('dateOfBirth') as string;
@@ -101,7 +100,8 @@ async function getCategoryByDateOfBirth(dateOfBirth: Date) {
   // Adjust age if a birthday hasn't occurred this year
   if (
     today.getMonth() < dateOfBirth.getMonth() ||
-    (today.getMonth() === dateOfBirth.getMonth() && today.getDate() < dateOfBirth.getDate())
+    (today.getMonth() === dateOfBirth.getMonth() &&
+      today.getDate() < dateOfBirth.getDate())
   ) {
     age--;
   }
@@ -111,18 +111,14 @@ async function getCategoryByDateOfBirth(dateOfBirth: Date) {
       AND: [
         { minAge: { lte: age } },
         {
-          OR: [
-            { maxAge: { gte: age } },
-            { maxAge: null }
-          ]
-        }
-      ]
-    }
+          OR: [{ maxAge: { gte: age } }, { maxAge: null }],
+        },
+      ],
+    },
   });
 }
 
 export async function createAthlete(_state: ActionState, payload: FormData) {
-
   // Prepare data for submission
   const formattedData = getAthleteObjectFromFormData(payload);
   try {
@@ -199,7 +195,9 @@ export async function updateAthlete(
   payload: FormData,
 ) {
   // Prepare data for submission
-  const formattedData = getAthleteObjectFromFormData(payload) as AthleteFormData;
+  const formattedData = getAthleteObjectFromFormData(
+    payload,
+  ) as AthleteFormData;
 
   try {
     await athleteSchema.validate(formattedData, { abortEarly: false });

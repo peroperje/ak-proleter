@@ -1,4 +1,8 @@
-import { EventActionState, EventFormData, updateEvent } from '@/app/lib/actions/event';
+import {
+  EventActionState,
+  EventFormData,
+  updateEvent,
+} from '@/app/lib/actions/event';
 import { EventForm } from '@/app/components/events';
 
 interface Props {
@@ -16,10 +20,10 @@ export default function EditForm({ event, eventId, categories }: Props) {
   };
 
   return (
-      <EventForm
-        action={updateEvent.bind(null, eventId)}
-        categories={categories}
-        initialState={initialState}
-      />
+    <EventForm
+      action={updateEvent.bind(null, eventId)}
+      categories={categories}
+      initialState={initialState}
+    />
   );
 }

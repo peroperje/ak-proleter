@@ -1,6 +1,6 @@
 // Navigation routes for the application
 // This file defines all the navigation routes used throughout the app
-import {  IconType } from './icons';
+import { IconType } from './icons';
 
 export interface NavItem {
   name: string;
@@ -18,7 +18,7 @@ export const navItems: NavItems = {
     name: 'Dashboard',
     href: () => '/',
     description: 'View overall statistics and recent activities.',
-    icon: 'dashboard'
+    icon: 'dashboard',
   },
   athletes: {
     name: 'Athletes',
@@ -28,8 +28,9 @@ export const navItems: NavItems = {
       }
       return '/athletes';
     },
-    description: 'Manage athlete profiles, view statistics, and track progress.',
-    icon: 'athletes'
+    description:
+      'Manage athlete profiles, view statistics, and track progress.',
+    icon: 'athletes',
   },
   events: {
     name: 'Events',
@@ -40,7 +41,7 @@ export const navItems: NavItems = {
       return '/events';
     },
     description: 'Manage competitions, training sessions, and other events.',
-    icon: 'events'
+    icon: 'events',
   },
   results: {
     name: 'Results',
@@ -51,7 +52,7 @@ export const navItems: NavItems = {
       return '/results';
     },
     description: 'Record and analyze athlete performance results.',
-    icon: 'results'
+    icon: 'results',
   },
   training: {
     name: 'Training',
@@ -62,7 +63,7 @@ export const navItems: NavItems = {
       return '/training';
     },
     description: 'Plan and track training sessions and exercises.',
-    icon: 'training'
+    icon: 'training',
   },
   coaches: {
     name: 'Coaches',
@@ -73,7 +74,7 @@ export const navItems: NavItems = {
       return '/coaches';
     },
     description: 'Manage coach profiles and assignments.',
-    icon: 'coaches'
+    icon: 'coaches',
   },
   reports: {
     name: 'Reports',
@@ -84,6 +85,6 @@ export const navItems: NavItems = {
       return '/reports';
     },
     description: 'Generate reports and analytics on athlete performance.',
-    icon: 'reports'
+    icon: 'reports',
   },
 };

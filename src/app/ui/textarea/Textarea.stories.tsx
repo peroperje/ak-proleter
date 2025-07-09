@@ -27,7 +27,8 @@ export const WithValue = Template.bind({});
 WithValue.args = {
   label: 'Description',
   placeholder: 'Enter your description here...',
-  value: 'This is a sample text that demonstrates how the textarea looks with content.',
+  value:
+    'This is a sample text that demonstrates how the textarea looks with content.',
 };
 
 export const WithError = Template.bind({});

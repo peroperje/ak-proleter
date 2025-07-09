@@ -194,9 +194,7 @@ async function main() {
         },
       },
       participants: {
-        connect: [
-          { id: anaUser.id },
-        ],
+        connect: [{ id: anaUser.id }],
       },
       categories: {
         connect: {

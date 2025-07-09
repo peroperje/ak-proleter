@@ -49,11 +49,7 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
   };
 }
 
-export default function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
   // Fetch athlete data
   const { id } = use(params);
   const athlete = use(getAthleteById(id));

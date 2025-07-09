@@ -8,7 +8,10 @@ function calculateAge(dateOfBirth: Date): number {
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDifference = today.getMonth() - birthDate.getMonth();
 
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
@@ -19,7 +22,7 @@ function formatDate(date: Date): string {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
-    day: 'numeric'
+    day: 'numeric',
   });
 }
 
@@ -40,7 +43,7 @@ const ProfileInfoBoxContent: React.FC<ProfileInformationProps> = ({
   active,
   photoUrl,
   dateOfBirth,
-  categories
+  categories,
 }): ReactElement => {
   const age = calculateAge(dateOfBirth);
   return (

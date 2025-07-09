@@ -30,8 +30,8 @@ Default.args = {
   description: 'Update your account profile information.',
   children: (
     <>
-      <InputField title="Full Name" placeholder="John Doe" />
-      <InputField title="Email" type="email" placeholder="john@example.com" />
+      <InputField title='Full Name' placeholder='John Doe' />
+      <InputField title='Email' type='email' placeholder='john@example.com' />
     </>
   ),
 };
@@ -42,11 +42,11 @@ WithAllFields.args = {
   description: 'This form demonstrates all available form components.',
   children: (
     <>
-      <InputField title="Full Name" placeholder="John Doe" />
-      <InputField title="Email" type="email" placeholder="john@example.com" />
+      <InputField title='Full Name' placeholder='John Doe' />
+      <InputField title='Email' type='email' placeholder='john@example.com' />
 
       <Select
-        label="Country"
+        label='Country'
         options={[
           { value: '', label: 'Select a country' },
           { value: 'us', label: 'United States' },
@@ -55,16 +55,16 @@ WithAllFields.args = {
         ]}
       />
 
-      <div className="space-y-2">
-        <p className="block text-sm font-bold dark:text-white">Gender</p>
-        <Radio label="Male" name="gender" />
-        <Radio label="Female" name="gender" />
-        <Radio label="Other" name="gender" />
+      <div className='space-y-2'>
+        <p className='block text-sm font-bold dark:text-white'>Gender</p>
+        <Radio label='Male' name='gender' />
+        <Radio label='Female' name='gender' />
+        <Radio label='Other' name='gender' />
       </div>
 
-      <Textarea label="Bio" placeholder="Tell us about yourself..." />
+      <Textarea label='Bio' placeholder='Tell us about yourself...' />
 
-      <Checkbox label="I agree to the terms and conditions" />
+      <Checkbox label='I agree to the terms and conditions' />
     </>
   ),
 };
@@ -76,8 +76,13 @@ WithError.args = {
   error: 'There was an error submitting the form. Please try again.',
   children: (
     <>
-      <InputField title="Full Name" placeholder="John Doe" />
-      <InputField title="Email" type="email" placeholder="john@example.com" error="Invalid email address" />
+      <InputField title='Full Name' placeholder='John Doe' />
+      <InputField
+        title='Email'
+        type='email'
+        placeholder='john@example.com'
+        error='Invalid email address'
+      />
     </>
   ),
 };
@@ -89,8 +94,8 @@ Loading.args = {
   isLoading: true,
   children: (
     <>
-      <InputField title="Full Name" placeholder="John Doe" />
-      <InputField title="Email" type="email" placeholder="john@example.com" />
+      <InputField title='Full Name' placeholder='John Doe' />
+      <InputField title='Email' type='email' placeholder='john@example.com' />
     </>
   ),
 };
@@ -102,8 +107,8 @@ WithCancel.args = {
   onCancel: () => {},
   children: (
     <>
-      <InputField title="Full Name" placeholder="John Doe" />
-      <InputField title="Email" type="email" placeholder="john@example.com" />
+      <InputField title='Full Name' placeholder='John Doe' />
+      <InputField title='Email' type='email' placeholder='john@example.com' />
     </>
   ),
 };

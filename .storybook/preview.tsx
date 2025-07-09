@@ -1,6 +1,6 @@
-import type { Preview } from "@storybook/react";
-import "../src/app/globals.css";
-import {Inter} from "next/font/google";
+import type { Preview } from '@storybook/react';
+import '../src/app/globals.css';
+import { Inter } from 'next/font/google';
 
 const inter = Inter({
   weight: ['400', '700'],
@@ -9,9 +9,13 @@ const inter = Inter({
   display: 'swap',
 });
 const preview: Preview = {
-decorators:[(Story)=>(
-    <main className={`${inter.className}`}><Story /></main>
-)],
+  decorators: [
+    (Story) => (
+      <main className={`${inter.className}`}>
+        <Story />
+      </main>
+    ),
+  ],
   parameters: {
     controls: {
       matchers: {

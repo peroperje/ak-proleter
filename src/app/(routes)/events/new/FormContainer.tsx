@@ -13,7 +13,11 @@ const FormContainer: React.FC = (): ReactElement => {
   return (
     <CategoryProvider>
       {(categories) => (
-        <EventForm action={createEvent} categories={categories} initialState={initialState} />
+        <EventForm
+          action={createEvent}
+          categories={categories}
+          initialState={initialState}
+        />
       )}
     </CategoryProvider>
   );

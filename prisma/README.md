@@ -5,10 +5,12 @@ This project uses PostgreSQL with Prisma ORM for database operations.
 ## Local Development Setup
 
 ### Prerequisites
+
 - Docker and Docker Compose installed on your machine
 - Node.js and npm/pnpm installed
 
 ### Starting the Database
+
 To start the PostgreSQL database in Docker:
 
 ```bash
@@ -18,6 +20,7 @@ pnpm db:start
 ```
 
 This will start a PostgreSQL 16 instance with the following configuration:
+
 - Host: localhost
 - Port: 5432
 - Username: postgres
@@ -25,6 +28,7 @@ This will start a PostgreSQL 16 instance with the following configuration:
 - Database: ak_proleter
 
 ### Stopping the Database
+
 To stop the PostgreSQL database:
 
 ```bash
@@ -42,6 +46,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ak_proleter?schema=p
 ```
 
 ### Generating Prisma Client
+
 After making changes to the Prisma schema, you'll need to generate the Prisma client:
 
 ```bash
@@ -51,6 +56,7 @@ pnpm prisma:generate
 ```
 
 ### Using Prisma Studio
+
 Prisma Studio is a visual database editor that allows you to view and edit your database data:
 
 ```bash
@@ -60,6 +66,7 @@ pnpm prisma:studio
 ```
 
 This will start Prisma Studio at [http://localhost:5555](http://localhost:5555), where you can:
+
 - Browse and edit data in all your tables
 - Filter and sort data
 - Create, update, and delete records

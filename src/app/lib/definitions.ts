@@ -20,7 +20,7 @@ export interface Athlete {
   training?: Training[];
   results?: Result[];
   events?: Event[];
-  coaches?: Coach[]
+  coaches?: Coach[];
   photoUrl?: string;
 }
 
@@ -42,7 +42,16 @@ export interface Event {
 export interface Discipline {
   id: string;
   name: string;
-  category: 'sprint' | 'middle-distance' | 'long-distance' | 'hurdles' | 'jumps' | 'throws' | 'combined' | 'relay' | 'walk';
+  category:
+    | 'sprint'
+    | 'middle-distance'
+    | 'long-distance'
+    | 'hurdles'
+    | 'jumps'
+    | 'throws'
+    | 'combined'
+    | 'relay'
+    | 'walk';
   measurementUnit: 'time' | 'distance' | 'points';
   ageGroups?: string[]; // e.g., "U18", "Senior"
   genderCategory: 'male' | 'female' | 'mixed';

@@ -17,7 +17,6 @@ export interface EventFormData {
   categoryIds?: string[];
 }
 
-
 export type EventActionState = {
   errors: {
     [K in keyof EventFormData]?: string;
@@ -28,12 +27,19 @@ export type EventActionState = {
 };
 
 interface EventFormProps {
-  action:  (state: Awaited<EventActionState>, data:FormData) => (Promise<EventActionState> | EventActionState);
+  action: (
+    state: Awaited<EventActionState>,
+    data: FormData,
+  ) => Promise<EventActionState> | EventActionState;
   categories: { id: string; name: string }[];
-  initialState: EventActionState
+  initialState: EventActionState;
 }
 
-const EventForm:React.FC<EventFormProps>=({action, categories, initialState })=>{
+const EventForm: React.FC<EventFormProps> = ({
+  action,
+  categories,
+  initialState,
+}) => {
   const router = useRouter();
 
   const [state, formAction, isSubmitting] = useActionState(
@@ -312,6 +318,6 @@ const EventForm:React.FC<EventFormProps>=({action, categories, initialState })=>
       </form>
     </Box>
   );
-}
+};
 
 export default EventForm;

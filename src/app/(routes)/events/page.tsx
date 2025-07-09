@@ -14,10 +14,10 @@ async function getEvents(): Promise<Event[]> {
     include: {
       organizer: true,
       categories: true,
-    }
+    },
   });
 
-  return dbEvents.map(event => {
+  return dbEvents.map((event) => {
     // Determine event status based on dates
     let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' = 'upcoming';
     const now = new Date();
@@ -30,7 +30,6 @@ async function getEvents(): Promise<Event[]> {
       status = 'ongoing';
     }
 
-
     return {
       id: event.id,
       name: event.title,
@@ -39,10 +38,13 @@ async function getEvents(): Promise<Event[]> {
       startDate: event.startDate,
       endDate: event.endDate || event.startDate,
       type: event.type,
-      category: event.categories && event.categories.length > 0 ? event.categories : null,
+      category:
+        event.categories && event.categories.length > 0
+          ? event.categories
+          : null,
       status,
       organizer: event.organizer?.name || 'Unknown',
-      notes: ''
+      notes: '',
     };
   });
 }
@@ -52,27 +54,20 @@ export default async function EventsPage() {
   const events = await getEvents();
 
   const addEventButton = (
-    <Link href="/src/app/(routes)/events/new">
-      <Button variant="submit">Add Event</Button>
+    <Link href='/src/app/(routes)/events/new'>
+      <Button variant='submit'>Add Event</Button>
     </Link>
   );
 
   return (
-    <PageLayout
-      title="Events"
-      action={addEventButton}
-    >
-
-          <Box
-            icon={navItems.events.icon}
-            title="Event List"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {events.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          </Box>
+    <PageLayout title='Events' action={addEventButton}>
+      <Box icon={navItems.events.icon} title='Event List'>
+        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+          {events.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      </Box>
     </PageLayout>
   );
 }

@@ -6,65 +6,66 @@ import Button from '@/app/ui/button';
 // Dynamically import Leaflet components with SSR disabled
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
-  { ssr: false }
+  { ssr: false },
 );
 const TileLayer = dynamic(
   () => import('react-leaflet').then((mod) => mod.TileLayer),
-  { ssr: false }
+  { ssr: false },
 );
 const Marker = dynamic(
   () => import('react-leaflet').then((mod) => mod.Marker),
-  { ssr: false }
+  { ssr: false },
 );
-const Popup = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Popup),
-  { ssr: false }
-);
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 // Create a client-side only MapEvents component
 const MapEvents = dynamic(
-  () => import('react-leaflet').then((mod) => {
-    // Create and return a component that uses useMapEvents
-    return function MapEventsComponent({
-      onLocationSelect,
-    }: {
-      onLocationSelect: (lat: number, lng: number) => void;
-    }) {
-      const { useMapEvents } = mod;
-      useMapEvents({
-        click: (e) => {
-          onLocationSelect(e.latlng.lat, e.latlng.lng);
-        },
-      });
-      return null;
-    };
-  }),
-  { ssr: false }
+  () =>
+    import('react-leaflet').then((mod) => {
+      // Create and return a component that uses useMapEvents
+      return function MapEventsComponent({
+        onLocationSelect,
+      }: {
+        onLocationSelect: (lat: number, lng: number) => void;
+      }) {
+        const { useMapEvents } = mod;
+        useMapEvents({
+          click: (e) => {
+            onLocationSelect(e.latlng.lat, e.latlng.lng);
+          },
+        });
+        return null;
+      };
+    }),
+  { ssr: false },
 );
 
 // Component to get map instance
 const MapRef = dynamic(
-  () => import('react-leaflet').then((mod) => {
-    return function MapRefComponent({
-      setMapRef,
-    }: {
-      setMapRef: (map: L.Map) => void;
-    }) {
-      const { useMap } = mod;
-      const map = useMap();
+  () =>
+    import('react-leaflet').then((mod) => {
+      return function MapRefComponent({
+        setMapRef,
+      }: {
+        setMapRef: (map: L.Map) => void;
+      }) {
+        const { useMap } = mod;
+        const map = useMap();
 
-      // Set map reference on mount
-      useEffect(() => {
-        setMapRef(map);
-        return () => {
-          setMapRef(null as never);
-        };
-      }, [map, setMapRef]);
+        // Set map reference on mount
+        useEffect(() => {
+          setMapRef(map);
+          return () => {
+            setMapRef(null as never);
+          };
+        }, [map, setMapRef]);
 
-      return null;
-    };
-  }),
-  { ssr: false }
+        return null;
+      };
+    }),
+  { ssr: false },
 );
 
 // Client-side only component for loading Leaflet CSS
@@ -88,12 +89,11 @@ const LocationField: React.FC<
   //const longitude = 20.3875;
   const readOnly = props.readOnly || false;
 
-  const [position, setPosition] = useState<[number, number]>([
-    0,
-    0,
-  ]);
+  const [position, setPosition] = useState<[number, number]>([0, 0]);
 
-  const [locationValue, setLocationValue] = useState<string>(props.defaultValue as string || '');
+  const [locationValue, setLocationValue] = useState<string>(
+    (props.defaultValue as string) || '',
+  );
   const [isMounted, setIsMounted] = useState(false);
   const [iconLoaded, setIconLoaded] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -117,19 +117,23 @@ const LocationField: React.FC<
 
       // Set up the new icon paths
       L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconRetinaUrl:
+          'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
       // Create a custom marker icon
       customIconRef.current = new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconUrl:
+          'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl:
+          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        shadowSize: [41, 41],
       });
 
       // Set icon as loaded
@@ -142,15 +146,14 @@ const LocationField: React.FC<
     setPosition([lat, lng]);
     // Update the location value with coordinates
     //const locationString = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-   // setLocationValue(locationString);
+    // setLocationValue(locationString);
 
     try {
       // Perform reverse geocoding
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
       );
       const data = await response.json();
-
 
       // The display_name property contains the full address
       const locationString = data.display_name;
@@ -161,10 +164,7 @@ const LocationField: React.FC<
       const locationString = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
       setLocationValue(locationString);
     }
-
   };
-
-
 
   // Function to search for a location using the input value
   const searchLocation = async () => {
@@ -174,7 +174,7 @@ const LocationField: React.FC<
     try {
       // Use OpenStreetMap Nominatim API for geocoding
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationValue)}`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationValue)}`,
       );
 
       const data = await response.json();
@@ -187,7 +187,7 @@ const LocationField: React.FC<
 
         // Update position
         setPosition([lat, lng]);
-        setLocationValue(result.display_name)
+        setLocationValue(result.display_name);
         // Update map view
         if (mapRef.current) {
           mapRef.current.setView([lat, lng], 2);
@@ -220,7 +220,7 @@ const LocationField: React.FC<
       <input type='hidden' name={'location'} value={locationValue} />
       <div className='flex gap-2'>
         <input
-          {...{ ...props, defaultValue:undefined}}
+          {...{ ...props, defaultValue: undefined }}
           id='location-search'
           name='location-search'
           value={locationValue}

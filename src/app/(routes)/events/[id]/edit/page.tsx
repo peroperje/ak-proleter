@@ -36,11 +36,11 @@ type DbEventWithCategories = {
 // Function to fetch event by ID
 async function fetchEventById(id: string): Promise<EventFormData | null> {
   // Fetch event from the database by ID
-  const dbEvent = await getEventById(id,{
+  const dbEvent = (await getEventById(id, {
     include: {
       categories: true,
-    }
-  }) as DbEventWithCategories | null;
+    },
+  })) as DbEventWithCategories | null;
 
   if (!dbEvent) {
     return null;
@@ -63,7 +63,7 @@ export default async function EditEventPage(props: Props) {
   const params = await props.params;
 
   const event = await fetchEventById(params.id);
-  if(!event){
+  if (!event) {
     notFound();
   }
 

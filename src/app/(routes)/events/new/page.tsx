@@ -7,7 +7,7 @@ export default function NewEventPage() {
   return (
     <PageLayout title={'New Event'}>
       <CloseBtn />
-        <FormContainer />
+      <FormContainer />
     </PageLayout>
   );
 }

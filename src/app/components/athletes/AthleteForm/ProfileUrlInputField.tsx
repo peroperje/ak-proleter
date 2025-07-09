@@ -1,5 +1,5 @@
-'use client'
-import React, { ReactElement,  useState } from 'react';
+'use client';
+import React, { ReactElement, useState } from 'react';
 import Image from 'next/image';
 
 const AVATAR_IMAGES = [
@@ -13,24 +13,24 @@ const AVATAR_IMAGES = [
   '/avatars-img/a-muscular-female-runner-with-tanned-skin-and-a-st_06.07.2025.webp',
   '/avatars-img/a-muscular-male-runner-with-an-athletic-build-wear_06.07.2025.webp',
   '/avatars-img/a-muscular-male-runner-with-a-space-look._06.07.2025.webp',
-  '/avatars-img/a-muscular-male-runner-with-short-black-hair-and-a_06.07.2025.webp'
+  '/avatars-img/a-muscular-male-runner-with-short-black-hair-and-a_06.07.2025.webp',
 ] as const;
 
+type Props = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
 
-type Props =  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-
-const ProfileUrlInputField: React.FC<Props> = (props): ReactElement=> {
-
+const ProfileUrlInputField: React.FC<Props> = (props): ReactElement => {
   const { defaultValue, ...restInputProps } = props;
   const [value, setValue] = useState(defaultValue || AVATAR_IMAGES[0]);
-
 
   return (
     <div className={'flex gap-4'}>
       {value && (
         <Image
           loader={({ src, width, quality }) => {
-            return `${src}?w=${width}&q=${quality || 75}`
+            return `${src}?w=${width}&q=${quality || 75}`;
           }}
           width={150}
           height={150}
@@ -62,5 +62,5 @@ const ProfileUrlInputField: React.FC<Props> = (props): ReactElement=> {
       </div>
     </div>
   );
-}
+};
 export default ProfileUrlInputField;

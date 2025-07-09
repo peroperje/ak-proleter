@@ -6,20 +6,19 @@ import { DivIcon } from 'leaflet';
 // Dynamically import Leaflet components with SSR disabled
 const MapContainer = dynamic(
   () => import('react-leaflet').then((mod) => mod.MapContainer),
-  { ssr: false }
+  { ssr: false },
 );
 const TileLayer = dynamic(
   () => import('react-leaflet').then((mod) => mod.TileLayer),
-  { ssr: false }
+  { ssr: false },
 );
 const Marker = dynamic(
   () => import('react-leaflet').then((mod) => mod.Marker),
-  { ssr: false }
+  { ssr: false },
 );
-const Popup = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Popup),
-  { ssr: false }
-);
+const Popup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 // Client-side only component for loading Leaflet CSS
 const LeafletCSS: React.FC = () => {
@@ -50,7 +49,7 @@ const EventMap: React.FC<EventMapProps> = ({ location }) => {
     const geocodeLocation = async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`,
         );
         const data = await response.json();
 
@@ -71,19 +70,23 @@ const EventMap: React.FC<EventMapProps> = ({ location }) => {
     import('leaflet').then((L) => {
       // Set up the new icon paths
       L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconRetinaUrl:
+          'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
       // Create a custom marker icon
       customIconRef.current = new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconUrl:
+          'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl:
+          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        shadowSize: [41, 41],
       });
 
       setIconLoaded(true);
@@ -93,19 +96,19 @@ const EventMap: React.FC<EventMapProps> = ({ location }) => {
 
   if (isLoading) {
     return (
-      <div className="w-full h-[150px] mb-4 rounded-md overflow-hidden bg-gray-200 dark:bg-neutral-700 animate-pulse">
+      <div className='mb-4 h-[150px] w-full animate-pulse overflow-hidden rounded-md bg-gray-200 dark:bg-neutral-700'>
         {/* Map skeleton with some landmark indicators */}
-        <div className="h-full w-full relative">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-300 dark:bg-neutral-600"></div>
-          <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-sm bg-gray-300 dark:bg-neutral-600"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-4 h-4 rounded-sm bg-gray-300 dark:bg-neutral-600"></div>
+        <div className='relative h-full w-full'>
+          <div className='absolute top-1/2 left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-gray-300 dark:bg-neutral-600'></div>
+          <div className='absolute top-1/4 left-1/4 h-4 w-4 rounded-sm bg-gray-300 dark:bg-neutral-600'></div>
+          <div className='absolute right-1/4 bottom-1/4 h-4 w-4 rounded-sm bg-gray-300 dark:bg-neutral-600'></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-[150px] mb-4 rounded-md overflow-hidden">
+    <div className='mb-4 h-[150px] w-full overflow-hidden rounded-md'>
       {isMounted && position && (
         <>
           <LeafletCSS />
@@ -113,15 +116,18 @@ const EventMap: React.FC<EventMapProps> = ({ location }) => {
             center={position}
             zoom={8}
             scrollWheelZoom={false}
-            className="h-full w-full"
+            className='h-full w-full'
             style={{ height: '100%', width: '100%' }}
           >
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             />
             {iconLoaded && (
-              <Marker position={position} icon={customIconRef.current as DivIcon}>
+              <Marker
+                position={position}
+                icon={customIconRef.current as DivIcon}
+              >
                 <Popup>{location}</Popup>
               </Marker>
             )}
