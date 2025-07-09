@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
@@ -27,6 +27,25 @@ function formatDate(date: Date): string {
   });
 }
 
+interface NoteBoxBgProps {
+  type: Event['type'];
+  className?: string;
+}
+
+const NoteBoxBg: React.FC<PropsWithChildren<NoteBoxBgProps>> = ({
+  children,
+  type,
+  className,
+}) => {
+  return (
+    <div
+      className={`mb-4 rounded-lg p-2 shadow-md transition-shadow duration-300 hover:shadow-lg ${className} ${eventTypeStyles[type]}`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const EventCard: React.FC<EventCardProps> = ({
   event: {
     id,
@@ -40,7 +59,6 @@ const EventCard: React.FC<EventCardProps> = ({
     endDate,
   },
 }) => {
-
   return (
     <div className='relative flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-shadow duration-300 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-md dark:shadow-neutral-700/30'>
       <Link
@@ -75,17 +93,17 @@ const EventCard: React.FC<EventCardProps> = ({
               </span>
             </div>
 
-            <div className={`mb-4 rounded-lg  p-2 ${eventTypeStyles[type]}`}>
+            <NoteBoxBg type={type}>
               <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
                 {name}
               </h3>
               <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
                 {organizer}
               </p>
-            </div>
+            </NoteBoxBg>
 
             {/* Location text */}
-            <div className='mb-4 text-sm'>
+            <NoteBoxBg type={type}>
               <span className='flex items-center text-gray-500 dark:text-neutral-400'>
                 <LocationIcon className='mr-1' size={16} /> Location:
               </span>
@@ -95,36 +113,52 @@ const EventCard: React.FC<EventCardProps> = ({
               >
                 {location}
               </span>
-            </div>
+            </NoteBoxBg>
 
-            <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
-              <div className='flex flex-col gap-0 text-sm'>
-                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                  <DateFromIcon className='mr-1' size={16} /> From:
-                </span>
-                <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                  {formatDate(startDate)}
-                </span>
+            <NoteBoxBg type={type}>
+              <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
+                <div className='flex flex-col gap-0 text-sm'>
+                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                    <DateFromIcon className='mr-1' size={16} /> From:
+                  </span>
+                  <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    {formatDate(startDate)}
+                  </span>
+                </div>
+                <div className='flex flex-col gap-0 text-sm'>
+                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                    <DateToIcon className='mr-1' size={16} /> To:
+                  </span>
+                  <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
+                    {formatDate(endDate)}
+                  </span>
+                </div>
+                <div className='flex flex-col text-sm'>
+                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                    <CategoriesIcon className='mr-1' size={16} /> Categories:
+                  </span>
+                  <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
+                    {category && category.length > 0
+                      ? category.map((cat) => cat.name).join(', ')
+                      : 'All categories'}
+                  </span>
+                </div>
               </div>
-              <div className='flex flex-col gap-0 text-sm'>
-                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                  <DateToIcon className='mr-1' size={16} /> To:
-                </span>
-                <span className='ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
-                  {formatDate(endDate)}
-                </span>
+            </NoteBoxBg>
+            <NoteBoxBg type={type}>
+              <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
+                <div className='flex flex-col text-sm'>
+                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                    <CategoriesIcon className='mr-1' size={16} /> Categories:
+                  </span>
+                  <span className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
+                    {category && category.length > 0
+                      ? category.map((cat) => cat.name).join(', ')
+                      : 'All categories'}
+                  </span>
+                </div>
               </div>
-              <div className='flex flex-col text-sm'>
-                <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                  <CategoriesIcon className='mr-1' size={16} /> Categories:
-                </span>
-                <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
-                  {category && category.length > 0
-                    ? category.map((cat) => cat.name).join(', ')
-                    : 'All categories'}
-                </span>
-              </div>
-            </div>
+            </NoteBoxBg>
           </div>
         </div>
       </Link>
