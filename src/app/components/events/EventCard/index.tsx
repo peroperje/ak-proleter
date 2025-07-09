@@ -116,7 +116,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </NoteBoxBg>
 
             <NoteBoxBg type={type}>
-              <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
+              <div className='grid w-full flex-grow grid-cols-2 gap-2'>
                 <div className='flex flex-col gap-0 text-sm'>
                   <span className='flex items-center text-gray-500 dark:text-neutral-400'>
                     <DateFromIcon className='mr-1' size={16} /> From:
@@ -133,31 +133,17 @@ const EventCard: React.FC<EventCardProps> = ({
                     {formatDate(endDate)}
                   </span>
                 </div>
-                <div className='flex flex-col text-sm'>
-                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                    <CategoriesIcon className='mr-1' size={16} /> Categories:
-                  </span>
-                  <span className='ml-1 font-bold text-gray-500 dark:text-neutral-400'>
-                    {category && category.length > 0
-                      ? category.map((cat) => cat.name).join(', ')
-                      : 'All categories'}
-                  </span>
-                </div>
               </div>
             </NoteBoxBg>
-            <NoteBoxBg type={type}>
-              <div className='mb-4 grid w-full flex-grow grid-cols-2 gap-2'>
-                <div className='flex flex-col text-sm'>
-                  <span className='flex items-center text-gray-500 dark:text-neutral-400'>
-                    <CategoriesIcon className='mr-1' size={16} /> Categories:
-                  </span>
-                  <span className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
-                    {category && category.length > 0
-                      ? category.map((cat) => cat.name).join(', ')
-                      : 'All categories'}
-                  </span>
-                </div>
-              </div>
+            <NoteBoxBg type={type} className={'text-sm'}>
+              <span className='flex items-center text-gray-500 dark:text-neutral-400'>
+                <CategoriesIcon className='mr-1' size={16} /> Categories:
+              </span>
+              <span className='font-bold text-gray-500 dark:text-neutral-400'>
+                {category && category.length > 0
+                  ? category.map((cat) => cat.name).join(', ')
+                  : 'All categories'}
+              </span>
             </NoteBoxBg>
           </div>
         </div>
