@@ -6,7 +6,7 @@ import LocationField from '@/app/components/events/EventForm/LocationField';
 import { routes } from '@/app/lib/routes';
 import Box from '@/app/components/Box';
 import React, { useActionState, useEffect } from 'react';
-import { CalendarIcon } from '@/app/lib/icons';
+import { CalendarIcon } from '@/app/ui/icons';
 
 export interface EventFormData {
   title: string;

@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import EventCardSkeleton from '@/app/components/events/EventCard/EventCardSkeleton';
-import { CalendarIcon } from '@/app/lib/icons';
+import { CalendarIcon } from '@/app/ui/icons';
 
 export default function LoadingEventsPage() {
   return (

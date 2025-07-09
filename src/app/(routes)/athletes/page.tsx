@@ -4,7 +4,7 @@ import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
-import { UserPlusIcon, UsersIcon } from '@/app/lib/icons';
+import { UserPlusIcon, UsersIcon } from '@/app/ui/icons';
 import prisma from '@/app/lib/prisma';
 import AthletesCard from '@/app/components/athletes/AthletesCard';
 

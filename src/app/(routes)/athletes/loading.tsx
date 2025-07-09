@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import AthletesCardSkeleton from '@/app/components/athletes/AthletesCard/AthletesCardSkeleton';
-import { UsersIcon } from '@/app/lib/icons';
+import { UsersIcon } from '@/app/ui/icons';
 
 export default function LoadingAthletesPage() {
   return (

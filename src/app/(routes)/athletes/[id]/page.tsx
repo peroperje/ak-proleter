@@ -8,7 +8,7 @@ import prisma from '@/app/lib/prisma';
 import CloseBtn from '@/app/components/CloseBtn';
 import ProfileInfoBoxContent from '@/app/components/athletes/ProfileInfoBoxContent';
 import ContactBoxContent from '@/app/components/athletes/ContactBoxContent';
-import { UsersIcon, RunningIcon, MailIcon } from '@/app/lib/icons';
+import { UsersIcon, RunningIcon, MailIcon } from '@/app/ui/icons';
 
 // Function to fetch athlete by ID
 async function getAthleteById(id: string): Promise<Athlete | null> {

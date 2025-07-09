@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
-import { MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/lib/icons';
+import { MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/ui/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
 import { getEventById, Category } from '@/app/lib/actions';
 import CloseBtn from '@/app/components/CloseBtn';

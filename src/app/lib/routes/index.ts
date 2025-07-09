@@ -24,7 +24,7 @@ import {
   ActivityIcon,
   BriefcaseIcon,
   BarChartIcon
-} from '../icons';
+} from '../../ui/icons';
 
 // Re-export NavItems and NavItem types from the old routes.ts file
 /**

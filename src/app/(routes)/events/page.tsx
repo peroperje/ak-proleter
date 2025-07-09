@@ -6,7 +6,7 @@ import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
 import EventCard from '@/app/components/events/EventCard';
-import { CalendarIcon } from '@/app/lib/icons';
+import { CalendarIcon } from '@/app/ui/icons';
 
 async function getEvents(): Promise<Event[]> {
   // Fetch events from the database

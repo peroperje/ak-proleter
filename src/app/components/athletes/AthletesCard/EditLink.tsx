@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { EditIcon } from '@/app/lib/icons';
+import { EditIcon } from '@/app/ui/icons';
 import Link from 'next/link';
 import { routes } from '@/app/lib/routes';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import CloseBtn from '@/app/components/CloseBtn';
-import { CalendarIcon } from '@/app/lib/icons';
+import { CalendarIcon } from '@/app/ui/icons';
 
 export default function LoadingNewEventPage() {
   return (

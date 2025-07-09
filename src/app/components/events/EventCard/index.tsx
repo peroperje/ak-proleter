@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
 import { routes } from '@/app/lib/routes';
-import { EditIcon, MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/lib/icons';
+import { EditIcon, MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/ui/icons';
 import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
 const IconComponent = EditIcon;

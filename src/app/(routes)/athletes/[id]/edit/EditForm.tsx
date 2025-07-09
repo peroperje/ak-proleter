@@ -4,7 +4,7 @@ import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { routes } from '@/app/lib/routes';
-import { UsersIcon } from '@/app/lib/icons';
+import { UsersIcon } from '@/app/ui/icons';
 import Link from 'next/link';
 
 interface Props {
