@@ -19,7 +19,7 @@ async function getEvents(): Promise<Event[]> {
 
   return dbEvents.map((event) => {
     // Determine event status based on dates
-    let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' = 'upcoming';
+    let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
     const now = new Date();
 
     if (event.endDate && event.endDate < now) {
