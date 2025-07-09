@@ -1,13 +1,20 @@
 import React, { use } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
 import { navItems } from '@/app/lib/routes';
+import { icons } from '@/app/lib/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
 import { getEventById, Category } from '@/app/lib/actions';
+
+const LocationIcon = icons.location;
+const DateFromIcon = icons.dateFrom;
+const DateToIcon = icons.dateTo;
+const CategoriesIcon = icons.categories;
 
 
 // Helper function to format date
@@ -135,11 +142,19 @@ export default function EventPage({ params }: EventPageProps) {
   return (
     <PageLayout title={event.name} action={editButton}>
       <Box
-        icon={navItems.events.icon}
+
         title={() => {
-          return <div className={'flex w-full items-center justify-between '}>
-            <span>Event Details</span>
-            <div className='mb-2 flex flex-wrap items-center justify-center gap-2'>
+          return <div className={'flex w-full items-center gap-2 '}>
+            <div className='relative  w-10 h-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
+              <Image
+                src={`/event-img/${event.type}.png`}
+                alt={`${event.type} event`}
+                fill
+                className='object-contain p-1'
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </div>
+
               <span
                 className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${typeStyles[event.type]}`}
               >
@@ -150,19 +165,23 @@ export default function EventPage({ params }: EventPageProps) {
               >
                 {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
               </span>
-            </div>
+
           </div>;
         }}
       >
         <div className='flex flex-col space-y-6'>
           {/* Header section with name, organizer, and badges */}
-          <div className='mb-4 flex flex-col items-center space-y-2'>
+          <div className='mb-4 flex flex-col items-center space-y-4'>
 
             <h1 className='text-center text-2xl font-bold text-gray-900 dark:text-white'>
               {event.name}
             </h1>
             <p className='text-center text-lg text-gray-600 dark:text-neutral-400'>
               Organized by: {event.organizer}
+            </p>
+
+            <p className='text-sm font-bold text-gray-500 dark:text-neutral-400 flex items-center justify-center'>
+              <LocationIcon className="mr-1" size={16} /> {event.location}
             </p>
             {/* Map component */}
             <div className='h-[200px] w-full overflow-hidden rounded-md'>
@@ -171,60 +190,47 @@ export default function EventPage({ params }: EventPageProps) {
           </div>
 
           {/* Event details grid */}
-          <div className='grid grid-cols-1 gap-6 rounded-lg bg-gray-50 p-4 md:grid-cols-2 dark:bg-neutral-800'>
+          <div className='grid grid-cols-1 gap-6 rounded-lg   p-4 md:grid-cols-1 dark:bg-neutral-800'>
             {/* Date and time section */}
-            <div className='flex flex-col space-y-2'>
-              <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
-                Date & Time
-              </h3>
-              <div className='grid grid-cols-2 gap-4'>
-                <div>
-                  <p className='text-sm text-gray-500 dark:text-neutral-400'>
-                    Start:
+
+              <div className='flex flex-wrap gap-4  w-full'>
+                <div className={'flex-auto bg-gray-50 p-3 rounded-md'}>
+                  <p className='text-sm text-gray-500 dark:text-neutral-400 flex items-center'>
+                    <DateFromIcon className="mr-1" size={16} /> Start:
                   </p>
-                  <p className='text-base text-gray-900 dark:text-white'>
+                  <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
                     {formatDate(event.startDate)}
                   </p>
                 </div>
-                <div>
-                  <p className='text-sm text-gray-500 dark:text-neutral-400'>
-                    End:
+                <div className={'flex-auto bg-gray-50 p-3 rounded-md'}>
+                  <p className='text-sm text-gray-500 dark:text-neutral-400 flex items-center'>
+                    <DateToIcon className="mr-1" size={16} /> End:
                   </p>
-                  <p className='text-base text-gray-900 dark:text-white'>
+                  <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
                     {formatDate(event.endDate)}
                   </p>
                 </div>
+
+                {/* Categories section */}
+                <div className={'flex-auto bg-gray-50 p-3 rounded-md'}>
+                  <p className='text-sm text-gray-500 dark:text-neutral-400 flex items-center'>
+                    <CategoriesIcon className="mr-1" size={16} /> Categories
+                  </p>
+                  <p className='text-sm text-center font-bold text-gray-500 dark:text-neutral-400'>
+                    {event.category && event.category.length > 0
+                      ? event.category.map((cat: Category) => cat.name).join(', ')
+                      : 'All categories'}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {/* Location section */}
-            <div className='flex flex-col space-y-2'>
-              <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
-                Location
-              </h3>
-              <p className='text-base text-gray-900 dark:text-white'>
-                {event.location}
-              </p>
-            </div>
 
-            {/* Categories section */}
-            <div className='flex flex-col space-y-2'>
-              <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
-                Categories
-              </h3>
-              <p className='text-base text-gray-900 dark:text-white'>
-                {event.category && event.category.length > 0
-                  ? event.category.map((cat: Category) => cat.name).join(', ')
-                  : 'All categories'}
-              </p>
-            </div>
+
+
 
             {/* Description section */}
-            <div className='flex flex-col space-y-2 md:col-span-2'>
-              <h3 className='text-lg font-medium text-gray-900 dark:text-white'>
-                Description
-              </h3>
-              <p className='text-base whitespace-pre-wrap text-gray-900 dark:text-white'>
+            <div className='flex flex-col space-y-2 md:col-span-2  p-3 rounded-md'>
+              <p className='text-sm whitespace-pre-wrap text-gray-500 dark:text-neutral-400'>
                 {event.description || 'No description provided.'}
               </p>
             </div>
