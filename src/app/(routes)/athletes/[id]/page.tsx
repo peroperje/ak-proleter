@@ -5,10 +5,10 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes/index';
 import CloseBtn from '@/app/components/CloseBtn';
 import ProfileInfoBoxContent from '@/app/components/athletes/ProfileInfoBoxContent';
 import ContactBoxContent from '@/app/components/athletes/ContactBoxContent';
+import { UsersIcon, RunningIcon, MailIcon } from '@/app/lib/icons';
 
 // Function to fetch athlete by ID
 async function getAthleteById(id: string): Promise<Athlete | null> {
@@ -57,7 +57,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   if (!athlete) {
     return (
       <PageLayout title='Athlete Not Found'>
-        <Box icon={navItems.athletes.icon} title='Error' variants='error'>
+        <Box icon={UsersIcon} title='Error' variants='error'>
           <p className='text-red-500'>
             The athlete you are looking for does not exist.
           </p>
@@ -76,7 +76,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
         {/* Profile Information */}
         <div className='md:col-span-1'>
-          <Box icon={'running'} title='Profile Information'>
+          <Box icon={RunningIcon} title='Profile Information'>
             <Suspense fallback={<>Loading</>}>
               <ProfileInfoBoxContent {...athlete} />
             </Suspense>
@@ -85,7 +85,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
         {/* Contacts  */}
         <div className='md:col-span-1'>
-          <Box title='Contacts' icon={'mail'}>
+          <Box title='Contacts' icon={MailIcon}>
             <Suspense fallback={<>loding...</>}>
               <ContactBoxContent {...athlete} />
             </Suspense>

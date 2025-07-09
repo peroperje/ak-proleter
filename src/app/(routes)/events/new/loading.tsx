@@ -2,12 +2,12 @@ import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import CloseBtn from '@/app/components/CloseBtn';
-import { navItems } from '@/app/lib/routes/index';
+import { CalendarIcon } from '@/app/lib/icons';
 
 export default function LoadingNewEventPage() {
   return (
     <PageLayout title={'New Event'} action={<CloseBtn />}>
-      <Box icon={navItems.events.icon} title='Loading form...'>
+      <Box icon={CalendarIcon} title='Loading form...'>
         <div className='animate-pulse'>
           <div className='space-y-6'>
             {/* Form fields skeleton */}

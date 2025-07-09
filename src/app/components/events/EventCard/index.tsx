@@ -2,15 +2,15 @@ import React, { PropsWithChildren } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
-import { routes } from '@/app/lib/routes/index';
-import { icons } from '@/app/lib/icons';
+import { routes } from '@/app/lib/routes';
+import { EditIcon, MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/lib/icons';
 import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
-const IconComponent = icons.edit;
-const LocationIcon = icons.location;
-const DateFromIcon = icons.dateFrom;
-const DateToIcon = icons.dateTo;
-const CategoriesIcon = icons.categories;
+const IconComponent = EditIcon;
+const LocationIcon = MapPinIcon;
+const DateFromIcon = CalendarIcon;
+const DateToIcon = ClockIcon;
+const CategoriesIcon = TagIcon;
 
 interface EventCardProps {
   event: Event;

@@ -3,7 +3,8 @@ import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
-import { navItems, routes } from '@/app/lib/routes/index';
+import { routes } from '@/app/lib/routes';
+import { UsersIcon } from '@/app/lib/icons';
 import Link from 'next/link';
 
 interface Props {
@@ -36,7 +37,7 @@ export default function EditForm({ user, userId }: Props) {
 
   return (
     <Box
-      icon={navItems.athletes.icon}
+      icon={UsersIcon}
       title={() => {
         if (state.status === 'success') {
           return (

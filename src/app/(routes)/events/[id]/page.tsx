@@ -4,16 +4,16 @@ import { notFound } from 'next/navigation';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
-import { icons } from '@/app/lib/icons';
+import { MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/lib/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
 import { getEventById, Category } from '@/app/lib/actions';
 import CloseBtn from '@/app/components/CloseBtn';
 import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
 
-const LocationIcon = icons.location;
-const DateFromIcon = icons.dateFrom;
-const DateToIcon = icons.dateTo;
-const CategoriesIcon = icons.categories;
+const LocationIcon = MapPinIcon;
+const DateFromIcon = CalendarIcon;
+const DateToIcon = ClockIcon;
+const CategoriesIcon = TagIcon;
 
 // Helper function to format date
 function formatDate(date: Date): string {

@@ -1,10 +1,10 @@
 import React, { ReactElement, PropsWithChildren } from 'react';
-import { icons, IconType } from '@/app/lib/icons';
+import { IconType as ReactIconType } from 'react-icons';
 import clsx from 'clsx';
 
 interface Props {
   title: string | (() => React.ReactNode);
-  icon?: IconType;
+  icon?: ReactIconType;
   variants?: 'success' | 'error' | 'warning' | 'info' | 'default';
 }
 
@@ -14,7 +14,7 @@ const Box: React.FC<PropsWithChildren<Props>> = ({
   children,
   variants,
 }): ReactElement => {
-  const IconComponent = icon ? icons[icon] : null;
+  const IconComponent = icon;
   const titleContent = typeof title === 'function' ? title() : title;
 
   return (

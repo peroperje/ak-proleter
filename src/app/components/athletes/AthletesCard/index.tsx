@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 import { Athlete } from '@/app/lib/definitions';
-import {  routes } from '@/app/lib/routes/index';
+import { routes } from '@/app/lib/routes';
 import EditLink from '@/app/components/athletes/AthletesCard/EditLink';
 
 interface UserCardProps {

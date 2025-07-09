@@ -4,12 +4,11 @@ import Box from '@/app/components/Box';
 import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
-import { icons } from '@/app/lib/icons';
+import { UserPlusIcon, UsersIcon } from '@/app/lib/icons';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes/index';
 import AthletesCard from '@/app/components/athletes/AthletesCard';
 
-const IconComponent = icons.addUser;
+const IconComponent = UserPlusIcon;
 
 // Add generateStaticParams to pre-render static paths
 export async function generateStaticParams() {
@@ -84,7 +83,7 @@ export default function AthletesPage() {
         </Link>
       }
     >
-      <Box icon={navItems.athletes.icon} title='Athlete List'>
+      <Box icon={UsersIcon} title='Athlete List'>
         <Suspense fallback={<>Loading athletes...</>}>
           <AthleteList athletes={athletes} />
         </Suspense>

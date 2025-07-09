@@ -6,7 +6,6 @@ import {
   FiActivity,
   FiBriefcase,
   FiBarChart2,
-  FiBox,
   FiUserPlus,
   FiMail,
   FiEdit,
@@ -17,29 +16,21 @@ import {
 
 import { FaRunning } from 'react-icons/fa';
 
-// Export all icons used in the application
-export const icons = {
-  // Navigation icons
-  dashboard: FiHome,
-  athletes: FiUsers,
-  events: FiCalendar,
-  results: FiAward,
-  training: FiActivity,
-  coaches: FiBriefcase,
-  reports: FiBarChart2,
-  addUser: FiUserPlus,
-  running: FaRunning,
-  mail: FiMail,
-
-  box: FiBox,
-  edit: FiEdit,
-
-  // Event card icons
-  location: FiMapPin,
-  dateFrom: FiCalendar,
-  dateTo: FiClock,
-  categories: FiTag,
+// Direct exports of icons for use in components
+export {
+  FiHome as HomeIcon,
+  FiUsers as UsersIcon,
+  FiCalendar as CalendarIcon,
+  FiAward as AwardIcon,
+  FiActivity as ActivityIcon,
+  FiBriefcase as BriefcaseIcon,
+  FiBarChart2 as BarChartIcon,
+  FiUserPlus as UserPlusIcon,
+  FiMail as MailIcon,
+  FiEdit as EditIcon,
+  FiMapPin as MapPinIcon,
+  FiClock as ClockIcon,
+  FiTag as TagIcon,
+  FaRunning as RunningIcon
 };
 
-// Export icon types
-export type IconType = keyof typeof icons;

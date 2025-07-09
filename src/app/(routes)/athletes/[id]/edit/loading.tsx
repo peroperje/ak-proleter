@@ -1,14 +1,14 @@
 import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
-import { navItems } from '@/app/lib/routes/index';
 import CloseBtn from '@/app/components/CloseBtn';
+import { UsersIcon } from '@/app/lib/icons';
 
 export default function LoadingEditAthletePage() {
   return (
     <PageLayout title={'Edit Athlete'}>
       <CloseBtn />
-      <Box icon={navItems.athletes.icon} title='Loading athlete data...'>
+      <Box icon={UsersIcon} title='Loading athlete data...'>
         <div className='animate-pulse'>
           <div className='space-y-6'>
             {/* Form fields skeleton */}

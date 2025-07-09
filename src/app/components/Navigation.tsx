@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { navItems } from '@/app/lib/routes/index';
-import { icons } from '@/app/lib/icons';
+import { navItems } from '@/app/lib/routes';
 import Logo from './Logo';
 
 interface NavigationProps {
@@ -17,7 +16,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
             <Logo className='mr-8' />
             <nav className='hidden space-x-4 md:flex'>
               {Object.values(navItems).map((item) => {
-                const IconComponent = item.icon ? icons[item.icon] : null;
+                const IconComponent = item.icon;
                 return (
                   <Link
                     key={item.name}
@@ -53,7 +52,7 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
       <div className='border-t border-gray-200 md:hidden dark:border-neutral-700'>
         <div className='space-y-1 px-2 py-3'>
           {Object.values(navItems).map((item) => {
-            const IconComponent = item.icon ? icons[item.icon] : null;
+            const IconComponent = item.icon;
             return (
               <Link
                 key={item.name}

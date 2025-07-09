@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import LocationField from '@/app/components/events/EventForm/LocationField';
-import {  routes } from '@/app/lib/routes/index';
+import { routes } from '@/app/lib/routes';
 import Box from '@/app/components/Box';
 import React, { useActionState, useEffect } from 'react';
+import { CalendarIcon } from '@/app/lib/icons';
 
 export interface EventFormData {
   title: string;
@@ -58,7 +59,7 @@ const EventForm: React.FC<EventFormProps> = ({
 
   return (
     <Box
-      icon={'events'}
+      icon={CalendarIcon}
       title={state.message || initialState.message || ''}
       variants={((status) => {
         switch (status) {

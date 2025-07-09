@@ -15,7 +15,16 @@ import {
   validateCoachPath,
   validateReportPath
 } from './utils';
-import { IconType } from '../icons';
+import { IconType as ReactIconType } from 'react-icons';
+import {
+  HomeIcon,
+  UsersIcon,
+  CalendarIcon,
+  AwardIcon,
+  ActivityIcon,
+  BriefcaseIcon,
+  BarChartIcon
+} from '../icons';
 
 // Re-export NavItems and NavItem types from the old routes.ts file
 /**
@@ -25,7 +34,7 @@ export interface NavItem {
   name: string;
   href: (params?: Record<string, string>) => string;
   description?: string;
-  icon?: IconType;
+  icon?: ReactIconType;
 }
 
 export interface NavItems {
@@ -99,7 +108,7 @@ export const navItems: NavItems = {
     name: 'Dashboard',
     href: () => '/',
     description: 'View overall statistics and recent activities.',
-    icon: 'dashboard',
+    icon: HomeIcon,
   },
   athletes: {
     name: 'Athletes',
@@ -111,7 +120,7 @@ export const navItems: NavItems = {
     },
     description:
       'Manage athlete profiles, view statistics, and track progress.',
-    icon: 'athletes',
+    icon: UsersIcon,
   },
   events: {
     name: 'Events',
@@ -123,7 +132,7 @@ export const navItems: NavItems = {
       return `/events/${id}`;
     },
     description: 'Manage competitions, training sessions, and other events.',
-    icon: 'events',
+    icon: CalendarIcon,
   },
   results: {
     name: 'Results',
@@ -134,7 +143,7 @@ export const navItems: NavItems = {
       return '/results';
     },
     description: 'Record and analyze athlete performance results.',
-    icon: 'results',
+    icon: AwardIcon,
   },
   training: {
     name: 'Training',
@@ -145,7 +154,7 @@ export const navItems: NavItems = {
       return '/training';
     },
     description: 'Plan and track training sessions and exercises.',
-    icon: 'training',
+    icon: ActivityIcon,
   },
   coaches: {
     name: 'Coaches',
@@ -156,7 +165,7 @@ export const navItems: NavItems = {
       return '/coaches';
     },
     description: 'Manage coach profiles and assignments.',
-    icon: 'coaches',
+    icon: BriefcaseIcon,
   },
   reports: {
     name: 'Reports',
@@ -167,6 +176,6 @@ export const navItems: NavItems = {
       return '/reports';
     },
     description: 'Generate reports and analytics on athlete performance.',
-    icon: 'reports',
+    icon: BarChartIcon,
   },
 };

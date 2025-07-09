@@ -5,8 +5,8 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes/index';
 import EventCard from '@/app/components/events/EventCard';
+import { CalendarIcon } from '@/app/lib/icons';
 
 async function getEvents(): Promise<Event[]> {
   // Fetch events from the database
@@ -61,7 +61,7 @@ export default async function EventsPage() {
 
   return (
     <PageLayout title='Events' action={addEventButton}>
-      <Box icon={navItems.events.icon} title='Event List'>
+      <Box icon={CalendarIcon} title='Event List'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
           {events.map((event) => (
             <EventCard key={event.id} event={event} />

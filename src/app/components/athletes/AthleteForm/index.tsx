@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { ActionState } from '@/app/lib/actions';
-import { routes } from '@/app/lib/routes/index';
+import { routes } from '@/app/lib/routes';
 import clsx from 'clsx';
 import ProfileUrlInputField from '@/app/components/athletes/AthleteForm/ProfileUrlInputField';
 
