@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import CloseBtn from '@/app/components/CloseBtn';
+import { MailIcon, RunningIcon } from '@/app/ui/icons';
 
 export default function LoadingAthletePage() {
   return (
@@ -9,7 +10,7 @@ export default function LoadingAthletePage() {
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
         {/* Profile Information Skeleton */}
         <div className='md:col-span-1'>
-          <Box icon={'running'} title='Profile Information'>
+          <Box icon={RunningIcon} title='Profile Information'>
             <div className='mb-6 flex flex-col items-start md:flex-row'>
               <div className='mr-4 mb-4 md:mb-0'>
                 {/* Avatar skeleton */}
@@ -55,7 +56,7 @@ export default function LoadingAthletePage() {
 
         {/* Contacts Skeleton */}
         <div className='md:col-span-1'>
-          <Box title='Contacts' icon={'mail'}>
+          <Box title='Contacts' icon={MailIcon}>
             <div className='flex flex-wrap justify-between gap-4 md:gap-6'>
               {/* Phone skeleton */}
               <div>

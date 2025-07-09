@@ -1,10 +1,10 @@
 'use client';
-import Box from '@/app/components/Box';
+import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
-
+import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
 import { ActionState, createAthlete } from '@/app/lib/actions';
-import { useActionState, useEffect } from 'react';
+import { UserPlusIcon } from '@/app/ui/icons';
 import CloseBtn from '@/app/components/CloseBtn';
 
 export default function NewAthletePage() {
@@ -33,7 +33,7 @@ export default function NewAthletePage() {
     <PageLayout title={'New Athlete'}>
       <CloseBtn />
       <Box
-        icon={'addUser'}
+        icon={UserPlusIcon}
         title={state.message || initialState.message || ''}
         variants={((status) => {
           switch (status) {
