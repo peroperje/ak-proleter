@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 import { Athlete } from '@/app/lib/definitions';
-import { navItems } from '@/app/lib/routes';
+import {  routes } from '@/app/lib/routes/index';
 import EditLink from '@/app/components/athletes/AthletesCard/EditLink';
 
 interface UserCardProps {
@@ -24,8 +24,8 @@ const AthletesCard: React.FC<UserCardProps> = ({ athlete }) => {
 
   return (
     <div className='relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-neutral-700/70'>
-      <EditLink />
-      <Link href={navItems.athletes.href({ id: athlete.id })}>
+      <EditLink id={athlete.id} />
+      <Link href={routes.athletes.detail(athlete.id)} passHref={true}>
         <div className='flex flex-col items-center p-4'>
           <div className='mb-4 flex w-full items-center justify-between'>
             <span

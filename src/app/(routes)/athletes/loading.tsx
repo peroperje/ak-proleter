@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
-import { navItems } from '@/app/lib/routes';
+import { navItems } from '@/app/lib/routes/index';
 import AthletesCardSkeleton from '@/app/components/athletes/AthletesCard/AthletesCardSkeleton';
 
 export default function LoadingAthletesPage() {

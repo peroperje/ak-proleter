@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { ActionState } from '@/app/lib/actions';
-import { navItems } from '@/app/lib/routes';
+import { routes } from '@/app/lib/routes/index';
 import clsx from 'clsx';
 import ProfileUrlInputField from '@/app/components/athletes/AthleteForm/ProfileUrlInputField';
 
@@ -293,7 +293,7 @@ export default function AthleteForm({
       <div className='grid grid-cols-2 gap-4'>
         <button
           type='button'
-          onClick={() => router.push(navItems.athletes.href())}
+          onClick={() => router.push(routes.athletes.list())}
           className='inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white'
           disabled={isSubmitting}
         >

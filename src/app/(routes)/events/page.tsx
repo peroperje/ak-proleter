@@ -5,7 +5,7 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes';
+import { navItems } from '@/app/lib/routes/index';
 import EventCard from '@/app/components/events/EventCard';
 
 async function getEvents(): Promise<Event[]> {

@@ -3,7 +3,7 @@ import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
 import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
-import { navItems } from '@/app/lib/routes';
+import { navItems, routes } from '@/app/lib/routes/index';
 import Link from 'next/link';
 
 interface Props {
@@ -44,7 +44,8 @@ export default function EditForm({ user, userId }: Props) {
               Athlete{' '}
               <Link
                 className={'font-bold text-blue-500 underline'}
-                href={navItems.athletes.href({ id: userId })}
+                href={routes.athletes.detail(userId)}
+                passHref={true}
               >
                 {user.firstName} {user.lastName}
               </Link>{' '}

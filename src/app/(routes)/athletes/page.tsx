@@ -6,7 +6,7 @@ import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
 import { icons } from '@/app/lib/icons';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes';
+import { navItems } from '@/app/lib/routes/index';
 import AthletesCard from '@/app/components/athletes/AthletesCard';
 
 const IconComponent = icons.addUser;
@@ -76,7 +76,7 @@ export default function AthletesPage() {
     <PageLayout
       title='Athletes'
       action={
-        <Link href='athletes/new' passHref>
+        <Link href='/athletes/new' passHref>
           <Button variant='submit'>
             <IconComponent size={20} />
             Add Athlete

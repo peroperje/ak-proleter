@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import LocationField from '@/app/components/events/EventForm/LocationField';
-import { navItems } from '@/app/lib/routes';
+import {  routes } from '@/app/lib/routes/index';
 import Box from '@/app/components/Box';
 import React, { useActionState, useEffect } from 'react';
 
@@ -301,7 +301,7 @@ const EventForm: React.FC<EventFormProps> = ({
         <div className='grid grid-cols-2 gap-4'>
           <button
             type='button'
-            onClick={() => router.push(navItems.events.href())}
+            onClick={() => router.push(routes.events.list())}
             className='inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none dark:border-neutral-700 dark:text-neutral-300 dark:hover:text-white'
             disabled={isSubmitting}
           >

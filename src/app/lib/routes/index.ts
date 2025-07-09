@@ -15,6 +15,22 @@ import {
   validateCoachPath,
   validateReportPath
 } from './utils';
+import { IconType } from '../icons';
+
+// Re-export NavItems and NavItem types from the old routes.ts file
+/**
+ * @deprecated
+ */
+export interface NavItem {
+  name: string;
+  href: (params?: Record<string, string>) => string;
+  description?: string;
+  icon?: IconType;
+}
+
+export interface NavItems {
+  [key: string]: NavItem;
+}
 
 /**
  * Type-safe route helpers for the application
@@ -76,3 +92,81 @@ export const routes = {
 // Re-export types for convenience
 export * from './types';
 export * from './utils';
+
+// Export navItems for backward compatibility
+export const navItems: NavItems = {
+  dashboard: {
+    name: 'Dashboard',
+    href: () => '/',
+    description: 'View overall statistics and recent activities.',
+    icon: 'dashboard',
+  },
+  athletes: {
+    name: 'Athletes',
+    href: (params?: Record<string, string>) => {
+      if (params?.id) {
+        return `/athletes/${params.id}`;
+      }
+      return '/athletes';
+    },
+    description:
+      'Manage athlete profiles, view statistics, and track progress.',
+    icon: 'athletes',
+  },
+  events: {
+    name: 'Events',
+    href: (params?: Record<string, string>) => {
+      if (!params) return '/events';
+      const { id, action } = params;
+      if (!id) return '/events';
+      if (action) return `/events/${id}/${action}`;
+      return `/events/${id}`;
+    },
+    description: 'Manage competitions, training sessions, and other events.',
+    icon: 'events',
+  },
+  results: {
+    name: 'Results',
+    href: (params?: Record<string, string>) => {
+      if (params?.id) {
+        return `/results/${params.id}`;
+      }
+      return '/results';
+    },
+    description: 'Record and analyze athlete performance results.',
+    icon: 'results',
+  },
+  training: {
+    name: 'Training',
+    href: (params?: Record<string, string>) => {
+      if (params?.id) {
+        return `/training/${params.id}`;
+      }
+      return '/training';
+    },
+    description: 'Plan and track training sessions and exercises.',
+    icon: 'training',
+  },
+  coaches: {
+    name: 'Coaches',
+    href: (params?: Record<string, string>) => {
+      if (params?.id) {
+        return `/coaches/${params.id}`;
+      }
+      return '/coaches';
+    },
+    description: 'Manage coach profiles and assignments.',
+    icon: 'coaches',
+  },
+  reports: {
+    name: 'Reports',
+    href: (params?: Record<string, string>) => {
+      if (params?.id) {
+        return `/reports/${params.id}`;
+      }
+      return '/reports';
+    },
+    description: 'Generate reports and analytics on athlete performance.',
+    icon: 'reports',
+  },
+};

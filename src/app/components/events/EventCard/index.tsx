@@ -77,7 +77,7 @@ const EventCard: React.FC<EventCardProps> = ({
       >
         <IconComponent />
       </Link>
-      <Link href={routes.events.detail(id)}>
+      <Link href={routes.events.detail(id)} passHref={true}>
         <div className='flex h-full flex-col'>
           <div className='p-4'>
             <div className='mb-4 flex flex-wrap items-center gap-2 py-2'>

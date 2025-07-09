@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { navItems } from '@/app/lib/routes';
+import { navItems } from '@/app/lib/routes/index';
 import { icons } from '@/app/lib/icons';
 import Logo from './Logo';
 

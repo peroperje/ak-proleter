@@ -5,7 +5,7 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Athlete } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
-import { navItems } from '@/app/lib/routes';
+import { navItems } from '@/app/lib/routes/index';
 import CloseBtn from '@/app/components/CloseBtn';
 import ProfileInfoBoxContent from '@/app/components/athletes/ProfileInfoBoxContent';
 import ContactBoxContent from '@/app/components/athletes/ContactBoxContent';
