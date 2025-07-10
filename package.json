@@ -13,9 +13,7 @@
     "db:stop": "docker-compose down",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
-    "db:seed": "prisma db seed",
-    "migrate:profiles": "node --loader ts-node/esm src/scripts/migrate-and-populate-profiles.ts",
-    "test:profiles": "node --loader ts-node/esm src/scripts/test-profile-migration.ts"
+    "db:seed": "prisma db seed"
   },
   "type": "module",
   "prisma": {

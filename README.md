@@ -163,7 +163,22 @@ To verify that the migration was successful, you can run:
 pnpm test:profiles
 ```
 
-For more details, see the [Profile Migration Documentation](./src/scripts/README.md).
+#### Optional User-Profile Relationship
+
+The User-Profile relationship has been made optional, allowing profiles to exist without being associated with a user. This enables:
+- Importing athlete data from external sources before creating user accounts
+- More flexibility in data management
+- A more gradual onboarding process
+
+To apply this migration, run:
+
+```bash
+pnpm migrate:optional-user
+```
+
+This will update the database schema and test creating a profile without a user to verify the changes.
+
+For more details on both migrations, see the [Profile Migration Documentation](./src/scripts/README.md).
 
 ## License
 
