@@ -176,33 +176,6 @@ export default function AthleteForm({
       <div className='grid grid-cols-1 gap-4'>
         <div>
           <label
-            htmlFor='email'
-            className={clsx('block text-sm font-bold dark:text-white', {
-              'text-red-500': !!state.errors.email,
-            })}
-          >
-            Email
-          </label>
-          <input
-            id='email'
-            name='email'
-            type='email'
-            defaultValue={state.data?.email}
-            className={clsx(
-              'block w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600',
-              {
-                'border-red-500': !!state.errors.email,
-              },
-            )}
-          />
-          {!!state.errors.email && (
-            <p className='text-sm text-red-500 dark:text-neutral-400'>
-              {state.errors.email}
-            </p>
-          )}
-        </div>
-        <div>
-          <label
             htmlFor='phone'
             className={clsx('block text-sm font-bold dark:text-white', {
               'text-red-500': !!state.errors.phone,

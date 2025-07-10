@@ -10,7 +10,6 @@ export interface AthleteFormData {
   lastName: string;
   dateOfBirth: Date;
   gender: 'male' | 'female';
-  email?: string;
   phone?: string;
   address?: string;
   notes?: string;
@@ -28,7 +27,6 @@ const athleteSchema = yup.object().shape({
     .string()
     .oneOf(['male', 'female'], 'Gender must be male or female')
     .required('Gender is required'),
-  email: yup.string().email('Invalid email format').optional(),
   phone: yup.string().optional(),
   address: yup.string().optional(),
   notes: yup.string().optional(),
@@ -62,7 +60,6 @@ function getAthleteObjectFromFormData(payload: FormData): AthleteFormData {
   const lastName = payload.get('lastName') as string;
   const dateOfBirth = payload.get('dateOfBirth') as string;
   const gender = payload.get('gender') as 'male' | 'female';
-  const email = (payload.get('email') as string) || undefined;
   const phone = (payload.get('phone') as string) || undefined;
   const address = (payload.get('address') as string) || undefined;
   const notes = (payload.get('notes') as string) || undefined;
@@ -73,7 +70,6 @@ function getAthleteObjectFromFormData(payload: FormData): AthleteFormData {
     lastName,
     dateOfBirth: new Date(dateOfBirth),
     gender,
-    email,
     phone,
     address,
     notes,
@@ -126,35 +122,21 @@ export async function createAthlete(_state: ActionState, payload: FormData) {
 
     const category = await getCategoryByDateOfBirth(formattedData.dateOfBirth);
 
-    // Create a new user with a profile
-    await prisma.user.create({
+    // Create only a profile, not a user
+    await prisma.profile.create({
       data: {
         name: `${formattedData.firstName} ${formattedData.lastName}`,
-        email:
-          formattedData.email ||
-          `${formattedData.firstName.toLowerCase()}.${formattedData.lastName.toLowerCase()}@example.com`,
-        passwordHash: 'placeholder', // In a real app, this would be properly hashed
-        role: 'MEMBER',
-        profile: {
-          create: {
-            name: `${formattedData.firstName} ${formattedData.lastName}`,
-            dateOfBirth: new Date(formattedData.dateOfBirth),
-            phoneNumber: formattedData.phone,
-            address: formattedData.address,
-            bio: formattedData.notes,
-            avatarUrl: formattedData.photoUrl,
-            gender: formattedData.gender,
-            categoryId: category?.id || null,
-            openTrackId:  null,
-          },
-        },
+        dateOfBirth: new Date(formattedData.dateOfBirth),
+        phoneNumber: formattedData.phone,
+        address: formattedData.address,
+        bio: formattedData.notes,
+        avatarUrl: formattedData.photoUrl,
+        gender: formattedData.gender,
+        categoryId: category?.id || null,
+        openTrackId: null,
       },
       include: {
-        profile: {
-          include: {
-            category: true,
-          },
-        },
+        category: true,
       },
     });
     revalidatePath('/athletes');
@@ -284,7 +266,6 @@ export async function getAthleteById(
     const profile = await prisma.profile.findUnique({
       where: { id },
       include: {
-        user:true,
         category: true,
       },
     });
@@ -299,7 +280,6 @@ export async function getAthleteById(
       lastName: profile.name.split(' ').slice(1).join(' '),
       dateOfBirth: new Date(profile.dateOfBirth as Date),
       gender: profile?.gender === 'male' ? 'male' : ('female' as const), // Default to male if not specified
-      email: profile?.user?.email,
       phone: profile.phoneNumber || undefined,
       address: profile.address || undefined,
       notes: profile.bio || undefined,
