@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+//import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -15,6 +15,7 @@ async function main() {
   await prisma.category.deleteMany();
 
   console.log('Existing data cleared');
+/*
 
   // Create categories
   const seniorCategory = await prisma.category.create({
@@ -273,6 +274,7 @@ async function main() {
   });
 
   console.log('Results created');
+*/
 
   console.log('Database seeding completed');
 }

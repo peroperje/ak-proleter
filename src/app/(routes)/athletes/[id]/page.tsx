@@ -12,27 +12,23 @@ import { UsersIcon, RunningIcon, MailIcon } from '@/app/ui/icons';
 
 // Function to fetch athlete by ID
 async function getAthleteById(id: string): Promise<Athlete | null> {
-  // Fetch user with a MEMBER role from the database
-  const user = await prisma.user.findUnique({
+
+  const athleteProfile = await prisma.profile.findUnique({
     where: {
-      id: id,
-      role: 'MEMBER',
+      id: id
     },
     include: {
-      profile: {
-        include: {
-          category: true,
-        },
-      },
-    },
+      user: true,
+      category: true
+    }
   });
 
-  if (!user) {
+  if (!athleteProfile) {
     return null;
   }
 
   // Transform the user data to match the Athlete interface
-  return {
+  /*return {
     id: user.id,
     firstName: user.name.split(' ')[0],
     lastName: user.name.split(' ').slice(1).join(' '),
@@ -46,8 +42,25 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
     address: user.profile?.address,
     notes: user.profile?.bio,
     photoUrl: user.profile?.avatarUrl || undefined,
-  };
+  };*/
+  return {
+    id: athleteProfile.id,
+    firstName: athleteProfile.name.split(' ')[0],
+    lastName: athleteProfile.name.split(' ').slice(1).join(' '),
+    dateOfBirth: athleteProfile?.dateOfBirth || new Date(),
+    gender: athleteProfile?.gender === 'male' ? 'male' : 'female',
+    email: athleteProfile?.user?.email || '',
+    phone: athleteProfile?.phoneNumber || undefined,
+    joinDate: athleteProfile?.user?.createdAt,
+    active: true, // This information is not in the schema, defaulting to true
+    categories: athleteProfile?.category ? [athleteProfile.category.name] : [],
+    address: athleteProfile?.address,
+    notes: athleteProfile?.bio,
+    photoUrl: athleteProfile?.avatarUrl || undefined
+  }
 }
+
+
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   // Fetch athlete data
@@ -56,14 +69,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   if (!athlete) {
     return (
-      <PageLayout title='Athlete Not Found'>
-        <Box icon={UsersIcon} title='Error' variants='error'>
-          <p className='text-red-500'>
+      <PageLayout title="Athlete Not Found">
+        <Box icon={UsersIcon} title="Error" variants="error">
+          <p className="text-red-500">
             The athlete you are looking for does not exist.
           </p>
-          <div className='mt-4'>
-            <Link href='/athletes'>
-              <Button variant='outline'>Back to Athletes</Button>
+          <div className="mt-4">
+            <Link href="/athletes">
+              <Button variant="outline">Back to Athletes</Button>
             </Link>
           </div>
         </Box>
@@ -73,10 +86,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <PageLayout title={''} action={<CloseBtn />}>
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Profile Information */}
-        <div className='md:col-span-1'>
-          <Box icon={RunningIcon} title='Profile Information'>
+        <div className="md:col-span-1">
+          <Box icon={RunningIcon} title="Profile Information">
             <Suspense fallback={<>Loading</>}>
               <ProfileInfoBoxContent {...athlete} />
             </Suspense>
@@ -84,8 +97,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         </div>
 
         {/* Contacts  */}
-        <div className='md:col-span-1'>
-          <Box title='Contacts' icon={MailIcon}>
+        <div className="md:col-span-1">
+          <Box title="Contacts" icon={MailIcon}>
             <Suspense fallback={<>loding...</>}>
               <ContactBoxContent {...athlete} />
             </Suspense>

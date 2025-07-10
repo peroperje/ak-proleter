@@ -12,7 +12,7 @@ export interface Athlete {
   email?: string;
   phone?: string;
   address: string | null | undefined;
-  joinDate: Date;
+  joinDate?: Date;
   active: boolean;
   categories?: string[]; // Age categories or competition categories
   notes: string | null | undefined;

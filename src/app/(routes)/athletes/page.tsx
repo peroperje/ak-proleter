@@ -27,33 +27,27 @@ export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
 async function getAthletes(): Promise<Athlete[]> {
-  // Fetch users with a MEMBER role from the database
-  const users = await prisma.user.findMany({
-    where: { role: 'MEMBER' },
+
+  const profile = await prisma.profile.findMany({
     include: {
-      profile: {
-        include: {
-          category: true,
-        },
-      },
+      user: true,
+      category: true,
     },
   });
-
-  // Transform the user data to match the Athlete interface
-  return users.map((user) => ({
-    id: user.id,
-    firstName: user.name.split(' ')[0],
-    lastName: user.name.split(' ').slice(1).join(' '),
-    dateOfBirth: user.profile?.dateOfBirth || new Date(),
-    gender: user.profile?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
-    email: user.email,
-    phone: user.profile?.phoneNumber || undefined,
-    joinDate: user.createdAt,
+  return profile.map((profile) => ({
+    id: profile.id,
+    firstName: profile.name.split(' ')[0],
+    lastName: profile.name.split(' ').slice(1).join(' '),
+    dateOfBirth: profile?.dateOfBirth || new Date(),
+    gender: profile?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
+    email: profile?.user?.email || '',
+    phone: profile?.phoneNumber || undefined,
+    joinDate: profile?.user?.createdAt,
     active: true, // This information is not in the schema, defaulting to true
-    categories: user.profile?.category ? [user.profile.category.name] : [],
-    address: user.profile?.address,
-    notes: user.profile?.bio,
-    photoUrl: user.profile?.avatarUrl || undefined,
+    categories: profile?.category ? [profile.category.name] : [],
+    address: profile?.address,
+    notes: profile?.bio,
+    photoUrl: profile?.avatarUrl || undefined,
   }));
 }
 
