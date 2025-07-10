@@ -72,6 +72,20 @@ This will start Prisma Studio at [http://localhost:5555](http://localhost:5555),
 - Create, update, and delete records
 - View relationships between tables
 
+### Migrations
+
+To create and apply a new migration after changing the `schema.prisma` file, run the following command:
+
+```bash
+npx prisma migrate dev --name <migration_name>
+```
+
+Replace `<migration_name>` with a descriptive name for your migration (e.g., `add_user_roles`). This command will:
+
+1.  Create a new SQL migration file in the `prisma/migrations` directory.
+2.  Apply the new migration to the database.
+3.  Generate the Prisma Client to reflect the schema changes.
+
 ## Production Setup
 
 In production, the application will use PostgreSQL in Vercel. The configuration for this will be added in the future.

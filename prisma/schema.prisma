@@ -80,16 +80,18 @@ model News {
 }
 
 model Result {
-  id        String   @id @default(uuid())
-  userId    String
-  eventId   String
-  position  Int?
-  score     String?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  event     Event    @relation(fields: [eventId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  id           String     @id @default(uuid())
+  userId       String
+  eventId      String
+  disciplineId String
+  position     Int?
+  score        String?
+  notes        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  event        Event      @relation(fields: [eventId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
 }
 
 enum UserRole {
@@ -152,6 +154,7 @@ model Discipline {
   worldChampionshipEvent Boolean           @default(false)
   category              DisciplineCategory? @relation(fields: [categoryId], references: [id])
   unit                  MeasurementUnit?   @relation(fields: [unitId], references: [id])
+  results               Result[]
   createdAt             DateTime           @default(now())
   updatedAt             DateTime           @updatedAt
 }

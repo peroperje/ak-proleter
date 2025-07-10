@@ -107,7 +107,7 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        organizerId: 'f26d1152-d1c3-466d-8791-bfbd550bfed5', // TODO: this is hardocded. need to be current user
+        organizerId: '00f5a688-d09f-4d87-8f4a-d58c466aa46c', // TODO: this is hardocded. need to be current user
         // Connect categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
