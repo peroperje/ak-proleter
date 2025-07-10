@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UnitType, DisciplineCategory, MeasurementUnit } from '@prisma/client';
 import * as fs from 'fs';
 
 const prisma = new PrismaClient();
@@ -73,6 +73,570 @@ function getRandomAvatar(gender: string): string {
   return `/avatars-img/${randomAvatar}`;
 }
 
+// Function to seed discipline categories
+async function seedDisciplineCategories(): Promise<DisciplineCategory[]> {
+  console.log('Seeding discipline categories...');
+
+  const categories = [
+    { name: 'Sprints', description: 'Short distance running events' },
+    { name: 'Middle Distance', description: 'Medium distance running events' },
+    { name: 'Long Distance', description: 'Long distance running events' },
+    { name: 'Hurdles', description: 'Running events with barriers' },
+    { name: 'Relays', description: 'Team running events' },
+    { name: 'Jumps', description: 'Athletic jumping events' },
+    { name: 'Throws', description: 'Athletic throwing events' },
+    { name: 'Combined Events', description: 'Multi-event competitions' },
+    { name: 'Race Walking', description: 'Walking events' },
+    { name: 'Road Running', description: 'Long distance running on roads' },
+    { name: 'Cross Country', description: 'Running over natural terrain' }
+  ];
+
+  const results = [];
+  for (const category of categories) {
+    const result = await prisma.disciplineCategory.upsert({
+      where: { name: category.name },
+      update: { description: category.description },
+      create: {
+        name: category.name,
+        description: category.description
+      }
+    });
+    results.push(result);
+  }
+
+  console.log(`${results.length} discipline categories created or updated`);
+  return results;
+}
+
+// Function to seed measurement units
+async function seedMeasurementUnits(): Promise<MeasurementUnit[]> {
+  console.log('Seeding measurement units...');
+
+  const units = [
+    { name: 'seconds', symbol: 's', type: UnitType.TIME },
+    { name: 'minutes', symbol: 'min', type: UnitType.TIME },
+    { name: 'hours', symbol: 'h', type: UnitType.TIME },
+    { name: 'meters', symbol: 'm', type: UnitType.DISTANCE },
+    { name: 'kilometers', symbol: 'km', type: UnitType.DISTANCE },
+    { name: 'points', symbol: 'pts', type: UnitType.POINTS },
+    { name: 'count', symbol: 'cnt', type: UnitType.COUNT },
+    { name: 'kilograms', symbol: 'kg', type: UnitType.WEIGHT },
+    { name: 'centimeters', symbol: 'cm', type: UnitType.DISTANCE },
+    { name: 'milliseconds', symbol: 'ms', type: UnitType.TIME }
+  ];
+
+  const results = [];
+  for (const unit of units) {
+    const result = await prisma.measurementUnit.upsert({
+      where: { name: unit.name },
+      update: {
+        symbol: unit.symbol,
+        type: unit.type
+      },
+      create: {
+        name: unit.name,
+        symbol: unit.symbol,
+        type: unit.type
+      }
+    });
+    results.push(result);
+  }
+
+  console.log(`${results.length} measurement units created or updated`);
+  return results;
+}
+
+// Function to seed disciplines
+async function seedDisciplines(categories: DisciplineCategory[], units: MeasurementUnit[]) {
+  console.log('Seeding disciplines...');
+
+  // Create maps for easier lookup
+  const categoryMap = new Map(categories.map(cat => [cat.name, cat.id]));
+  const unitMap = new Map(units.map(unit => [unit.name, unit.id]));
+
+  const disciplines = [
+    // Sprints
+    {
+      name: '100 meters',
+      internationalSign: '100m',
+      description: 'Sprint race over 100 meters',
+      categoryName: 'Sprints',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '200 meters',
+      internationalSign: '200m',
+      description: 'Sprint race over 200 meters',
+      categoryName: 'Sprints',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '400 meters',
+      internationalSign: '400m',
+      description: 'Sprint race over 400 meters',
+      categoryName: 'Sprints',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Middle Distance
+    {
+      name: '800 meters',
+      internationalSign: '800m',
+      description: 'Middle distance race over 800 meters',
+      categoryName: 'Middle Distance',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '1500 meters',
+      internationalSign: '1500m',
+      description: 'Middle distance race over 1500 meters',
+      categoryName: 'Middle Distance',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Long Distance
+    {
+      name: '5000 meters',
+      internationalSign: '5000m',
+      description: 'Long distance race over 5000 meters',
+      categoryName: 'Long Distance',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '10000 meters',
+      internationalSign: '10000m',
+      description: 'Long distance race over 10000 meters',
+      categoryName: 'Long Distance',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Hurdles
+    {
+      name: '110 meters hurdles',
+      internationalSign: '110mH',
+      description: 'Hurdle race over 110 meters for men',
+      categoryName: 'Hurdles',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '400 meters hurdles',
+      internationalSign: '400mH',
+      description: 'Hurdle race over 400 meters',
+      categoryName: 'Hurdles',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '100 meters hurdles',
+      internationalSign: '100mH',
+      description: 'Hurdle race over 100 meters for women',
+      categoryName: 'Hurdles',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+
+    // Relays
+    {
+      name: '4x100 meters relay',
+      internationalSign: '4x100m',
+      description: 'Team relay race with 4 runners each running 100 meters',
+      categoryName: 'Relays',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: true,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '4x400 meters relay',
+      internationalSign: '4x400m',
+      description: 'Team relay race with 4 runners each running 400 meters',
+      categoryName: 'Relays',
+      unitName: 'seconds',
+      isTrackEvent: true,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: true,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Jumps
+    {
+      name: 'High Jump',
+      internationalSign: 'HJ',
+      description: 'Athletic jump for height over a horizontal bar',
+      categoryName: 'Jumps',
+      unitName: 'centimeters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Pole Vault',
+      internationalSign: 'PV',
+      description: 'Athletic jump for height over a horizontal bar using a flexible pole',
+      categoryName: 'Jumps',
+      unitName: 'centimeters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Long Jump',
+      internationalSign: 'LJ',
+      description: 'Athletic jump for distance from a take-off point',
+      categoryName: 'Jumps',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Triple Jump',
+      internationalSign: 'TJ',
+      description: 'Athletic jump consisting of hop, step and jump phases',
+      categoryName: 'Jumps',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Throws
+    {
+      name: 'Shot Put',
+      internationalSign: 'SP',
+      description: 'Throwing a heavy spherical object as far as possible',
+      categoryName: 'Throws',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Discus Throw',
+      internationalSign: 'DT',
+      description: 'Throwing a heavy disc as far as possible',
+      categoryName: 'Throws',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Hammer Throw',
+      internationalSign: 'HT',
+      description: 'Throwing a heavy metal ball attached to wire as far as possible',
+      categoryName: 'Throws',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Javelin Throw',
+      internationalSign: 'JT',
+      description: 'Throwing a spear-like implement as far as possible',
+      categoryName: 'Throws',
+      unitName: 'meters',
+      isTrackEvent: false,
+      isFieldEvent: true,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+
+    // Combined Events
+    {
+      name: 'Decathlon',
+      internationalSign: 'DEC',
+      description: 'Combined event consisting of 10 track and field events over two days (men)',
+      categoryName: 'Combined Events',
+      unitName: 'points',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: true,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Heptathlon',
+      internationalSign: 'HEP',
+      description: 'Combined event consisting of 7 track and field events over two days (women)',
+      categoryName: 'Combined Events',
+      unitName: 'points',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: true,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+
+    // Race Walking
+    {
+      name: '20 kilometers race walk',
+      internationalSign: '20kmRW',
+      description: 'Race walking event over 20 kilometers',
+      categoryName: 'Race Walking',
+      unitName: 'seconds',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: true,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: '50 kilometers race walk',
+      internationalSign: '50kmRW',
+      description: 'Race walking event over 50 kilometers',
+      categoryName: 'Race Walking',
+      unitName: 'seconds',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: true,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+
+    // Road Running
+    {
+      name: 'Marathon',
+      internationalSign: 'MAR',
+      description: 'Long distance running event of 42.195 kilometers',
+      categoryName: 'Road Running',
+      unitName: 'kilometers',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: true,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: true,
+      paralympicEvent: true,
+      worldChampionshipEvent: true
+    },
+    {
+      name: 'Half Marathon',
+      internationalSign: 'HALF',
+      description: 'Long distance running event of 21.0975 kilometers',
+      categoryName: 'Road Running',
+      unitName: 'kilometers',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: true,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: false,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    },
+
+    // Cross Country
+    {
+      name: 'Cross Country',
+      internationalSign: 'XC',
+      description: 'Running over natural terrain, typically 10km for men and 8km for women',
+      categoryName: 'Cross Country',
+      unitName: 'kilometers',
+      isTrackEvent: false,
+      isFieldEvent: false,
+      isRoadEvent: false,
+      isCombinedEvent: false,
+      isTeamEvent: false,
+      olympicEvent: false,
+      paralympicEvent: false,
+      worldChampionshipEvent: true
+    }
+  ];
+
+  const results = [];
+  for (const discipline of disciplines) {
+    const categoryId = categoryMap.get(discipline.categoryName);
+    const unitId = unitMap.get(discipline.unitName);
+
+    if (!categoryId) {
+      console.warn(`Category not found for discipline ${discipline.name}: ${discipline.categoryName}`);
+      continue;
+    }
+
+    if (!unitId) {
+      console.warn(`Unit not found for discipline ${discipline.name}: ${discipline.unitName}`);
+      continue;
+    }
+
+    const result = await prisma.discipline.upsert({
+      where: { name: discipline.name },
+      update: {
+        internationalSign: discipline.internationalSign,
+        description: discipline.description,
+        categoryId: categoryId,
+        unitId: unitId,
+        isTrackEvent: discipline.isTrackEvent,
+        isFieldEvent: discipline.isFieldEvent,
+        isRoadEvent: discipline.isRoadEvent,
+        isCombinedEvent: discipline.isCombinedEvent,
+        isTeamEvent: discipline.isTeamEvent,
+        olympicEvent: discipline.olympicEvent,
+        paralympicEvent: discipline.paralympicEvent,
+        worldChampionshipEvent: discipline.worldChampionshipEvent
+      },
+      create: {
+        name: discipline.name,
+        internationalSign: discipline.internationalSign,
+        description: discipline.description,
+        categoryId: categoryId,
+        unitId: unitId,
+        isTrackEvent: discipline.isTrackEvent,
+        isFieldEvent: discipline.isFieldEvent,
+        isRoadEvent: discipline.isRoadEvent,
+        isCombinedEvent: discipline.isCombinedEvent,
+        isTeamEvent: discipline.isTeamEvent,
+        olympicEvent: discipline.olympicEvent,
+        paralympicEvent: discipline.paralympicEvent,
+        worldChampionshipEvent: discipline.worldChampionshipEvent
+      }
+    });
+    results.push(result);
+  }
+
+  console.log(`${results.length} disciplines created or updated`);
+  return results;
+}
+
 async function main() {
   console.log('Seeding database...');
 
@@ -84,6 +648,10 @@ async function main() {
   // await prisma.athlete.deleteMany();
   await prisma.user.deleteMany();
   // await prisma.category.deleteMany();
+  // We don't delete discipline-related data as we'll be upserting them
+  // await prisma.discipline.deleteMany();
+  // await prisma.measurementUnit.deleteMany();
+  // await prisma.disciplineCategory.deleteMany();
 
   console.log('Existing data cleared');
 
@@ -867,14 +1435,34 @@ async function main() {
   }
 
   console.log(`Athletes processed: ${createdCount} created, ${updatedCount} updated, ${errorCount} errors`);
+
+  try {
+    // Seed discipline categories
+    console.log('Starting to seed discipline categories...');
+    const disciplineCategories = await seedDisciplineCategories();
+
+    // Seed measurement units
+    console.log('Starting to seed measurement units...');
+    const measurementUnits = await seedMeasurementUnits();
+
+    // Seed disciplines
+    console.log('Starting to seed disciplines...');
+    await seedDisciplines(disciplineCategories, measurementUnits);
+  } catch (error) {
+    console.error('Error seeding discipline data:', error);
+  }
+
   console.log('Database seeding completed');
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
+// Wrap the main function in a self-executing async function to ensure proper error handling
+(async () => {
+  try {
+    await main();
+  } catch (e) {
+    console.error('Error in main function:', e);
     process.exit(1);
-  })
-  .finally(async () => {
+  } finally {
     await prisma.$disconnect();
-  });
+  }
+})();

@@ -106,3 +106,52 @@ enum EventType {
   OTHER
   CAMP
 }
+
+enum UnitType {
+  TIME
+  DISTANCE
+  POINTS
+  COUNT
+  WEIGHT
+  OTHER
+}
+
+model DisciplineCategory {
+  id                String       @id @default(uuid())
+  name              String       @unique
+  description       String?
+  disciplines       Discipline[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model MeasurementUnit {
+  id                String       @id @default(uuid())
+  name              String       @unique
+  symbol            String       @unique
+  type              UnitType
+  disciplines       Discipline[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model Discipline {
+  id                    String             @id @default(uuid())
+  name                  String             @unique
+  internationalSign     String             @unique
+  description           String?
+  categoryId            String?
+  unitId                String?
+  isTrackEvent          Boolean            @default(false)
+  isFieldEvent          Boolean            @default(false)
+  isRoadEvent           Boolean            @default(false)
+  isCombinedEvent       Boolean            @default(false)
+  isTeamEvent           Boolean            @default(false)
+  olympicEvent          Boolean            @default(false)
+  paralympicEvent       Boolean            @default(false)
+  worldChampionshipEvent Boolean           @default(false)
+  category              DisciplineCategory? @relation(fields: [categoryId], references: [id])
+  unit                  MeasurementUnit?   @relation(fields: [unitId], references: [id])
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+}
