@@ -16,7 +16,7 @@ async function getResults(): Promise<ResultWithRelations[]> {
   // Fetch results from the database
   const dbResults = await prisma.result.findMany({
     include: {
-      user: true,
+      athlete: true,
       event: true,
     },
   });
@@ -45,14 +45,14 @@ async function getResults(): Promise<ResultWithRelations[]> {
         measurementUnit: result.score?.includes('m') ? 'distance' : 'time',
       };
 
-    // Split user name into first and last name
-    const nameParts = result.user.name.split(' ');
+
+    const nameParts = result.athlete.name.split(' ');
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' ');
 
     return {
       id: result.id,
-      athleteId: result.userId,
+      athleteId: result.athleteId,
       eventId: result.eventId,
       disciplineId: mockDiscipline.id,
       date: result.createdAt,
@@ -65,7 +65,7 @@ async function getResults(): Promise<ResultWithRelations[]> {
       notes: result?.notes || undefined,
       // Joined data
       athlete: {
-        id: result.userId,
+        id: result.athleteId,
         firstName,
         lastName,
       },
@@ -178,10 +178,8 @@ export default async function ResultsPage() {
             <tbody className='divide-y divide-gray-200 bg-white dark:divide-neutral-700 dark:bg-neutral-900'>
               {results.map((result) => (
                 <tr key={result.id}>
-                  <td className='px-6 py-4 whitespace-nowrap'>
-                    <div className='text-sm font-medium text-gray-900 dark:text-white'>
-                      {result.athlete.firstName} {result.athlete.lastName}
-                    </div>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {result.athlete.firstName} {result.athlete.lastName}
                   </td>
                   <td className='px-6 py-4 whitespace-nowrap'>
                     <div className='text-sm text-gray-900 dark:text-white'>

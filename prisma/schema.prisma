@@ -18,7 +18,6 @@ model User {
   eventsCreated Event[]  @relation("organizer")
   newsItems     News[]   @relation("author")
   athlete       Athlete?
-  results       Result[]
   eventsJoined  Event[]  @relation("participants")
 }
 
@@ -36,6 +35,7 @@ model Athlete {
   openTrackId String?   @unique
   category    Category? @relation(fields: [categoryId], references: [id])
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  results     Result[]
 }
 
 model Category {
@@ -81,7 +81,7 @@ model News {
 
 model Result {
   id           String     @id @default(uuid())
-  userId       String
+  athleteId    String
   eventId      String
   disciplineId String
   position     Int?
@@ -90,7 +90,7 @@ model Result {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   event        Event      @relation(fields: [eventId], references: [id])
-  user         User       @relation(fields: [userId], references: [id])
+  athlete      Athlete    @relation(fields: [athleteId], references: [id])
   discipline   Discipline @relation(fields: [disciplineId], references: [id])
 }
 
