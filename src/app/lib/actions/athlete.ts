@@ -206,7 +206,7 @@ export async function updateAthlete(
 
     const category = await getCategoryByDateOfBirth(formattedData.dateOfBirth);
     // Update the existing user and profile
-    await prisma.user.update({
+    /*await prisma.user.update({
       where: { id },
       data: {
         name: `${formattedData.firstName} ${formattedData.lastName}`,
@@ -225,7 +225,21 @@ export async function updateAthlete(
           },
         },
       },
+    });*/
+    await prisma.profile.update({
+      where: { id },
+      data: {
+        name: `${formattedData.firstName} ${formattedData.lastName}`,
+        dateOfBirth: new Date(formattedData.dateOfBirth),
+        phoneNumber: formattedData.phone,
+        address: formattedData.address,
+        bio: formattedData.notes,
+        avatarUrl: formattedData.photoUrl,
+        gender: formattedData.gender,
+        categoryId: category?.id || null,
+      }
     });
+
 
     revalidatePath('/athletes');
     revalidatePath(`/athletes/${id}`);
@@ -267,32 +281,29 @@ export async function getAthleteById(
   id: string,
 ): Promise<AthleteFormData | null> {
   try {
-    const user = await prisma.user.findUnique({
+    const profile = await prisma.profile.findUnique({
       where: { id },
       include: {
-        profile: {
-          include: {
-            category: true,
-          },
-        },
+        user:true,
+        category: true,
       },
     });
 
-    if (!user || !user.profile) {
+    if (!profile) {
       return null;
     }
 
     // Format the data to match AthleteFormData structure
     return {
-      firstName: user.name.split(' ')[0],
-      lastName: user.name.split(' ').slice(1).join(' '),
-      dateOfBirth: new Date(user.profile.dateOfBirth as Date),
-      gender: user.profile?.gender === 'male' ? 'male' : ('female' as const), // Default to male if not specified
-      email: user.email,
-      phone: user.profile.phoneNumber || undefined,
-      address: user.profile.address || undefined,
-      notes: user.profile.bio || undefined,
-      photoUrl: user.profile.avatarUrl || undefined,
+      firstName: profile.name.split(' ')[0],
+      lastName: profile.name.split(' ').slice(1).join(' '),
+      dateOfBirth: new Date(profile.dateOfBirth as Date),
+      gender: profile?.gender === 'male' ? 'male' : ('female' as const), // Default to male if not specified
+      email: profile?.user?.email,
+      phone: profile.phoneNumber || undefined,
+      address: profile.address || undefined,
+      notes: profile.bio || undefined,
+      photoUrl: profile.avatarUrl || undefined,
     };
   } catch (error) {
     console.error('Error fetching athlete:', error);

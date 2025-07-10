@@ -1,18 +1,19 @@
 'use client';
 import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
-import { useActionState, useEffect } from 'react';
+import {  useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { routes } from '@/app/lib/routes';
 import { UsersIcon } from '@/app/ui/icons';
 import Link from 'next/link';
 
 interface Props {
-  user: AthleteFormData;
+  athlete: AthleteFormData
   userId: string;
 }
 
-export default function EditForm({ user, userId }: Props) {
+export default function EditForm({ athlete, userId }: Props) {
+  const  user = athlete;
   // Fetch athlete data when the component mounts
 
   const initialState: ActionState = {

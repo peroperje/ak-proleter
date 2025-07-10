@@ -12,9 +12,52 @@ async function main() {
   await prisma.event.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.user.deleteMany();
-  await prisma.category.deleteMany();
+  // await prisma.category.deleteMany();
 
   console.log('Existing data cleared');
+
+  // Create or update age categories
+  const ageCategories = [
+    { name: 'U8', description: 'Children under 8 years old', minAge: 0, maxAge: 7 },
+    { name: 'U10', description: 'Children aged 8 to 10 years', minAge: 8, maxAge: 9 },
+    { name: 'U12', description: 'Children aged 10 to 12 years', minAge: 10, maxAge: 11 },
+    { name: 'U14', description: 'Young cadets (12–14 years)', minAge: 12, maxAge: 13 },
+    { name: 'U16', description: 'Cadets (14–16 years)', minAge: 14, maxAge: 15 },
+    { name: 'U18', description: 'Junior athletes (16–18 years)', minAge: 16, maxAge: 17 },
+    { name: 'U20', description: 'Junior athletes (18–20 years)', minAge: 18, maxAge: 19 },
+    { name: 'U23', description: 'Young seniors (20–23 years)', minAge: 20, maxAge: 22 },
+    { name: 'SEN', description: 'Senior athletes (typically 20–34 years)', minAge: 20, maxAge: 34 },
+    { name: 'V35', description: 'Masters athletes (35–39 years)', minAge: 35, maxAge: 39 },
+    { name: 'V40', description: 'Masters athletes (40–44 years)', minAge: 40, maxAge: 44 },
+    { name: 'V45', description: 'Masters athletes (45–49 years)', minAge: 45, maxAge: 49 },
+    { name: 'V50', description: 'Masters athletes (50–54 years)', minAge: 50, maxAge: 54 },
+    { name: 'V55', description: 'Masters athletes (55–59 years)', minAge: 55, maxAge: 59 },
+    { name: 'V60', description: 'Masters athletes (60–64 years)', minAge: 60, maxAge: 64 },
+    { name: 'V65', description: 'Masters athletes (65–69 years)', minAge: 65, maxAge: 69 },
+    { name: 'V70', description: 'Masters athletes (70–74 years)', minAge: 70, maxAge: 74 },
+    { name: 'V75', description: 'Masters athletes (75–79 years)', minAge: 75, maxAge: 79 },
+    { name: 'V80', description: 'Masters athletes (80+ years)', minAge: 80, maxAge: null },
+  ];
+
+  for (const category of ageCategories) {
+    await prisma.category.upsert({
+      where: { name: category.name },
+      update: {
+        description: category.description,
+        minAge: category.minAge,
+        maxAge: category.maxAge,
+      },
+      create: {
+        name: category.name,
+        description: category.description,
+        minAge: category.minAge,
+        maxAge: category.maxAge,
+      },
+    });
+  }
+
+  console.log('Age categories created or updated');
+
 /*
 
   // Create categories

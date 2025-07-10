@@ -3,16 +3,17 @@ import { getAthleteById } from '@/app/lib/actions';
 import { notFound } from 'next/navigation';
 import EditForm from '@/app/(routes)/athletes/[id]/edit/EditForm';
 import CloseBtn from '@/app/components/CloseBtn';
+import { Suspense, use } from 'react';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
-export default async function EditAthletePage(props: Props) {
-  const params = await props.params;
+export default  function EditAthletePage(props: Props) {
+  const params = use (props.params);
 
-  const user = await getAthleteById(params.id);
-  if (!user) {
+  const athlete =  use(getAthleteById(params.id));
+  if (!athlete) {
     notFound();
   }
 
@@ -20,7 +21,9 @@ export default async function EditAthletePage(props: Props) {
     <PageLayout title={'Edit Athlete'}>
       <CloseBtn />
 
-      <EditForm user={user} userId={params.id} />
+      <Suspense fallback={'Loading athlete data...'}>
+        <EditForm athlete={athlete} userId={params.id} />
+      </Suspense>
     </PageLayout>
   );
 }
