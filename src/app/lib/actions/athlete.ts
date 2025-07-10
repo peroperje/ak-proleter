@@ -137,6 +137,7 @@ export async function createAthlete(_state: ActionState, payload: FormData) {
         role: 'MEMBER',
         profile: {
           create: {
+            name: `${formattedData.firstName} ${formattedData.lastName}`,
             dateOfBirth: new Date(formattedData.dateOfBirth),
             phoneNumber: formattedData.phone,
             address: formattedData.address,
@@ -144,6 +145,7 @@ export async function createAthlete(_state: ActionState, payload: FormData) {
             avatarUrl: formattedData.photoUrl,
             gender: formattedData.gender,
             categoryId: category?.id || null,
+            openTrackId:  null,
           },
         },
       },

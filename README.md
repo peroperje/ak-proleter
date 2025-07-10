@@ -143,6 +143,28 @@ This project now uses a PostgreSQL database with Prisma ORM for data persistence
 - Stop the database: `pnpm db:stop`
 - Open Prisma Studio to view/edit data: `pnpm prisma:studio`
 
+### Recent Database Migrations
+
+#### Profile Model Refactoring
+
+The Profile model has been refactored to include:
+- `name` field (String): Required field to store the profile name
+- `openTrackId` field (String?): Optional field to store the OpenTrack ID
+
+To apply this migration and populate existing profiles with data from the associated User's name, run:
+
+```bash
+pnpm migrate:profiles
+```
+
+To verify that the migration was successful, you can run:
+
+```bash
+pnpm test:profiles
+```
+
+For more details, see the [Profile Migration Documentation](./src/scripts/README.md).
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
