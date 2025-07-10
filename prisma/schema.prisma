@@ -17,12 +17,12 @@ model User {
   updatedAt     DateTime @updatedAt
   eventsCreated Event[]  @relation("organizer")
   newsItems     News[]   @relation("author")
-  profile       Profile?
+  athlete       Athlete?
   results       Result[]
   eventsJoined  Event[]  @relation("participants")
 }
 
-model Profile {
+model Athlete {
   id          String    @id @default(uuid())
   userId      String?   @unique
   name        String
@@ -33,7 +33,7 @@ model Profile {
   avatarUrl   String?
   categoryId  String?
   gender      String    @default("male")
-  openTrackId String?
+  openTrackId String?   @unique
   category    Category? @relation(fields: [categoryId], references: [id])
   user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -44,7 +44,7 @@ model Category {
   description String    @map("description")
   minAge      Int       @map("min_age")
   maxAge      Int?      @map("max_age")
-  profiles    Profile[]
+  athletes    Athlete[]
   events      Event[]   @relation("EventToCategory")
 }
 

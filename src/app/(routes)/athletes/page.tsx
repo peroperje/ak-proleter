@@ -28,26 +28,26 @@ export const fetchCache = 'force-no-store';
 
 async function getAthletes(): Promise<Athlete[]> {
 
-  const profile = await prisma.profile.findMany({
+  const athletes = await prisma.athlete.findMany({
     include: {
       user: true,
       category: true,
     },
   });
-  return profile.map((profile) => ({
-    id: profile.id,
-    firstName: profile.name.split(' ')[0],
-    lastName: profile.name.split(' ').slice(1).join(' '),
-    dateOfBirth: profile?.dateOfBirth || new Date(),
-    gender: profile?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
-    email: profile?.user?.email || '',
-    phone: profile?.phoneNumber || undefined,
-    joinDate: profile?.user?.createdAt,
+  return athletes.map((athlete) => ({
+    id: athlete.id,
+    firstName: athlete.name.split(' ')[0],
+    lastName: athlete.name.split(' ').slice(1).join(' '),
+    dateOfBirth: athlete?.dateOfBirth || new Date(),
+    gender: athlete?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
+    email: athlete?.user?.email || '',
+    phone: athlete?.phoneNumber || undefined,
+    joinDate: athlete?.user?.createdAt,
     active: true, // This information is not in the schema, defaulting to true
-    categories: profile?.category ? [profile.category.name] : [],
-    address: profile?.address,
-    notes: profile?.bio,
-    photoUrl: profile?.avatarUrl || undefined,
+    categories: athlete?.category ? [athlete.category.name] : [],
+    address: athlete?.address,
+    notes: athlete?.bio,
+    photoUrl: athlete?.avatarUrl || undefined,
   }));
 }
 

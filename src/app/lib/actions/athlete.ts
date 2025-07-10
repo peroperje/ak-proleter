@@ -122,8 +122,8 @@ export async function createAthlete(_state: ActionState, payload: FormData) {
 
     const category = await getCategoryByDateOfBirth(formattedData.dateOfBirth);
 
-    // Create only a profile, not a user
-    await prisma.profile.create({
+    // Create only an athlete, not a user
+    await prisma.athlete.create({
       data: {
         name: `${formattedData.firstName} ${formattedData.lastName}`,
         dateOfBirth: new Date(formattedData.dateOfBirth),
@@ -187,7 +187,7 @@ export async function updateAthlete(
     await athleteSchema.validate(formattedData, { abortEarly: false });
 
     const category = await getCategoryByDateOfBirth(formattedData.dateOfBirth);
-    // Update the existing user and profile
+    // Update the existing user and athlete
     /*await prisma.user.update({
       where: { id },
       data: {
@@ -195,7 +195,7 @@ export async function updateAthlete(
         email:
           formattedData.email ||
           `${formattedData.firstName.toLowerCase()}.${formattedData.lastName.toLowerCase()}@example.com`,
-        profile: {
+        athlete: {
           update: {
             dateOfBirth: new Date(formattedData.dateOfBirth),
             phoneNumber: formattedData.phone,
@@ -208,7 +208,7 @@ export async function updateAthlete(
         },
       },
     });*/
-    await prisma.profile.update({
+    await prisma.athlete.update({
       where: { id },
       data: {
         name: `${formattedData.firstName} ${formattedData.lastName}`,
@@ -263,27 +263,27 @@ export async function getAthleteById(
   id: string,
 ): Promise<AthleteFormData | null> {
   try {
-    const profile = await prisma.profile.findUnique({
+    const athlete = await prisma.athlete.findUnique({
       where: { id },
       include: {
         category: true,
       },
     });
 
-    if (!profile) {
+    if (!athlete) {
       return null;
     }
 
     // Format the data to match AthleteFormData structure
     return {
-      firstName: profile.name.split(' ')[0],
-      lastName: profile.name.split(' ').slice(1).join(' '),
-      dateOfBirth: new Date(profile.dateOfBirth as Date),
-      gender: profile?.gender === 'male' ? 'male' : ('female' as const), // Default to male if not specified
-      phone: profile.phoneNumber || undefined,
-      address: profile.address || undefined,
-      notes: profile.bio || undefined,
-      photoUrl: profile.avatarUrl || undefined,
+      firstName: athlete.name.split(' ')[0],
+      lastName: athlete.name.split(' ').slice(1).join(' '),
+      dateOfBirth: new Date(athlete.dateOfBirth as Date),
+      gender: athlete?.gender === 'male' ? 'male' : ('female' as const), // Default to male if not specified
+      phone: athlete.phoneNumber || undefined,
+      address: athlete.address || undefined,
+      notes: athlete.bio || undefined,
+      photoUrl: athlete.avatarUrl || undefined,
     };
   } catch (error) {
     console.error('Error fetching athlete:', error);

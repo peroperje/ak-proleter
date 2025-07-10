@@ -107,7 +107,7 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        organizerId: 'e7926135-1dd7-4422-a610-3777dbf3768a',
+        organizerId: 'f26d1152-d1c3-466d-8791-bfbd550bfed5', // TODO: this is hardocded. need to be current user
         // Connect categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
@@ -145,7 +145,7 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         status: 'error' as const,
       };
     }
-
+    console.log('Error creating event:', error);
     return {
       errors: {} as EventActionState['errors'],
       message: 'An unexpected error occurred. Please, check your data',

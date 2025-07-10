@@ -13,7 +13,7 @@ import { UsersIcon, RunningIcon, MailIcon } from '@/app/ui/icons';
 // Function to fetch athlete by ID
 async function getAthleteById(id: string): Promise<Athlete | null> {
 
-  const athleteProfile = await prisma.profile.findUnique({
+  const athlete = await prisma.athlete.findUnique({
     where: {
       id: id
     },
@@ -23,7 +23,7 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
     }
   });
 
-  if (!athleteProfile) {
+  if (!athlete) {
     return null;
   }
 
@@ -32,31 +32,31 @@ async function getAthleteById(id: string): Promise<Athlete | null> {
     id: user.id,
     firstName: user.name.split(' ')[0],
     lastName: user.name.split(' ').slice(1).join(' '),
-    dateOfBirth: user.profile?.dateOfBirth || new Date(),
-    gender: user.profile?.gender === 'male' ? 'male' : 'female',
+    dateOfBirth: user.athlete?.dateOfBirth || new Date(),
+    gender: user.athlete?.gender === 'male' ? 'male' : 'female',
     email: user.email,
-    phone: user.profile?.phoneNumber || undefined,
+    phone: user.athlete?.phoneNumber || undefined,
     joinDate: user.createdAt,
     active: true, // This information is not in the schema, defaulting to true
-    categories: user.profile?.category ? [user.profile.category.name] : [],
-    address: user.profile?.address,
-    notes: user.profile?.bio,
-    photoUrl: user.profile?.avatarUrl || undefined,
+    categories: user.athlete?.category ? [user.athlete.category.name] : [],
+    address: user.athlete?.address,
+    notes: user.athlete?.bio,
+    photoUrl: user.athlete?.avatarUrl || undefined,
   };*/
   return {
-    id: athleteProfile.id,
-    firstName: athleteProfile.name.split(' ')[0],
-    lastName: athleteProfile.name.split(' ').slice(1).join(' '),
-    dateOfBirth: athleteProfile?.dateOfBirth || new Date(),
-    gender: athleteProfile?.gender === 'male' ? 'male' : 'female',
-    email: athleteProfile?.user?.email || '',
-    phone: athleteProfile?.phoneNumber || undefined,
-    joinDate: athleteProfile?.user?.createdAt,
+    id: athlete.id,
+    firstName: athlete.name.split(' ')[0],
+    lastName: athlete.name.split(' ').slice(1).join(' '),
+    dateOfBirth: athlete?.dateOfBirth || new Date(),
+    gender: athlete?.gender === 'male' ? 'male' : 'female',
+    email: athlete?.user?.email || '',
+    phone: athlete?.phoneNumber || undefined,
+    joinDate: athlete?.user?.createdAt,
     active: true, // This information is not in the schema, defaulting to true
-    categories: athleteProfile?.category ? [athleteProfile.category.name] : [],
-    address: athleteProfile?.address,
-    notes: athleteProfile?.bio,
-    photoUrl: athleteProfile?.avatarUrl || undefined
+    categories: athlete?.category ? [athlete.category.name] : [],
+    address: athlete?.address,
+    notes: athlete?.bio,
+    photoUrl: athlete?.avatarUrl || undefined
   }
 }
 
