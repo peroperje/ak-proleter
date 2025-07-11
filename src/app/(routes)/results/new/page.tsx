@@ -3,20 +3,21 @@ import { Metadata } from 'next';
 import prisma from '@/app/lib/prisma';
 import ResultForm from './ResultForm';
 import AthleteSelectionFiled from '@/app/(routes)/results/new/AthleteSelectionFiled';
+import EventSelectionField from '@/app/(routes)/results/new/EventSelectionField';
 
 export const metadata: Metadata = {
   title: 'Create Result',
 };
 
 const Page = async (): Promise<ReactElement> => {
-  const events = await prisma.event.findMany();
   const disciplines = await prisma.discipline.findMany();
 
   return (
 
       <Suspense fallback={'Loading...'}>
-        <ResultForm events={events} disciplines={disciplines} >
+        <ResultForm  disciplines={disciplines} >
           <AthleteSelectionFiled />
+          <EventSelectionField />
         </ResultForm>
       </Suspense>
 

@@ -1,10 +1,11 @@
 'use server';
-
+import { Event as PrismaEvent } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
+import { Event } from '@/app/lib/definitions';
 
 // Define the type for the form data
 export interface EventFormData {
@@ -248,5 +249,79 @@ export async function getEventById(
   });
 }
 
-export type CreateEvent = typeof createEvent;
-export type UpdateEvent = typeof updateEvent;
+
+
+ const mapDBEvents = (event:PrismaEvent & {
+                        categories?: { id: string; name: string; description: string; minAge: number; maxAge: number | null; }[];
+                        organizer?: { name: string; };
+                      }
+ ) => {
+  let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  const now = new Date();
+
+  if (event.endDate && event.endDate < now) {
+    status = 'completed';
+  } else if (event.startDate > now) {
+    status = 'upcoming';
+  } else {
+    status = 'ongoing';
+  }
+
+  return {
+    id: event.id,
+    name: event.title,
+    description: event.description || '',
+    location: event.location,
+    startDate: event.startDate,
+    endDate: event.endDate || event.startDate,
+    type: event.type,
+    category:
+      event.categories && event.categories.length > 0 ? event.categories : null,
+    status,
+    organizer: event.organizer?.name || 'Unknown',
+    notes: '',
+  };
+};
+
+export async function getEvents(): Promise<Event[]> {
+  // Fetch events from the database
+  const dbEvents = await prisma.event.findMany({
+    include: {
+      organizer: true,
+      categories: true,
+    },
+  });
+
+  return dbEvents.map((event) => {
+    return  mapDBEvents(event);
+  });
+}
+export async function getClosedEvents() {
+  const today = new Date();
+  const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
+  const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+  const dbEvents = await prisma.event.findMany({
+    where: {
+      OR: [
+        // Currently ongoing events
+        {
+          AND: [{ startDate: { lte: today } }, { endDate: { gte: today } }],
+        },
+        // Events starting or ending within 3 days range
+        {
+          OR: [
+            { startDate: { gte: threeDaysAgo, lte: threeDaysFromNow } },
+            { endDate: { gte: threeDaysAgo, lte: threeDaysFromNow } },
+          ],
+        },
+      ],
+    },
+    orderBy: {
+      startDate: 'asc',
+    },
+  });
+  return dbEvents.map((event) => {
+    return  mapDBEvents(event);
+  });
+}

@@ -103,7 +103,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </div>
 
             <NoteBoxBg type={type}>
-              <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white'>
+              <h3 className='text-center text-lg font-medium text-gray-900 dark:text-white truncate'>
                 {name}
               </h3>
               <p className='text-center text-sm text-gray-500 dark:text-neutral-400'>
