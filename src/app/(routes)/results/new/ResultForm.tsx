@@ -18,7 +18,8 @@ interface ResultFormProps {
 
 const ResultForm:React.FC<PropsWithChildren<ResultFormProps>> = ({  events, disciplines, children }): ReactElement => {
   const initialState: State = { message: '', errors: {} };
-  const [state, dispatch] = useActionState(createResult, initialState);
+  const [state, dispatch, pending] = useActionState(createResult, initialState);
+
 
 
   const eventOptions = events.map(event => ({ value: event.id, label: event.title }));
@@ -36,7 +37,11 @@ const ResultForm:React.FC<PropsWithChildren<ResultFormProps>> = ({  events, disc
           <InputField name="position" title="Position" type="number" />
           <InputField name="score" title="Score" />
           <Textarea name="notes" label="Notes" />
-          <Button type="submit">Create Result</Button>
+          <Button type="submit" disabled={pending}
+          >
+            {pending ? 'Creating...' : 'Create Result'}
+
+          </Button>
           {state.message && <p className="text-red-500">{state.message}</p>}
         </form>
       </Box>

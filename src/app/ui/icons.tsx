@@ -13,3 +13,4 @@ export {
 } from 'react-icons/fi';
 
 export { FaRunning as RunningIcon } from 'react-icons/fa';
+export { IoCloseCircleOutline as IoCloseCircleOutlineIcon} from "react-icons/io5";

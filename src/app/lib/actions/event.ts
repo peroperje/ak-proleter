@@ -95,6 +95,8 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
 
   try {
     await eventSchema.validate(formattedData, { abortEarly: false });
+    // TODO: this is hardocded. need to be current user
+    const organizer = await prisma.user.findFirst();
 
     // Create a new event
     await prisma.event.create({
@@ -107,7 +109,7 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        organizerId: '00f5a688-d09f-4d87-8f4a-d58c466aa46c', // TODO: this is hardocded. need to be current user
+        organizerId: organizer?.id || '',
         // Connect categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
