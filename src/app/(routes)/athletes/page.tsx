@@ -7,13 +7,13 @@ import { Athlete } from '@/app/lib/definitions';
 import { UserPlusIcon, UsersIcon } from '@/app/ui/icons';
 import prisma from '@/app/lib/prisma';
 import AthletesCard from '@/app/components/athletes/AthletesCard';
+import { getAthletes } from '@/app/lib/actions';
 
 const IconComponent = UserPlusIcon;
 
 // Add generateStaticParams to pre-render static paths
 export async function generateStaticParams() {
-  const athletes = await prisma.user.findMany({
-    where: { role: 'MEMBER' },
+  const athletes = await prisma.athlete.findMany({
     select: { id: true },
   });
 
@@ -25,31 +25,6 @@ export async function generateStaticParams() {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
-
-async function getAthletes(): Promise<Athlete[]> {
-
-  const athletes = await prisma.athlete.findMany({
-    include: {
-      user: true,
-      category: true,
-    },
-  });
-  return athletes.map((athlete) => ({
-    id: athlete.id,
-    firstName: athlete.name.split(' ')[0],
-    lastName: athlete.name.split(' ').slice(1).join(' '),
-    dateOfBirth: athlete?.dateOfBirth || new Date(),
-    gender: athlete?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
-    email: athlete?.user?.email || '',
-    phone: athlete?.phoneNumber || undefined,
-    joinDate: athlete?.user?.createdAt,
-    active: true, // This information is not in the schema, defaulting to true
-    categories: athlete?.category ? [athlete.category.name] : [],
-    address: athlete?.address,
-    notes: athlete?.bio,
-    photoUrl: athlete?.avatarUrl || undefined,
-  }));
-}
 
 const AthleteList = ({ athletes }: { athletes: Athlete[] }) => {
   return (

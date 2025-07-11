@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
+import { Athlete } from '@/app/lib/definitions';
 
 // Define the type for the form data
 export interface AthleteFormData {
@@ -188,26 +189,6 @@ export async function updateAthlete(
 
     const category = await getCategoryByDateOfBirth(formattedData.dateOfBirth);
     // Update the existing user and athlete
-    /*await prisma.user.update({
-      where: { id },
-      data: {
-        name: `${formattedData.firstName} ${formattedData.lastName}`,
-        email:
-          formattedData.email ||
-          `${formattedData.firstName.toLowerCase()}.${formattedData.lastName.toLowerCase()}@example.com`,
-        athlete: {
-          update: {
-            dateOfBirth: new Date(formattedData.dateOfBirth),
-            phoneNumber: formattedData.phone,
-            address: formattedData.address,
-            bio: formattedData.notes,
-            avatarUrl: formattedData.photoUrl,
-            gender: formattedData.gender,
-            categoryId: category?.id || null,
-          },
-        },
-      },
-    });*/
     await prisma.athlete.update({
       where: { id },
       data: {
@@ -219,9 +200,8 @@ export async function updateAthlete(
         avatarUrl: formattedData.photoUrl,
         gender: formattedData.gender,
         categoryId: category?.id || null,
-      }
+      },
     });
-
 
     revalidatePath('/athletes');
     revalidatePath(`/athletes/${id}`);
@@ -289,4 +269,28 @@ export async function getAthleteById(
     console.error('Error fetching athlete:', error);
     return null;
   }
+}
+
+export async function getAthletes(): Promise<Athlete[]> {
+  const athletes = await prisma.athlete.findMany({
+    include: {
+      user: true,
+      category: true,
+    },
+  });
+  return athletes.map((athlete) => ({
+    id: athlete.id,
+    firstName: athlete.name.split(' ')[0],
+    lastName: athlete.name.split(' ').slice(1).join(' '),
+    dateOfBirth: athlete?.dateOfBirth || new Date(),
+    gender: athlete?.gender === 'male' ? 'male' : 'female', // This information is not in the schema, defaulting to male
+    email: athlete?.user?.email || '',
+    phone: athlete?.phoneNumber || undefined,
+    joinDate: athlete?.user?.createdAt,
+    active: true, // This information is not in the schema, defaulting to true
+    categories: athlete?.category ? [athlete.category.name] : [],
+    address: athlete?.address,
+    notes: athlete?.bio,
+    photoUrl: athlete?.avatarUrl || undefined,
+  }));
 }

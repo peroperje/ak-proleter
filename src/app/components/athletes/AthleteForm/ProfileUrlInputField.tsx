@@ -3,17 +3,17 @@ import React, { ReactElement, useState } from 'react';
 import Image from 'next/image';
 
 const AVATAR_IMAGES = [
-  '/avatars-img/a-female-runner._06.07.2025.webp',
-  '/avatars-img/a-female-runner-with-a-muscular-build-is-captured-_06.07.2025 (1).webp',
-  '/avatars-img/a-female-runner-with-a-muscular-build-is-captured-_06.07.2025.webp',
-  '/avatars-img/a-male-runner._06.07.2025.webp',
-  '/avatars-img/a-male-runner-with-a-muscular-build-is-captured-in_06.07.2025.webp',
-  '/avatars-img/a-male-runner-with-a-muscular-build-wearing-a-fitt_06.07.2025.webp',
-  '/avatars-img/a-muscular-female-runner-with-an-athletic-build-sh_06.07.2025.webp',
-  '/avatars-img/a-muscular-female-runner-with-tanned-skin-and-a-st_06.07.2025.webp',
-  '/avatars-img/a-muscular-male-runner-with-an-athletic-build-wear_06.07.2025.webp',
-  '/avatars-img/a-muscular-male-runner-with-a-space-look._06.07.2025.webp',
-  '/avatars-img/a-muscular-male-runner-with-short-black-hair-and-a_06.07.2025.webp',
+  '/avatars-img/a-female-runner.webp',
+  '/avatars-img/a-female-runner-with-a-muscular-build-is-captured-1.webp',
+  '/avatars-img/a-female-runner-with-a-muscular-build-is-captured.webp',
+  '/avatars-img/a-male-runner.webp',
+  '/avatars-img/a-male-runner-with-a-muscular-build-is-captured-in.webp',
+  '/avatars-img/a-male-runner-with-a-muscular-build-wearing-a-fitt.webp',
+  '/avatars-img/a-muscular-female-runner-with-an-athletic-build-sh.webp',
+  '/avatars-img/a-muscular-female-runner-with-tanned-skin-and-a-st.webp',
+  '/avatars-img/a-muscular-male-runner-with-an-athletic-build-wear.webp',
+  '/avatars-img/a-muscular-male-runner-with-a-space-look.webp',
+  '/avatars-img/a-muscular-male-runner-with-short-black-hair-and-a.webp',
 ] as const;
 
 type Props = React.DetailedHTMLProps<
