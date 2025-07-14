@@ -16,7 +16,7 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
   return (
     <div className={'flex w-full flex-col'}>
       <label
-        htmlFor='athleteId'
+        htmlFor='eventId'
         className={clsx('block text-sm font-bold dark:text-white')}
       >
         Event
@@ -28,8 +28,8 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
       >
         <input
           type='hidden'
-          id='athleteId'
-          name='athleteId'
+          id='eventId'
+          name='eventId'
           value={selected?.id || ''}
         />
         {!!selected && (

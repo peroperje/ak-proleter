@@ -6,7 +6,16 @@ import { revalidatePath } from 'next/cache';
 import { routes } from '@/app/lib/routes';
 import { redirect } from 'next/navigation';
 
-export type State = {
+const ResultSchema = z.object({
+  athleteId: z.string().nonempty(),
+  eventId: z.string().nonempty(),
+  disciplineId: z.string(),
+  position: z.coerce.number().optional(),
+  score: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+/*export type State = {
   errors?: {
     athleteId?: string[];
     eventId?: string[];
@@ -15,24 +24,37 @@ export type State = {
     score?: string[];
     notes?: string[];
   };
+  //errors?: z.infer<typeof ResultSchema>;
+  //errors?: z.core.$ZodError<typeof ResultSchema>;
+  //errors?: z.ZodObject<typeof ResultSchema>;
+  message: string;
+};*/
+
+type TreeifiedError<T> = {
+  errors: string[];
+  properties?: {
+    [K in keyof T]?: {
+      errors: string[];
+    };
+  };
+};
+
+
+export type State = {
+  errors?: TreeifiedError<z.infer<typeof ResultSchema>>;
+
   message: string;
 };
 
-const ResultSchema = z.object({
-  athleteId: z.string(),
-  eventId: z.string(),
-  disciplineId: z.string(),
-  position: z.coerce.number().optional(),
-  score: z.string().optional(),
-  notes: z.string().optional(),
-});
 
-export async function createResult(prevState: State, formData: FormData): Promise<State> {
+export async function createResult(_prevState: State, formData: FormData): Promise<State> {
   const validatedFields = ResultSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
+    const treeifiedErrors = z.treeifyError(validatedFields.error);
+    console.log('Validation Errors:', treeifiedErrors);
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
+      errors: z.treeifyError(validatedFields.error),
       message: 'Validation Error: Failed to create result.',
     };
   }
