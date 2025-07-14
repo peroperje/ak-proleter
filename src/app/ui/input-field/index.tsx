@@ -12,7 +12,7 @@ const InputField: React.FC<Props> = ({
   ...restProps
 }): ReactElement => (
   <>
-    <div className='max-w-sm'>
+    <div >
       <label
         htmlFor='input-label'
         className={clsx(

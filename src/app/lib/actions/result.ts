@@ -15,20 +15,7 @@ const ResultSchema = z.object({
   notes: z.string().optional(),
 });
 
-/*export type State = {
-  errors?: {
-    athleteId?: string[];
-    eventId?: string[];
-    disciplineId?: string[];
-    position?: string[];
-    score?: string[];
-    notes?: string[];
-  };
-  //errors?: z.infer<typeof ResultSchema>;
-  //errors?: z.core.$ZodError<typeof ResultSchema>;
-  //errors?: z.ZodObject<typeof ResultSchema>;
-  message: string;
-};*/
+
 
 type TreeifiedError<T> = {
   errors: string[];
@@ -59,9 +46,8 @@ export async function createResult(_prevState: State, formData: FormData): Promi
     };
   }
 
-  let result;
   try {
-    result = await prisma.result.create({
+    await prisma.result.create({
       data: {
         ...validatedFields.data,
       },
@@ -73,6 +59,7 @@ export async function createResult(_prevState: State, formData: FormData): Promi
   }
 
   revalidatePath(routes.results.new());
-  redirect(routes.results.view(result.id));
+  revalidatePath(routes.results.list());
+  redirect(routes.results.list());
 }
 
