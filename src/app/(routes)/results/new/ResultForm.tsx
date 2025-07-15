@@ -3,9 +3,6 @@ import React, { PropsWithChildren, ReactElement, useActionState } from 'react';
 import PageLayout from '@/app/components/PageLayout';
 import { createResult, State } from '@/app/lib/actions/result';
 import Button from '@/app/ui/button';
-
-
-import InputField from '@/app/ui/input-field';
 import Textarea from '@/app/ui/textarea';
 import CloseBtn from '@/app/components/CloseBtn';
 import Box from '@/app/components/Box';
@@ -26,7 +23,7 @@ const ResultForm:React.FC<PropsWithChildren> = ({   children }): ReactElement =>
           }
 
 
-          <InputField name="position" title="Position" type="number" />
+
 
           <Textarea name="notes" label="Notes" />
           <Button type="submit" disabled={pending}
