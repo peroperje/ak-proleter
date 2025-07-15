@@ -9,7 +9,7 @@ interface Props {
   disciplines: GetDisciplineReturn;
 }
 
-const SelectionBox: React.FC<Props> = ({ disciplines }): ReactElement => {
+const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
   const [selected, setSelected] = useState<GetDisciplineReturn[0]>();
   const [search, setSearch] = useState<string>('');
 
@@ -160,4 +160,4 @@ const SelectionBox: React.FC<Props> = ({ disciplines }): ReactElement => {
     </div>
   );
 };
-export default SelectionBox;
+export default DisciplineField;

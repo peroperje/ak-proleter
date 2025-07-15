@@ -1,25 +1,25 @@
 'use client';
 import React, { ReactElement, useState } from 'react';
-import { Event } from '@/app/lib/definitions';
+import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
+import { Athlete } from '@/app/lib/definitions';
 import clsx from 'clsx';
 import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
-import Image from 'next/image';
 
 interface Props {
-  events: Event[];
+  athletes: Athlete[];
 }
 
-const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
-  const [selected, setSelected] = useState<Event>();
+const AthleteField: React.FC<Props> = ({ athletes }): ReactElement => {
+  const [selected, setSelected] = useState<Athlete>();
   const [search, setSearch] = useState<string>('');
 
   return (
     <div className={'flex w-full flex-col'}>
       <label
-        htmlFor='eventId'
+        htmlFor='athleteId'
         className={clsx('block text-sm font-bold dark:text-white')}
       >
-        Event
+        Athlete
       </label>
       <div
         className={
@@ -28,8 +28,8 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
       >
         <input
           type='hidden'
-          id='eventId'
-          name='eventId'
+          id='athleteId'
+          name='athleteId'
           value={selected?.id || ''}
         />
         {!!selected && (
@@ -39,18 +39,14 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
             )}
             onClick={() => setSelected(undefined)}
           >
-            <div className='relative h-10 w-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
-              <Image
-                src={`/event-img/${selected.type}.png`}
-                alt={`${selected.type} event`}
-                fill
-                className='object-contain p-1'
-                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-              />
-            </div>
+            <ProfilePhotos
+              src={selected.photoUrl || ''}
+              alt={`${selected.firstName} ${selected.lastName}`}
+              className='h-10 w-10 rounded-full object-cover'
+            />
             <div className={'flex gap-2 text-sm'}>
               <p className={'text-gray-500 dark:text-neutral-400'}>
-                {selected.name} is selected
+                {selected.firstName} {selected.lastName} is selected
               </p>
             </div>
             <div
@@ -97,17 +93,19 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
                 'h-50 grid w-full gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] auto-rows-[70px] overflow-y-auto'
               }
             >
-              {events
-                .filter(({ name }: Event) => {
+
+              {athletes
+                .filter(({ firstName, lastName }: Athlete) => {
                   if (search.length > 0) {
                     return (
-                      name.toLowerCase().includes(search.toLowerCase())
+                      firstName.toLowerCase().includes(search.toLowerCase()) ||
+                      lastName.toLowerCase().includes(search.toLowerCase())
                     );
                   }
                   return true;
                 })
                 .map((athlete) => {
-                  const { id, type, name } = athlete;
+                  const { id, photoUrl, firstName, lastName } = athlete;
                   return (
                     <div
                       key={id}
@@ -116,23 +114,22 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
                       )}
                       onClick={() => setSelected(athlete)}
                     >
-                      <div className='relative flex-shrink-0 h-10 w-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-lg'>
-                        <Image
-                          src={`/event-img/${type}.png`}
-                          alt={`${type} event`}
-                          fill
-                          className='object-contain p-1'
-                          sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                        />
-                      </div>
-                      <div className={'flex flex-col text-sm overflow-x-hidden'}>
-                        <p className={'text-gray-500 dark:text-neutral-400 truncate'}>
-                          {name}
+                      <ProfilePhotos
+                        src={photoUrl || ''}
+                        alt={`${firstName} ${lastName}`}
+                        className='h-13 w-13 rounded-full object-cover'
+                      />
+                      <div className={'flex flex-col text-sm'}>
+                        <p className={'text-gray-500 dark:text-neutral-400'}>
+                          {firstName}
                         </p>
-                        <p className={'text-gray-500 dark:text-neutral-400 capitalize'}>
-                          {type.toLowerCase()}
+                        <p
+                          className={
+                            'overflow-x-hidden text-ellipsis whitespace-nowrap text-gray-500 dark:text-neutral-400'
+                          }
+                        >
+                          {lastName}
                         </p>
-
                       </div>
                     </div>
                   );
@@ -144,4 +141,4 @@ const SelectionBox: React.FC<Props> = ({ events }): ReactElement => {
     </div>
   );
 };
-export default SelectionBox;
+export default AthleteField;

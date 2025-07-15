@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { getAthletes } from '@/app/lib/actions';
-import SelectionBox from '@/app/(routes)/results/new/AthleteSelectionFiled/SelectionBox';
+import { Athlete } from '@/app/lib/definitions';
 
 
-const AthleteSelectionFiledContainer: React.FC = async () => {
+interface Props {
+  children: (athletes: Athlete[]) => React.ReactNode;
+}
+const AthleteSelectionFiledProvider: React.FC<Props> = async ({children}) => {
   const athletes = await getAthletes();
 
   return (
-      <SelectionBox athletes={athletes} />
+    <Suspense fallback={'loading athletes'}>
+      {
+        children(athletes)
+      }
+
+    </Suspense>
   );
 };
-export default AthleteSelectionFiledContainer;
+export default AthleteSelectionFiledProvider;

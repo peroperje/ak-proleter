@@ -296,7 +296,7 @@ export async function getEvents(): Promise<Event[]> {
     return  mapDBEvents(event);
   });
 }
-export async function getClosedEvents() {
+export async function getClosedEvents(): Promise<Event[]> {
   const today = new Date();
   const threeDaysAgo = new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000);
   const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000);

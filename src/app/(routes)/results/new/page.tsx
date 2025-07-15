@@ -3,23 +3,38 @@ import { Metadata } from 'next';
 import ResultForm from './ResultForm';
 import AthleteSelectionFiled from '@/app/(routes)/results/new/AthleteSelectionFiled';
 import EventSelectionField from '@/app/(routes)/results/new/EventSelectionField';
-import DisciplineSelectionField from '@/app/(routes)/results/new/DisciplineSelectionField';
+import DisciplineSelectionFieldProvider from '@/app/(routes)/results/new/DisciplineSelectionField';
+import DisciplineField from '@/app/(routes)/results/new/DisciplineSelectionField/DisciplineField';
+import AthleteField from '@/app/(routes)/results/new/AthleteSelectionFiled/AthleteField';
+import EventField from '@/app/(routes)/results/new/EventSelectionField/EventField';
 
 export const metadata: Metadata = {
   title: 'Create Result',
 };
 
-const Page = async (): Promise<ReactElement> => {
+const Page =  (): ReactElement => {
   return (
     <ResultForm>
-      <Suspense fallback={'load discipline'}>
-        <DisciplineSelectionField />
-      </Suspense>
-      <Suspense fallback={'Loading athletes...'}>
-        <AthleteSelectionFiled />
-      </Suspense>
+        <DisciplineSelectionFieldProvider >
+          {
+            (disciplines)=>(
+              <DisciplineField disciplines={disciplines} />
+            )
+          }
+        </DisciplineSelectionFieldProvider>
+
+        <AthleteSelectionFiled >
+          {
+            (athletes)=>(<AthleteField athletes={athletes} />)
+          }
+        </AthleteSelectionFiled>
+
       <Suspense fallback={'Loading events...'}>
-        <EventSelectionField />
+        <EventSelectionField >
+          {
+            (events)=>(<EventField events={events} />)
+          }
+        </EventSelectionField>
       </Suspense>
     </ResultForm>
   );

@@ -1,13 +1,18 @@
-import React from 'react';
-import SelectionBox from './SelectionBox';
-import { getDiscipline } from '@/app/lib/actions/dicipline';
+import React, { Suspense } from 'react';
+import { getDiscipline, GetDisciplineReturn } from '@/app/lib/actions/dicipline';
 
-const DisciplineSelectionField: React.FC = async ()=> {
+interface Props {
+  children: (disciplines: GetDisciplineReturn) => React.ReactNode;
+}
+const DisciplineSelectionFieldProvider: React.FC<Props> = async ({children})=> {
   const disciplines = await getDiscipline();
 
   return (
-      <SelectionBox disciplines={disciplines} />
+    <Suspense fallback={'loading disciplines'}>
+      {children(disciplines)}
+
+    </Suspense>
   );
 }
 
-export default DisciplineSelectionField;
+export default DisciplineSelectionFieldProvider;
