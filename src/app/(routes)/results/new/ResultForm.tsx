@@ -21,10 +21,6 @@ const ResultForm:React.FC<PropsWithChildren> = ({   children }): ReactElement =>
           {
             children
           }
-
-
-
-
           <Textarea name="notes" label="Notes" />
           <Button type="submit" disabled={pending}
           >
