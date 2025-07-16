@@ -7,23 +7,24 @@ import Textarea from '@/app/ui/textarea';
 import CloseBtn from '@/app/components/CloseBtn';
 import Box from '@/app/components/Box';
 import { Athlete,  Event } from '@/app/lib/definitions';
-import DisciplineScoreField from '@/app/(routes)/results/new/DisciplineSelectionField';
-import AthleteField from '@/app/(routes)/results/new/AthleteSelectionFiled';
-import EventField from '@/app/(routes)/results/new/EventSelectionField';
+import DisciplineScoreField from '@/app/components/results/Form/DisciplineSelectionField';
+import AthleteField from '@/app/components/results/Form/AthleteSelectionFiled';
+import EventField from '@/app/components/results/Form/EventSelectionField';
 import { GetDisciplineReturn } from '@/app/lib/actions/dicipline';
 
 interface Props {
+  title?: string;
   disciplines:GetDisciplineReturn;
   athletes:Athlete[];
   events:Event[];
 }
-const AdminResultForm:React.FC<Props> = ({disciplines,athletes,events}): ReactElement => {
+const AdminResultForm:React.FC<Props> = ({title='Create Result', disciplines,athletes,events}): ReactElement => {
   const initialState: State = { message: '' };
   const [state, dispatch, pending] = useActionState(createResult, initialState);
 
   return (
-    <PageLayout title="Create Result" action={<CloseBtn />}>
-      <Box title={'Create result'}>
+    <PageLayout title={title} action={<CloseBtn />}>
+      <Box title={'Please enter result data'}>
         <form action={dispatch} className="flex flex-col gap-4">
 
           <DisciplineScoreField

@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Metadata } from 'next';
-import AdminResultForm from './AdminResultForm';
+import AdminResultForm from '../../../components/results/Form/AdminResultForm';
 import { getDiscipline } from '@/app/lib/actions/dicipline';
 import { getAthletes, getClosedEvents } from '@/app/lib/actions';
 
