@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 import { Athlete } from '@/app/lib/definitions';
 import clsx from 'clsx';
@@ -8,12 +8,20 @@ import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
 interface Props {
   athletes: Athlete[];
   errors?: string[]
+  defaultAthleteId?: string;
 }
 
-const AthleteField: React.FC<Props> = ({ athletes, errors }): ReactElement => {
+const AthleteField: React.FC<Props> = ({ athletes, errors, defaultAthleteId }): ReactElement => {
   const [selected, setSelected] = useState<Athlete>();
   const [search, setSearch] = useState<string>('');
-
+  useEffect(()=>{
+    if(defaultAthleteId){
+      const athlete = athletes.find((a)=>a.id ===  defaultAthleteId);
+      if (athlete){
+        setSelected(athlete)
+      }
+    }
+  }, [athletes, defaultAthleteId, setSelected])
   return (
     <div className={'flex w-full flex-col'}>
       <label

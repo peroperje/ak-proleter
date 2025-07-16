@@ -7,7 +7,7 @@ import Textarea from '@/app/ui/textarea';
 import CloseBtn from '@/app/components/CloseBtn';
 import Box from '@/app/components/Box';
 import { Athlete,  Event } from '@/app/lib/definitions';
-import DisciplineField from '@/app/(routes)/results/new/DisciplineSelectionField';
+import DisciplineScoreField from '@/app/(routes)/results/new/DisciplineSelectionField';
 import AthleteField from '@/app/(routes)/results/new/AthleteSelectionFiled';
 import EventField from '@/app/(routes)/results/new/EventSelectionField';
 import { GetDisciplineReturn } from '@/app/lib/actions/dicipline';
@@ -21,28 +21,35 @@ const AdminResultForm:React.FC<Props> = ({disciplines,athletes,events}): ReactEl
   const initialState: State = { message: '' };
   const [state, dispatch, pending] = useActionState(createResult, initialState);
 
-  console.log('Error in form',state.errors?.properties?.disciplineId?.errors);
   return (
     <PageLayout title="Create Result" action={<CloseBtn />}>
       <Box title={'Create result'}>
         <form action={dispatch} className="flex flex-col gap-4">
 
-          <DisciplineField
+          <DisciplineScoreField
             disciplines={disciplines}
+            defaultDisciplineId={state.data?.disciplineId}
+            defaultScore={state.data?.score}
             errors={state.errors?.properties?.disciplineId?.errors}
           />
           <AthleteField
             athletes={athletes}
             errors={state.errors?.properties?.athleteId?.errors}
+            defaultAthleteId={state.data?.athleteId}
           />
-          <EventField events={events} />
-          <Textarea name="notes" label="Notes" />
+          <EventField
+            events={events}
+            defaultEventId={state.data?.eventId}
+            errors={state.errors?.properties?.eventId?.errors}
+          />
+          <Textarea name="notes" label="Notes" defaultValue={state.data?.notes} error={state.errors?.properties?.notes?.errors.join(' ')} />
+          {state.message && <p className=" text-center text-red-500">{state.message}</p>}
           <Button type="submit" disabled={pending}
           >
             {pending ? 'Creating...' : 'Create Result'}
 
           </Button>
-          {state.message && <p className="text-red-500">{state.message}</p>}
+
         </form>
       </Box>
     </PageLayout>

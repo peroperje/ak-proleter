@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
 import { GetDisciplineReturn } from '@/app/lib/actions/dicipline';
@@ -7,12 +7,30 @@ import InputField from '@/app/ui/input-field';
 
 interface Props {
   disciplines: GetDisciplineReturn;
-  errors?: string[]
+  errors?: string[],
+  defaultDisciplineId?: string;
+  defaultScore?: number | string;
 }
 
-const DisciplineField: React.FC<Props> = ({ disciplines,errors }): ReactElement => {
+const DisciplineScoreField: React.FC<Props> = ({ disciplines,errors, defaultDisciplineId, defaultScore }): ReactElement => {
   const [selected, setSelected] = useState<GetDisciplineReturn[0]>();
   const [search, setSearch] = useState<string>('');
+  useEffect(()=>{
+    if(defaultDisciplineId){
+      setSelected((prevState)=>{
+        if(defaultDisciplineId){
+          const discipline = disciplines.find((d)=>d.id ===  defaultDisciplineId);
+          if (discipline){
+            return discipline
+          }
+        }
+        return prevState
+      })
+    }
+  },[
+   defaultDisciplineId,
+    disciplines
+  ])
   return (
     <div className={'flex w-full flex-col'}>
       <label
@@ -155,6 +173,7 @@ const DisciplineField: React.FC<Props> = ({ disciplines,errors }): ReactElement 
         </div>
         <div className={'relative w-full'}>
           <InputField
+            defaultValue={defaultScore}
             type={'number'}
             step={'any'}
             key={selected?.id}
@@ -182,4 +201,4 @@ const DisciplineField: React.FC<Props> = ({ disciplines,errors }): ReactElement 
     </div>
   );
 };
-export default DisciplineField;
+export default DisciplineScoreField;

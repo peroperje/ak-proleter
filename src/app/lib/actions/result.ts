@@ -29,8 +29,8 @@ type TreeifiedError<T> = {
 
 export type State = {
   errors?: TreeifiedError<z.infer<typeof ResultSchema>>;
-
   message: string;
+  data?: z.infer<typeof ResultSchema>;
 };
 
 
@@ -40,7 +40,8 @@ export async function createResult(_prevState: State, formData: FormData): Promi
   if (!validatedFields.success) {
     return {
       errors: z.treeifyError(validatedFields.error),
-      message: 'Validation Error: Failed to create result.',
+      message: 'Failed to create result, Please check your data.',
+      data:Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
     };
   }
 

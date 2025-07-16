@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Event } from '@/app/lib/definitions';
 import clsx from 'clsx';
 import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
@@ -9,23 +9,37 @@ import InputField from '@/app/ui/input-field';
 
 interface Props {
   events: Event[];
+  defaultEventId?: string;
+  errors?: string[]
 }
 
-const EventField: React.FC<Props> = ({ events }): ReactElement => {
+const EventField: React.FC<Props> = ({ events, errors, defaultEventId }): ReactElement => {
   const [selected, setSelected] = useState<Event>();
   const [search, setSearch] = useState<string>('');
 
+  useEffect(() => {
+    if(defaultEventId){
+      const event = events.find((e)=>e.id ===  defaultEventId);
+      if (event){
+        setSelected(event)
+      }
+    }
+  }, [events, defaultEventId, setSelected]);
   return (
     <div className={'flex w-full flex-col'}>
       <label
         htmlFor='eventId'
-        className={clsx('block text-sm font-bold dark:text-white')}
+        className={clsx('block text-sm font-bold dark:text-white',{
+          'text-red-500 dark:text-red-400': errors && errors.length > 0
+        })}
       >
         Event
       </label>
       <div
         className={
-          'flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400'
+          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+            'border-red-500 dark:border-red-400': errors && errors.length > 0,
+          })
         }
       >
         <input
@@ -168,6 +182,11 @@ const EventField: React.FC<Props> = ({ events }): ReactElement => {
           </>
         )}
       </div>
+      {
+        !!errors && errors.length > 0 && <p className={'text-sm text-red-500 dark:text-red-400'}>
+          {errors?.join(' ')}
+        </p>
+      }
     </div>
   );
 };
