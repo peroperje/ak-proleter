@@ -17,18 +17,24 @@ interface Props {
   athletes:Athlete[];
   events:Event[];
 }
-const ResultForm:React.FC<Props> = ({disciplines,athletes,events}): ReactElement => {
+const AdminResultForm:React.FC<Props> = ({disciplines,athletes,events}): ReactElement => {
   const initialState: State = { message: '' };
   const [state, dispatch, pending] = useActionState(createResult, initialState);
 
-
+  console.log('Error in form',state.errors?.properties?.disciplineId?.errors);
   return (
     <PageLayout title="Create Result" action={<CloseBtn />}>
       <Box title={'Create result'}>
         <form action={dispatch} className="flex flex-col gap-4">
 
-          <DisciplineField disciplines={disciplines} />
-          <AthleteField athletes={athletes} />
+          <DisciplineField
+            disciplines={disciplines}
+            errors={state.errors?.properties?.disciplineId?.errors}
+          />
+          <AthleteField
+            athletes={athletes}
+            errors={state.errors?.properties?.athleteId?.errors}
+          />
           <EventField events={events} />
           <Textarea name="notes" label="Notes" />
           <Button type="submit" disabled={pending}
@@ -43,4 +49,4 @@ const ResultForm:React.FC<Props> = ({disciplines,athletes,events}): ReactElement
   );
 };
 
-export default ResultForm;
+export default AdminResultForm;

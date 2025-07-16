@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Metadata } from 'next';
-import ResultForm from './ResultForm';
+import AdminResultForm from './AdminResultForm';
 import { getDiscipline } from '@/app/lib/actions/dicipline';
 import { getAthletes, getClosedEvents } from '@/app/lib/actions';
 
@@ -16,7 +16,7 @@ const Page = async (): Promise<ReactElement> => {
     getClosedEvents(),
   ]);
   return (
-    <ResultForm disciplines={disciplines} athletes={athletes} events={events} />
+    <AdminResultForm disciplines={disciplines} athletes={athletes} events={events} />
   );
 };
 

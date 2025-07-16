@@ -7,50 +7,53 @@ import InputField from '@/app/ui/input-field';
 
 interface Props {
   disciplines: GetDisciplineReturn;
+  errors?: string[]
 }
 
-const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
+const DisciplineField: React.FC<Props> = ({ disciplines,errors }): ReactElement => {
   const [selected, setSelected] = useState<GetDisciplineReturn[0]>();
   const [search, setSearch] = useState<string>('');
-
   return (
     <div className={'flex w-full flex-col'}>
       <label
         htmlFor='eventId'
-        className={clsx('block text-sm font-bold dark:text-white')}
+        className={
+        clsx('block text-sm font-bold dark:text-white',{
+          'text-red-500 dark:text-red-400': errors && errors.length > 0
+        })
+      }
       >
-       Score & Discipline
+        Score & Discipline
       </label>
       <div
         className={
-          'flex flex-col gap-4  rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400'
+          clsx('flex flex-col gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+            'border-red-500 dark:border-red-400': errors && errors.length > 0,
+          })
         }
       >
         <div className={'flex flex-col gap-2'}>
           <label
-          htmlFor="disciplineId"
-          className={clsx(
-            'block text-sm font-bold dark:text-white'
-          )}
-        >
-          Discipline
-        </label>
+            htmlFor='disciplineId'
+            className={clsx('block text-sm font-bold dark:text-white')}
+          >
+            Discipline
+          </label>
           <input
-            type="hidden"
-            id="disciplineId"
-            name="disciplineId"
+            type='hidden'
+            id='disciplineId'
+            name='disciplineId'
             value={selected?.id || ''}
           />
 
           {!!selected && (
             <div
-              id="discipline"
+              id='discipline'
               className={clsx(
-                'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2'
+                'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2',
               )}
               onClick={() => setSelected(undefined)}
             >
-
               <div className={'flex flex-col gap-0 text-sm'}>
                 <p className={'font-bold text-gray-500 dark:text-neutral-400'}>
                   {selected.name} is selected
@@ -100,14 +103,17 @@ const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
               </div>
               <div
                 className={
-                  'h-50 grid w-full gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] auto-rows-[70px] overflow-y-auto'
+                  'grid h-50 w-full auto-rows-[70px] grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 overflow-y-auto'
                 }
               >
                 {disciplines
                   .filter(({ name, description }) => {
                     if (search.length > 0) {
                       return (
-                        name.toLowerCase().includes(search.toLowerCase()) || description?.toLowerCase().includes(search.toLowerCase())
+                        name.toLowerCase().includes(search.toLowerCase()) ||
+                        description
+                          ?.toLowerCase()
+                          .includes(search.toLowerCase())
                       );
                     }
                     return true;
@@ -118,7 +124,7 @@ const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
                       <div
                         key={id}
                         className={clsx(
-                          'flex cursor-pointer items-center gap-4 rounded-lg border-1 border-gray-200 p-3 md:p-3'
+                          'flex cursor-pointer items-center gap-4 rounded-lg border-1 border-gray-200 p-3 md:p-3',
                         )}
                         onClick={() => setSelected(discipline)}
                       >
@@ -127,7 +133,7 @@ const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
                         >
                           <p
                             className={
-                              'font-bold text-xs text-gray-500 dark:text-neutral-400'
+                              'text-xs font-bold text-gray-500 dark:text-neutral-400'
                             }
                           >
                             {name}
@@ -139,24 +145,40 @@ const DisciplineField: React.FC<Props> = ({ disciplines }): ReactElement => {
                           >
                             {description}
                           </p>
-
-
                         </div>
                       </div>
                     );
                   })}
               </div>
             </>
-          )}</div>
-        <div className={'w-full relative'}>
-          <InputField type={'number'} step={'any'} key={selected?.id} name="score" title="Score" />
-          {
-            selected?.unit && (
-              <p className={'absolute top-6/12 right-2 text-gray-300 dark:text-neutral-200'}>{selected.unit.name}</p>
-            )
-          }
+          )}
+        </div>
+        <div className={'relative w-full'}>
+          <InputField
+            type={'number'}
+            step={'any'}
+            key={selected?.id}
+            name='score'
+            title='Score'
+            required={true}
+            placeholder={'Your score in selected discipline'}
+          />
+          {selected?.unit && (
+            <p
+              className={
+                'absolute top-6/12 right-2 text-gray-300 dark:text-neutral-200'
+              }
+            >
+              {selected.unit.name}
+            </p>
+          )}
         </div>
       </div>
+      {
+        !!errors && errors.length > 0 && <p className={'text-sm text-red-500 dark:text-red-400'}>
+          {errors?.join(' ')}
+        </p>
+      }
     </div>
   );
 };

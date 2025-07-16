@@ -7,9 +7,10 @@ import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
 
 interface Props {
   athletes: Athlete[];
+  errors?: string[]
 }
 
-const AthleteField: React.FC<Props> = ({ athletes }): ReactElement => {
+const AthleteField: React.FC<Props> = ({ athletes, errors }): ReactElement => {
   const [selected, setSelected] = useState<Athlete>();
   const [search, setSearch] = useState<string>('');
 
@@ -17,13 +18,18 @@ const AthleteField: React.FC<Props> = ({ athletes }): ReactElement => {
     <div className={'flex w-full flex-col'}>
       <label
         htmlFor='athleteId'
-        className={clsx('block text-sm font-bold dark:text-white')}
+        className={clsx('block text-sm font-bold dark:text-white',
+          {
+            'text-red-500 dark:text-red-400': errors && errors.length > 0
+          })}
       >
         Athlete
       </label>
       <div
         className={
-          'flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400'
+          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+            'border-red-500 dark:border-red-400': errors && errors.length > 0,
+          })
         }
       >
         <input
@@ -35,7 +41,9 @@ const AthleteField: React.FC<Props> = ({ athletes }): ReactElement => {
         {!!selected && (
           <div
             className={clsx(
-              'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2',
+              'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2',{
+                'border-red-500 dark:border-red-400': errors && errors.length > 0,
+              }
             )}
             onClick={() => setSelected(undefined)}
           >
@@ -138,6 +146,11 @@ const AthleteField: React.FC<Props> = ({ athletes }): ReactElement => {
           </>
         )}
       </div>
+      {
+        !!errors && errors.length > 0 && <p className={'text-sm text-red-500 dark:text-red-400'}>
+          {errors?.join(' ')}
+        </p>
+      }
     </div>
   );
 };

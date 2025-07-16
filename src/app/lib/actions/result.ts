@@ -7,9 +7,9 @@ import { routes } from '@/app/lib/routes';
 import { redirect } from 'next/navigation';
 
 const ResultSchema = z.object({
-  athleteId: z.string().nonempty(),
-  eventId: z.string().nonempty(),
-  disciplineId: z.string(),
+  athleteId: z.string().nonempty('Athlete is required'),
+  eventId: z.string().nonempty('Event is required'),
+  disciplineId: z.string().nonempty('Discipline is required'),
   position: z.coerce.number().optional(),
   score: z.string().optional(),
   notes: z.string().optional(),
@@ -38,8 +38,6 @@ export async function createResult(_prevState: State, formData: FormData): Promi
   const validatedFields = ResultSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    const treeifiedErrors = z.treeifyError(validatedFields.error);
-    console.log('Validation Errors:', treeifiedErrors);
     return {
       errors: z.treeifyError(validatedFields.error),
       message: 'Validation Error: Failed to create result.',
