@@ -5,6 +5,7 @@ import Button from '@/app/ui/button';
 import PageLayout from '@/app/components/PageLayout';
 import { Result, Athlete, Event, Discipline } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
+import { routes } from '@/app/lib/routes';
 
 type ResultWithRelations = Result & {
   athlete: Pick<Athlete, 'id' | 'firstName' | 'lastName'>;
@@ -227,7 +228,9 @@ export default async function ResultsPage() {
                   </td>
                   <td className='px-6 py-4 text-sm font-medium whitespace-nowrap'>
                     <div className='flex space-x-2'>
-                      <Link href={`/src/app/(routes)/results/${result.id}`}>
+                      <Link
+                        href={routes.results.detail(result.id)}
+                      >
                         <Button size='small' variant='outline'>
                           View
                         </Button>
