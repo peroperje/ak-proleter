@@ -14,6 +14,7 @@ import { GetDisciplineReturn } from '@/app/lib/actions/dicipline';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
+import Loader from '@/app/ui/loader';
 
 interface Props {
   title?: string;
@@ -45,7 +46,7 @@ const AdminResultForm: React.FC<Props> = ({
         behavior: 'smooth',
       });
     }
-  }, [state.status, router ]);
+  }, [state.status, router]);
 
   return (
     <PageLayout title={title} action={<CloseBtn />}>
@@ -91,6 +92,7 @@ const AdminResultForm: React.FC<Props> = ({
             {pending ? 'Creating...' : 'Create Result'}
           </Button>
         </form>
+        {pending && <Loader />}
       </Box>
     </PageLayout>
   );

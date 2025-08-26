@@ -1,22 +1,23 @@
 'use client';
 import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
-import {  useActionState, useEffect } from 'react';
+import { useActionState, useEffect } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { routes } from '@/app/lib/routes';
 import { UsersIcon } from '@/app/ui/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import Loader from '@/app/ui/loader';
 
 interface Props {
-  athlete: AthleteFormData
+  athlete: AthleteFormData;
   userId: string;
 }
 
 export default function EditForm({ athlete, userId }: Props) {
   const router = useRouter();
-  const  user = athlete;
+  const user = athlete;
   // Fetch athlete data when the component mounts
 
   const initialState: ActionState = {
@@ -41,8 +42,8 @@ export default function EditForm({ athlete, userId }: Props) {
   useEffect(() => {
     if (state.status === 'success') {
       toast.success(
-        <div>
-          Data of athlete{' '}
+        <div className={'flex gap-1 justify-center items-center'}>
+          <span>The data for athlete {' '}</span>
           <Link
             className={'font-bold text-blue-50 underline'}
             href={routes.athletes.detail(userId)}
@@ -50,12 +51,12 @@ export default function EditForm({ athlete, userId }: Props) {
           >
             {user.firstName} {user.lastName}
           </Link>{' '}
-          updated successfully.{' '}
-        </div>
+          <span>has been updated successfully.{' '}</span>
+        </div>,
       );
       router.push(routes.athletes.list());
     }
-  }, [state.status,router, user.firstName, user.lastName, userId]);
+  }, [state.status, router, user.firstName, user.lastName, userId]);
 
   return (
     <Box
@@ -63,8 +64,6 @@ export default function EditForm({ athlete, userId }: Props) {
       title={state.message || initialState.message || ''}
       variants={((status) => {
         switch (status) {
-          case 'success':
-            return 'success';
           case 'error':
             return 'error';
           default:
@@ -77,6 +76,7 @@ export default function EditForm({ athlete, userId }: Props) {
         formAction={formAction}
         isSubmitting={isSubmitting}
       />
+      {isSubmitting && <Loader />}
     </Box>
   );
 }

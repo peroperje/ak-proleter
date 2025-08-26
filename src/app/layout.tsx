@@ -28,11 +28,13 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${inter.className} antialiased`}>
+
         <div className='min-h-screen bg-gray-50 dark:bg-neutral-800'>
+
           <Navigation />
+          <ToastProvider />
           <Suspense fallback={'Loading...'}>{children}</Suspense>
         </div>
-        <ToastProvider />
       </body>
     </html>
   );

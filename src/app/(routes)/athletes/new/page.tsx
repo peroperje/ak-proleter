@@ -9,10 +9,10 @@ import CloseBtn from '@/app/components/CloseBtn';
 import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
 import { toast } from 'react-toastify';
+import Loader from '@/app/ui/loader';
 
 export default function NewAthletePage() {
   const router = useRouter();
-
 
   const initialState: ActionState = {
     message: 'Please fill out the form below to add a new athlete.',
@@ -32,12 +32,10 @@ export default function NewAthletePage() {
         top: 0,
         behavior: 'smooth',
       });
-    }else if (state.status === 'success') {
+    } else if (state.status === 'success') {
       toast.success(state.message);
       router.push(routes.athletes.list());
     }
-
-
   }, [state.status, router, state.message]);
 
   return (
@@ -62,6 +60,7 @@ export default function NewAthletePage() {
           formAction={formAction}
           isSubmitting={isSubmitting}
         />
+        {isSubmitting && <Loader />}
       </Box>
     </PageLayout>
   );
