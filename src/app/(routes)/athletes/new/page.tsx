@@ -6,8 +6,13 @@ import PageLayout from '@/app/components/PageLayout';
 import { ActionState, createAthlete } from '@/app/lib/actions';
 import { UserPlusIcon } from '@/app/ui/icons';
 import CloseBtn from '@/app/components/CloseBtn';
+import { useRouter } from 'next/navigation';
+import { routes } from '@/app/lib/routes';
 
 export default function NewAthletePage() {
+  const router = useRouter();
+
+
   const initialState: ActionState = {
     message: 'Please fill out the form below to add a new athlete.',
     errors: {},
@@ -21,13 +26,17 @@ export default function NewAthletePage() {
   );
 
   useEffect(() => {
-    if (state.status === 'success' || state.status === 'error') {
+    if (state.status === 'error') {
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
+    }else if (state.status === 'success') {
+      router.push(routes.athletes.list());
     }
-  }, [state.status]);
+
+
+  }, [state.status, router]);
 
   return (
     <PageLayout title={'New Athlete'}>

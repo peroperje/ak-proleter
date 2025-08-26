@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
 import { Athlete } from '@/app/lib/definitions';
+import { routes } from '@/app/lib/routes';
 
 // Define the type for the form data
 export interface AthleteFormData {
@@ -53,7 +54,7 @@ export type ActionState = {
  * This function:
  * 1. Extracts required fields (firstName, lastName, dateOfBirth, gender) from the FormData
  * 2. Extracts optional fields (email, phone, address, notes, photoUrl) from the FormData
- * 3. Converts the dateOfBirth string to Date object
+ * 3. Converts the dateOfBirth string to a Date object
  * 4. Returns a properly structured AthleteFormData object for use in athlete creation/update operations
  */
 function getAthleteObjectFromFormData(payload: FormData): AthleteFormData {
@@ -140,7 +141,7 @@ export async function createAthlete(_state: ActionState, payload: FormData) {
         category: true,
       },
     });
-    revalidatePath('/athletes');
+    revalidatePath(routes.athletes.list());
     return {
       errors: {} as ActionState['errors'],
       message: 'Athlete created successfully',
@@ -278,7 +279,7 @@ export async function getAthletes(): Promise<Athlete[]> {
       category: true,
     },
   });
-  return athletes.map((athlete) => ({
+  return athletes.map((athlete: typeof athletes) => ({
     id: athlete.id,
     firstName: athlete.name.split(' ')[0],
     lastName: athlete.name.split(' ').slice(1).join(' '),

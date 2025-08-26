@@ -23,7 +23,7 @@ async function getResults(): Promise<ResultWithRelations[]> {
   });
 
   // Transform the database results to match the Result interface
-  return dbResults.map((result) => {
+  return dbResults.map((result: typeof dbResults) => {
     // Parse the score to a number if possible
     let value = 0;
     if (result.score) {
