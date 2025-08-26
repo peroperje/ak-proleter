@@ -279,7 +279,7 @@ export async function getAthletes(): Promise<Athlete[]> {
       category: true,
     },
   });
-  return athletes.map((athlete: typeof athletes) => ({
+  return athletes.map((athlete) => ({
     id: athlete.id,
     firstName: athlete.name.split(' ')[0],
     lastName: athlete.name.split(' ').slice(1).join(' '),

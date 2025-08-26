@@ -7,6 +7,7 @@ import { routes } from '@/app/lib/routes';
 import Box from '@/app/components/Box';
 import React, { useActionState, useEffect } from 'react';
 import { CalendarIcon } from '@/app/ui/icons';
+import { toast } from 'react-toastify';
 
 export interface EventFormData {
   title: string;
@@ -41,7 +42,7 @@ const EventForm: React.FC<EventFormProps> = ({
   categories,
   initialState,
 }) => {
-  const router = useRouter();
+ const router = useRouter();
 
   const [state, formAction, isSubmitting] = useActionState(
     action,
@@ -49,13 +50,20 @@ const EventForm: React.FC<EventFormProps> = ({
   );
 
   useEffect(() => {
-    if (state.status === 'success' || state.status === 'error') {
+    if (state.status === 'error') {
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     }
   }, [state.status]);
+
+  useEffect(() => {
+    if (state.status === 'success') {
+      toast.success(state.message)
+      router.push(routes.events.list())
+    }
+  }, [state.status, router, state.message]);
 
   return (
     <Box

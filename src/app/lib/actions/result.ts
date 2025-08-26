@@ -31,6 +31,7 @@ export type State = {
   errors?: TreeifiedError<z.infer<typeof ResultSchema>>;
   message: string;
   data?: z.infer<typeof ResultSchema>;
+  status: 'success' | 'error' | 'validation' | 'new';
 };
 
 
@@ -39,6 +40,7 @@ export async function createResult(_prevState: State, formData: FormData): Promi
 
   if (!validatedFields.success) {
     return {
+      status: 'validation',
       errors: z.treeifyError(validatedFields.error),
       message: 'Failed to create result, Please check your data.',
       data:Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
@@ -51,14 +53,20 @@ export async function createResult(_prevState: State, formData: FormData): Promi
         ...validatedFields.data,
       },
     });
+    revalidatePath(routes.results.new());
+    revalidatePath(routes.results.list());
+
+    return {
+      status:'success',
+      message: 'Result created successfully',
+    }
   } catch {
     return {
+      status: 'error',
       message: 'Database Error: Failed to create result.',
     };
   }
 
-  revalidatePath(routes.results.new());
-  revalidatePath(routes.results.list());
-  redirect(routes.results.list());
+
 }
 

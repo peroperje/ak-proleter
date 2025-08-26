@@ -8,6 +8,7 @@ import { UserPlusIcon } from '@/app/ui/icons';
 import CloseBtn from '@/app/components/CloseBtn';
 import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
+import { toast } from 'react-toastify';
 
 export default function NewAthletePage() {
   const router = useRouter();
@@ -32,11 +33,12 @@ export default function NewAthletePage() {
         behavior: 'smooth',
       });
     }else if (state.status === 'success') {
+      toast.success(state.message);
       router.push(routes.athletes.list());
     }
 
 
-  }, [state.status, router]);
+  }, [state.status, router, state.message]);
 
   return (
     <PageLayout title={'New Athlete'}>

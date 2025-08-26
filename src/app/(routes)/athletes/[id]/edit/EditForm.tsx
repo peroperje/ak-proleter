@@ -6,6 +6,8 @@ import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { routes } from '@/app/lib/routes';
 import { UsersIcon } from '@/app/ui/icons';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 interface Props {
   athlete: AthleteFormData
@@ -13,6 +15,7 @@ interface Props {
 }
 
 export default function EditForm({ athlete, userId }: Props) {
+  const router = useRouter();
   const  user = athlete;
   // Fetch athlete data when the component mounts
 
@@ -28,35 +31,36 @@ export default function EditForm({ athlete, userId }: Props) {
   );
 
   useEffect(() => {
-    if (state.status === 'success' || state.status === 'error') {
+    if (state.status === 'error') {
       document.documentElement.scrollTo({
         top: 0,
         behavior: 'smooth',
       });
     }
   }, [state.status]);
+  useEffect(() => {
+    if (state.status === 'success') {
+      toast.success(
+        <div>
+          Data of athlete{' '}
+          <Link
+            className={'font-bold text-blue-50 underline'}
+            href={routes.athletes.detail(userId)}
+            passHref={true}
+          >
+            {user.firstName} {user.lastName}
+          </Link>{' '}
+          updated successfully.{' '}
+        </div>
+      );
+      router.push(routes.athletes.list());
+    }
+  }, [state.status,router, user.firstName, user.lastName, userId]);
 
   return (
     <Box
       icon={UsersIcon}
-      title={() => {
-        if (state.status === 'success') {
-          return (
-            <>
-              Athlete{' '}
-              <Link
-                className={'font-bold text-blue-500 underline'}
-                href={routes.athletes.detail(userId)}
-                passHref={true}
-              >
-                {user.firstName} {user.lastName}
-              </Link>{' '}
-              updated successfully.{' '}
-            </>
-          );
-        }
-        return state.message || initialState.message || '';
-      }}
+      title={state.message || initialState.message || ''}
       variants={((status) => {
         switch (status) {
           case 'success':

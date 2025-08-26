@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import React, { Suspense } from 'react';
 import Navigation from '@/app/components/Navigation';
+import ToastProvider from '@/app/components/providers/ToastProvider';
 
 const inter = Inter({
   weight: ['400', '700'],
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Navigation />
           <Suspense fallback={'Loading...'}>{children}</Suspense>
         </div>
+        <ToastProvider />
       </body>
     </html>
   );
