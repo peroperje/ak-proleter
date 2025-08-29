@@ -2,9 +2,11 @@
 import React, { useState, useRef } from 'react';
 import clsx from 'clsx';
 import { aiService } from '@/app/lib/service/AISevice';
+import { AthleteFormData } from '@/app/lib/actions';
+import { toast } from 'react-toastify';
 
 interface SmartFormInputProps {
-  onDataExtracted: (data: any) => void;
+  onDataExtracted: (data: AthleteFormData) => void;
   isDisabled?: boolean;
 }
 
@@ -36,14 +38,13 @@ export default function SmartFormInput({ onDataExtracted, isDisabled = false }: 
       const extractedData = await aiService.extractAthleteData(prompt);
 
       // Check if any data was extracted
-      const hasData = Object.keys(extractedData).length > 0;
+      const hasData = extractedData !== undefined && Object.keys(extractedData).length > 0;
 
       if (hasData) {
         onDataExtracted(extractedData);
-        setSuccess(`✅ Extracted: ${Object.keys(extractedData).join(', ')}`);
         setPrompt('');
-        // Don't auto-close, let user see the success message
-        setTimeout(() => setSuccess(null), 5000);
+        toast.info('Data extracted successfully, Check the form below and click on "Save Athlete" to save the data.');
+        setIsExpanded(false)
       } else {
         setError('Could not extract athlete information from the text. Please try rephrasing.');
       }
@@ -67,7 +68,7 @@ export default function SmartFormInput({ onDataExtracted, isDisabled = false }: 
     try {
       const extractedData = await aiService.extractAthleteDataFromAudio(audioFile);
 
-      const hasData = Object.keys(extractedData).length > 0;
+      const hasData = extractedData !== undefined && Object.keys(extractedData).length > 0;
 
       if (hasData) {
         onDataExtracted(extractedData);

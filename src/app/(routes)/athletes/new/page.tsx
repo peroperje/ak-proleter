@@ -1,9 +1,9 @@
 'use client';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
-import { ActionState, createAthlete } from '@/app/lib/actions';
+import { ActionState, AthleteFormData, createAthlete } from '@/app/lib/actions';
 import { UserPlusIcon } from '@/app/ui/icons';
 import CloseBtn from '@/app/components/CloseBtn';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,8 @@ import AiFormPopulator from '@/app/(routes)/athletes/new/AiFormPopulator';
 
 export default function NewAthletePage() {
   const router = useRouter();
+
+  const [aiFormData, setAiFormData] = useState<AthleteFormData | undefined>();
 
   const initialState: ActionState = {
     message: 'Please fill out the form below to add a new athlete.',
@@ -42,9 +44,12 @@ export default function NewAthletePage() {
   return (
     <PageLayout title={'New Athlete'}>
       <CloseBtn />
-      <AiFormPopulator onDataExtracted={(data)=>{
-        //console.log('data extracted', data)
-      }} />
+      <AiFormPopulator
+        onDataExtracted={(data) => {
+          console.log('Data extracted:', data);
+          setAiFormData(data);
+        }}
+      />
       <Box
         icon={UserPlusIcon}
         title={state.message || initialState.message || ''}
@@ -59,9 +64,13 @@ export default function NewAthletePage() {
           }
         })(state.status)}
       >
-
         <AthleteForm
-          state={state}
+          state={{
+            ...state,
+            ...aiFormData?{
+              data: aiFormData,
+            }:{}
+        }}
           formAction={formAction}
           isSubmitting={isSubmitting}
         />

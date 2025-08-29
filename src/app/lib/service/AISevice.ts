@@ -1,4 +1,5 @@
 
+import { InferenceClient } from "@huggingface/inference";
 import { AthleteFormData } from '@/app/lib/actions';
 
 
@@ -11,26 +12,24 @@ export class AIService {
   }
 
   // Text processing using Hugging Face with a working model
-  async extractAthleteData(prompt: string): Promise<AthleteFormData> {
+  async extractAthleteData(prompt: string): Promise<AthleteFormData | undefined> {
     // Try multiple models in order of preference
     const models = [
-      "microsoft/DialoGPT-medium",
-      "facebook/blenderbot-400M-distill",
-      "microsoft/DialoGPT-small"
+      "deepseek-ai/DeepSeek-V3-0324",
     ];
+
 
     for (const model of models) {
       try {
         const result = await this.tryModel(model, prompt);
         if (result) return result;
       } catch (error) {
+        console.error(`Error with model ${model}:`, error);
         console.warn(`Model ${model} failed, trying next...`);
       }
     }
 
     // If all models fail, use fallback extraction
-    console.log('All models failed, using regex fallback');
-    return this.fallbackExtraction(prompt);
   }
 
   private async tryModel(model: string, prompt: string): Promise<AthleteFormData | null> {
@@ -39,8 +38,41 @@ export class AIService {
 Text: "${prompt}"
 
 JSON:`;
+    const client = new InferenceClient(this.hfApiKey);
+    const chatCompletion = await client.chatCompletion({
+      model: model,
+      messages: [
+        {
+          role: "user",
+          content: systemPrompt,
+        },
+      ],
+      response_format: {
+        type: "json_object",
+      },
+      temperature: 0.1,
+      max_tokens: 100,
+      top_p: 0.95,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      stream: false,
+    });
 
-    try {
+    const content = chatCompletion.choices[0].message.content;
+
+
+    if (content){
+        const json = await JSON.parse(content);
+      const dateOfBirth = new Date(json.dateOfBirth);
+      if(json){
+        return {
+          ...json,
+          dateOfBirth: dateOfBirth.toString() !== 'Invalid Date' ? dateOfBirth:undefined,
+        }
+      }
+    }
+    return null;
+    /*try {
       const response = await fetch(
         `https://api-inference.huggingface.co/models/${model}`,
         {
@@ -63,7 +95,8 @@ JSON:`;
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error(`Model ${model} not found`);
+          console.error(`Model ${model} not found or not available through inference API`);
+          return null;
         }
         throw new Error(`API request failed: ${response.statusText}`);
       }
@@ -94,11 +127,11 @@ JSON:`;
     } catch (error) {
       console.error(`Error with model ${model}:`, error);
       throw error;
-    }
+    }*/
   }
 
   // Alternative approach: Use a text classification model for better results
-  async extractAthleteDataAlternative(prompt: string): Promise<AthleteFormData> {
+  /*async extractAthleteDataAlternative(prompt: string): Promise<AthleteFormData> {
     try {
       // Use a more reliable text generation model
       const response = await fetch(
@@ -139,7 +172,7 @@ JSON:`;
 
     // Always fall back to regex extraction
     return this.fallbackExtraction(prompt);
-  }
+  }*/
 
   // Audio transcription using Web Speech API (free, browser-based)
   async transcribeAudio(audioFile: File): Promise<string> {
@@ -206,7 +239,7 @@ JSON:`;
   }
 
   // Process audio: transcribe then extract data
-  async extractAthleteDataFromAudio(audioFile: File): Promise<AthleteFormData> {
+  async extractAthleteDataFromAudio(audioFile: File): Promise<AthleteFormData | undefined> {
     try {
       // First, transcribe the audio
       let transcript: string;
@@ -220,7 +253,37 @@ JSON:`;
       }
 
       // Then extract data from transcript
-      return await this.extractAthleteData(transcript);
+      //return await this.extractAthleteData(transcript);
+      const systemPrompt = `Extract athlete information and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes, photoUrl. Only include fields clearly mentioned.
+
+Text: "${prompt}"
+
+JSON:`;
+
+      const client = new InferenceClient(this.hfApiKey);
+      const chatCompletion = await client.chatCompletion({
+        model: "facebook/mms-1b-all",
+        messages: [
+          {
+            role: "user",
+            content: systemPrompt,
+          },
+        ],
+        response_format: {
+          type: "json_object",
+        },
+        temperature: 0.1,
+        max_tokens: 100,
+        top_p: 0.95,
+        frequency_penalty: 0.0,
+        presence_penalty: 0.0,
+        stream: false,
+      });
+
+      const content = chatCompletion.choices[0].message.content;
+
+      console.log('Chat completion response:', content);
+
     } catch (error) {
       console.error('Audio processing error:', error);
       throw error;
@@ -228,7 +291,7 @@ JSON:`;
   }
 
   // Enhanced fallback extraction using regex patterns
-  private fallbackExtraction(text: string): AthleteFormData {
+  /*private fallbackExtraction(text: string): AthleteFormData {
     console.log('Using fallback extraction for:', text);
     const data = {} as AthleteFormData;
 
@@ -329,7 +392,7 @@ JSON:`;
       data.notes = text.substring(0, 200) + (text.length > 200 ? '...' : '');
     }
     return data;
-  }
+  }*/
 }
 
 export const aiService = new AIService();
