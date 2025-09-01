@@ -72,107 +72,9 @@ JSON:`;
       }
     }
     return null;
-    /*try {
-      const response = await fetch(
-        `https://api-inference.huggingface.co/models/${model}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.hfApiKey}`,
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            inputs: systemPrompt,
-            parameters: {
-              max_new_tokens: 150,
-              temperature: 0.1,
-              do_sample: false,
-              return_full_text: false
-            }
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.error(`Model ${model} not found or not available through inference API`);
-          return null;
-        }
-        throw new Error(`API request failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      console.log(`Model ${model} response:`, result);
-
-      // Handle different response formats
-      let generatedText = '';
-      if (Array.isArray(result)) {
-        generatedText = result[0]?.generated_text || result[0]?.text || '';
-      } else {
-        generatedText = result.generated_text || result.text || '';
-      }
-
-      // Try to extract JSON from response
-      const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          return JSON.parse(jsonMatch[0]);
-        } catch {
-          // If JSON parsing fails, continue to fallback
-        }
-      }
-
-      return null;
-    } catch (error) {
-      console.error(`Error with model ${model}:`, error);
-      throw error;
-    }*/
   }
 
-  // Alternative approach: Use a text classification model for better results
-  /*async extractAthleteDataAlternative(prompt: string): Promise<AthleteFormData> {
-    try {
-      // Use a more reliable text generation model
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/google/flan-t5-base",
-        {
-          headers: {
-            Authorization: `Bearer ${this.hfApiKey}`,
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            inputs: `Extract athlete information from this text and format as JSON with fields firstName, lastName, dateOfBirth (YYYY-MM-DD), gender (male/female), phone, address, notes, photoUrl: "${prompt}"`,
-            parameters: {
-              max_new_tokens: 100,
-              temperature: 0.1
-            }
-          }),
-        }
-      );
 
-      if (response.ok) {
-        const result = await response.json();
-        const generatedText = result[0]?.generated_text || '';
-
-        const jsonMatch = generatedText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          try {
-            return JSON.parse(jsonMatch[0]);
-          } catch {
-            // Fall through to regex extraction
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Alternative model failed:', error);
-    }
-
-
-    // Always fall back to regex extraction
-    return this.fallbackExtraction(prompt);
-  }*/
 
   // Audio transcription using Web Speech API (free, browser-based)
   async transcribeAudio(audioFile: File): Promise<string> {
@@ -240,42 +142,9 @@ JSON:`;
 
   // Process audio: transcribe then extract data
   async extractAthleteDataFromAudio(audioFile: File): Promise<AthleteFormData | undefined> {
-    /*try {
-      // First, transcribe the audio
-      let transcript: string;
+    const transcript = await this.transcribeAudioWithHF(audioFile);
+    return this.extractAthleteData(transcript);
 
-      try {
-        // Try browser-based speech recognition first (free)
-        transcript = await this.transcribeAudio(audioFile);
-      } catch {
-        // Fallback to Hugging Face Whisper
-        transcript = await this.transcribeAudioWithHF(audioFile);
-      }
-
-      // Then extract data from transcript
-      //return await this.extractAthleteData(transcript);
-      const systemPrompt = `Extract athlete information and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes, photoUrl. Only include fields clearly mentioned.
-
-Text: "${prompt}"
-
-JSON:`;*/
-try {
-      console.log('typeof audioFile:',audioFile);
-      const client = new InferenceClient(this.hfApiKey);
-      const chatCompletion = await client.automaticSpeechRecognition({
-        model: "openai/whisper-large-v3",
-        data: audioFile,
-
-      });
-
-
-      console.log('Chat completion response:', chatCompletion);
-      return ;
-
-    } catch (error) {
-      console.error('Audio processing error:', error);
-      throw error;
-    }
   }
 }
 

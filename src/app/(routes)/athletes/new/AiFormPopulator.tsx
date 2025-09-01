@@ -108,7 +108,7 @@ export default function SmartFormInput({ onDataExtracted, isDisabled = false }: 
       mediaRecorder.start();
       setIsRecording(true);
       setError(null);
-    } catch (err) {
+    } catch (_) {
       setError('Failed to access microphone. Please check permissions.');
     }
   };
@@ -157,7 +157,7 @@ export default function SmartFormInput({ onDataExtracted, isDisabled = false }: 
         <>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 dark:bg-yellow-900/20 dark:border-yellow-800">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>💡 Tip:</strong> Be specific! Say "Create athlete John Smith, born January 15, 1990, male, phone 555-123-4567"
+              <strong>💡 Tip:</strong> Be specific! Say &#34;Create athlete John Smith, born January 15, 1990, male, phone 555-123-4567&#34;
             </p>
           </div>
 
