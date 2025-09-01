@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
 import { toast } from 'react-toastify';
 import Loader from '@/app/ui/loader';
-import AiFormPopulator from '@/app/(routes)/athletes/new/AiFormPopulator';
+import AIPopulation from '@/app/(routes)/athletes/new/AIPopulation';
 
 export default function NewAthletePage() {
   const router = useRouter();
@@ -44,12 +44,8 @@ export default function NewAthletePage() {
   return (
     <PageLayout title={'New Athlete'}>
       <CloseBtn />
-      <AiFormPopulator
-        onDataExtracted={(data) => {
-          console.log('Data extracted:', data);
-          setAiFormData(data);
-        }}
-      />
+
+
       <Box
         icon={UserPlusIcon}
         title={state.message || initialState.message || ''}
@@ -64,6 +60,11 @@ export default function NewAthletePage() {
           }
         })(state.status)}
       >
+
+        <AIPopulation onDataExtracted={(data) => {
+          setAiFormData({ ...data });
+        }} />
+
         <AthleteForm
           state={{
             ...state,

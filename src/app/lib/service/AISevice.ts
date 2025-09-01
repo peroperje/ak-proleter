@@ -33,7 +33,7 @@ export class AIService {
   }
 
   private async tryModel(model: string, prompt: string): Promise<AthleteFormData | null> {
-    const systemPrompt = `Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes, photoUrl. Only include fields clearly mentioned.
+    const systemPrompt = `Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.
 
 Text: "${prompt}"
 
@@ -74,45 +74,6 @@ JSON:`;
     return null;
   }
 
-
-
-  // Audio transcription using Web Speech API (free, browser-based)
-  async transcribeAudio(audioFile: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        reject(new Error('Speech recognition not supported'));
-        return;
-      }
-
-      // Use Web Speech API for transcription
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-
-      recognition.continuous = true;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-
-      recognition.onresult = (event: any) => {
-        let transcript = '';
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-        resolve(transcript);
-      };
-
-      recognition.onerror = (event: any) => {
-        reject(new Error(`Speech recognition error: ${event.error}`));
-      };
-
-      recognition.start();
-
-      // Timeout after 30 seconds
-      setTimeout(() => {
-        recognition.stop();
-        reject(new Error('Transcription timeout'));
-      }, 30000);
-    });
-  }
 
   // Alternative: Use Hugging Face's Whisper model for transcription
   async transcribeAudioWithHF(audioFile: File): Promise<string> {

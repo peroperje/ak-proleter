@@ -11,6 +11,8 @@ export {
   FiClock as ClockIcon,
   FiTag as TagIcon,
 } from 'react-icons/fi';
+export { HiSparkles as HiSparklesIcon } from 'react-icons/hi2';
+
 
 export { FaRunning as RunningIcon } from 'react-icons/fa';
 export { IoCloseCircleOutline as IoCloseCircleOutlineIcon} from "react-icons/io5";
