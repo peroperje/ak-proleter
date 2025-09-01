@@ -99,8 +99,8 @@ export default function SmartFormInput({ onDataExtracted, isDisabled = false }: 
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/wav' });
+        const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/wav' });
         setAudioFile(audioFile);
         stream.getTracks().forEach(track => track.stop());
       };

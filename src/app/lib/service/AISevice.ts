@@ -240,7 +240,7 @@ JSON:`;
 
   // Process audio: transcribe then extract data
   async extractAthleteDataFromAudio(audioFile: File): Promise<AthleteFormData | undefined> {
-    try {
+    /*try {
       // First, transcribe the audio
       let transcript: string;
 
@@ -258,141 +258,25 @@ JSON:`;
 
 Text: "${prompt}"
 
-JSON:`;
-
+JSON:`;*/
+try {
+      console.log('typeof audioFile:',audioFile);
       const client = new InferenceClient(this.hfApiKey);
-      const chatCompletion = await client.chatCompletion({
-        model: "facebook/mms-1b-all",
-        messages: [
-          {
-            role: "user",
-            content: systemPrompt,
-          },
-        ],
-        response_format: {
-          type: "json_object",
-        },
-        temperature: 0.1,
-        max_tokens: 100,
-        top_p: 0.95,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
-        stream: false,
+      const chatCompletion = await client.automaticSpeechRecognition({
+        model: "openai/whisper-large-v3",
+        data: audioFile,
+
       });
 
-      const content = chatCompletion.choices[0].message.content;
 
-      console.log('Chat completion response:', content);
+      console.log('Chat completion response:', chatCompletion);
+      return ;
 
     } catch (error) {
       console.error('Audio processing error:', error);
       throw error;
     }
   }
-
-  // Enhanced fallback extraction using regex patterns
-  /*private fallbackExtraction(text: string): AthleteFormData {
-    console.log('Using fallback extraction for:', text);
-    const data = {} as AthleteFormData;
-
-    // Name extraction - multiple patterns
-    const namePatterns = [
-      /(?:athlete|create|add|new)\s+([A-Z][a-z]+)\s+([A-Z][a-z]+)/i,
-      /([A-Z][a-z]+)\s+([A-Z][a-z]+)(?:\s*,|\s+born|\s+is)/i,
-      /name\s*:?\s*([A-Z][a-z]+)\s+([A-Z][a-z]+)/i
-    ];
-
-    for (const pattern of namePatterns) {
-      const match = text.match(pattern);
-      if (match) {
-        data.firstName = match[1];
-        data.lastName = match[2];
-        break;
-      }
-    }
-
-    // Date extraction with more patterns
-    const datePatterns = [
-      /born\s+(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{4})/i,
-      /(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{4})/,
-      /(\d{4})-(\d{1,2})-(\d{1,2})/,
-      /born\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(\d{4})/i,
-      /(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(\d{4})/i
-    ];
-
-    for (const pattern of datePatterns) {
-      const match = text.match(pattern);
-      if (match) {
-        if (pattern.source.includes('january|february')) {
-          // Month name format
-          const months: {[key: string]: string} = {
-            january: '01', february: '02', march: '03', april: '04',
-            may: '05', june: '06', july: '07', august: '08',
-            september: '09', october: '10', november: '11', december: '12'
-          };
-          const monthIndex = pattern.source.includes('born') ? 2 : 1;
-          const dayIndex = monthIndex + 1;
-          const yearIndex = dayIndex + 1;
-          const month = months[match[monthIndex].toLowerCase()];
-          data.dateOfBirth = `${match[yearIndex]}-${month}-${match[dayIndex].padStart(2, '0')}`;
-        } else if (match.length >= 4 && match[3]) {
-          // DD.MM.YYYY or similar
-          data.dateOfBirth = `${match[3]}-${match[2].padStart(2, '0')}-${match[1].padStart(2, '0')}`;
-        } else if (match[0].includes('-')) {
-          // YYYY-MM-DD format
-          data.dateOfBirth = match[0];
-        }
-        break;
-      }
-    }
-
-    // Gender extraction
-    if (/\b(male|man|boy|he|him|his)\b/i.test(text)) data.gender = 'male';
-    if (/\b(female|woman|girl|she|her)\b/i.test(text)) data.gender = 'female';
-
-    // Phone extraction - multiple patterns
-    const phonePatterns = [
-      /(?:phone|tel|call|mobile|number)\s*:?\s*([\+\d\-\s\(\)]{10,})/i,
-      /(\d{3}[-\.\s]?\d{3}[-\.\s]?\d{4})/,
-      /(\+\d{1,3}\s?\d{3,4}\s?\d{3,4}\s?\d{3,4})/
-    ];
-
-    for (const pattern of phonePatterns) {
-      const match = text.match(pattern);
-      if (match) {
-        data.phone = match[1].trim();
-        break;
-      }
-    }
-
-    // Email extraction
-    const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
-    if (emailMatch && !data.notes) {
-      data.notes = `Email: ${emailMatch[1]}`;
-    }
-
-    // Address extraction - enhanced patterns
-    const addressPatterns = [
-      /(?:address|lives?|resides?)\s*(?:at|in)?\s*:?\s*([^,\n]+(?:street|st|avenue|ave|road|rd|drive|dr|lane|ln|boulevard|blvd)[^,\n]*)/i,
-      /(?:address|lives?|resides?)\s*(?:at|in)?\s*:?\s*(\d+[^,\n]+)/i,
-      /(?:from|in)\s+([A-Z][a-zA-Z\s]+(?:City|Town|Village|,\s*[A-Z]{2}))/i
-    ];
-
-    for (const pattern of addressPatterns) {
-      const match = text.match(pattern);
-      if (match) {
-        data.address = match[1].trim();
-        break;
-      }
-    }
-
-    // Extract any additional notes
-    if (text.length > 50 && !data.notes) {
-      // If the text is long, use it as notes
-      data.notes = text.substring(0, 200) + (text.length > 200 ? '...' : '');
-    }
-    return data;
-  }*/
 }
 
 export const aiService = new AIService();
