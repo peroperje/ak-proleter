@@ -1,14 +1,18 @@
 
 import { InferenceClient } from "@huggingface/inference";
 import { AthleteFormData } from '@/app/lib/actions';
+import { useMemo } from 'react';
+import { string } from 'yup';
 
 
 export class AIService {
-  private hfApiKey: string;
+  private readonly hfApiKey: string;
+  private readonly defaultPrompt: string;
 
-  constructor() {
-    // Hugging Face API key (free forever)
+  constructor(defultPrompt:string) {
+    // the Hugging Face API key
     this.hfApiKey = process.env.NEXT_PUBLIC_HF_API_KEY || '';
+    this.defaultPrompt = defultPrompt;
   }
 
   // Text processing using Hugging Face with a working model
@@ -33,7 +37,7 @@ export class AIService {
   }
 
   private async tryModel(model: string, prompt: string): Promise<AthleteFormData | null> {
-    const systemPrompt = `Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.
+    const systemPrompt = `${this.defaultPrompt}
 
 Text: "${prompt}"
 
@@ -89,12 +93,11 @@ JSON:`;
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`Transcription failed: ${response.statusText}`);
+      if (response.ok) {
+        const result = await response.json();
+        return result.text || '';
       }
-
-      const result = await response.json();
-      return result.text || '';
+      return '';
     } catch (error) {
       console.error('HF transcription error:', error);
       throw error;
@@ -108,5 +111,10 @@ JSON:`;
 
   }
 }
-
-export const aiService = new AIService();
+type UseAIServiceProps = {
+  defaultPrompt: string;
+}
+const useAIService = ({defaultPrompt}:UseAIServiceProps) => {
+  return useMemo(()=>new AIService(defaultPrompt),[defaultPrompt]);
+}
+export default useAIService

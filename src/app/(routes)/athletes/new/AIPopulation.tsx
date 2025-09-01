@@ -54,6 +54,7 @@ const AIPopulation: React.FC<SmartFormInputProps> = ({
         title={'AI Form Populator'}
       >
         <AiFormPopulator
+          defaultPrompt={'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'}
           onDataExtracted={(data) => {
             setAiPopulationState('success-populated');
             setIsExpanded(false);

@@ -1,18 +1,29 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import clsx from 'clsx';
-import { aiService } from '@/app/lib/service/AISevice';
+import useAIService from '@/app/lib/service/AISevice';
 import { AthleteFormData } from '@/app/lib/actions';
+import Textarea from '@/app/ui/textarea';
+import {
+  FaMicrophoneAltIcon,
+  FaStopCircleIcon,
+  MdTextsmsIcon,
+} from '@/app/ui/icons';
+import Button from '@/app/ui/button';
 
 export interface SmartFormInputProps {
   onDataExtracted: (data: AthleteFormData) => void;
   isDisabled?: boolean;
+  defaultPrompt: string;
 }
 
 export default function SmartFormInput({
   onDataExtracted,
   isDisabled = false,
+  defaultPrompt,
 }: SmartFormInputProps) {
+  const aiService = useAIService({ defaultPrompt });
+
   const [prompt, setPrompt] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +134,8 @@ export default function SmartFormInput({
       mediaRecorder.start();
       setIsRecording(true);
       setError(null);
-    } catch (_) {
+    } catch (e) {
+      console.error('Error accessing microphone:', e);
       setError('Failed to access microphone. Please check permissions.');
     }
   };
@@ -147,40 +159,40 @@ export default function SmartFormInput({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && e.ctrlKey && inputMode === 'text') {
-      handleExtractFromText();
+      await handleExtractFromText();
     }
   };
 
   return (
-    <div className=''>
+    <div>
       {/* Input Mode Toggle */}
-      <div className='mb-4 grid grid-cols-2 border  border-gray-200 dark:border-neutral-700'>
+      <div className='mb-4 grid grid-cols-2 border border-gray-200 dark:border-neutral-700'>
         <button
           type='button'
-
           onClick={() => setInputMode('text')}
           className={clsx(
-            'px-3 py-1 text-sm font-medium transition-colors',
+            'flex items-center justify-center gap-2 px-3 py-1 text-sm font-medium transition-colors',
             inputMode === 'text'
               ? 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
               : '',
           )}
         >
-          📝 Text Input
+          <MdTextsmsIcon size={20} />
+          <span>Text Input</span>
         </button>
         <button
           type='button'
           onClick={() => setInputMode('audio')}
           className={clsx(
-            'px-3 py-1 text-sm font-medium transition-colors',
+            'flex items-center justify-center gap-2 px-3 py-1 text-sm font-medium transition-colors',
             inputMode === 'audio'
               ? 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
               : '',
           )}
         >
-          🎤 Audio Input
+          <FaMicrophoneAltIcon size={20} /> <span>Audio Input</span>
         </button>
       </div>
       <div className='mb-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-800 dark:bg-yellow-900/20'>
@@ -191,20 +203,14 @@ export default function SmartFormInput({
       </div>
       <div className='space-y-3'>
         {inputMode === 'text' && (
-          <div>
-            <textarea
+          <div className='min-h-52'>
+            <Textarea
+              label={'Enter description of athlete:'}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder='Example: Create athlete Maria Rodriguez, female, born March 15 1992, phone 555-0123, lives at 456 Oak Street, New York'
-              className={clsx(
-                'w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
-                {
-                  'border-red-500': error,
-                  'border-green-500': success,
-                },
-              )}
-              rows={3}
+              rows={7}
               disabled={isDisabled || isProcessing}
             />
             <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
@@ -215,34 +221,27 @@ export default function SmartFormInput({
 
         {inputMode === 'audio' && (
           <div className='space-y-3'>
-            <div className='flex gap-2'>
-              <button
+            <div className='min-h-52 flex flex-col w-full items-center justify-center '>
+              <Button
                 type='button'
+                size={'large'}
+                variant={isRecording ? 'cancel' : 'outline'}
                 onClick={isRecording ? stopRecording : startRecording}
                 disabled={isDisabled || isProcessing}
-                className={clsx(
-                  'rounded-lg px-4 py-2 text-sm font-medium focus:ring-2 focus:outline-none',
-                  {
-                    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500':
-                      isRecording,
-                    'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500':
-                      !isRecording && !isProcessing,
-                    'cursor-not-allowed bg-gray-300 text-gray-500':
-                      isProcessing,
-                  },
+              >
+                {isRecording ? (
+                  <>
+                    <FaStopCircleIcon />
+                    <span>Stop Recording</span>
+                  </>
+                ) : (
+                  <>
+                    <FaMicrophoneAltIcon size={20} />{' '}
+                    <span>Start Recording</span>
+                  </>
                 )}
-              >
-                {isRecording ? '⏹️ Stop Recording' : '🎤 Start Recording'}
-              </button>
+              </Button>
 
-              <button
-                type='button'
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isDisabled || isProcessing}
-                className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300'
-              >
-                📁 Upload Audio
-              </button>
 
               <input
                 ref={fileInputRef}
@@ -281,8 +280,8 @@ export default function SmartFormInput({
           </p>
         )}
 
-        <div className='flex gap-2'>
-          <button
+        <div className='grid grid-cols-2 gap-2'>
+          <Button
             type='button'
             onClick={
               inputMode === 'text'
@@ -295,25 +294,13 @@ export default function SmartFormInput({
               (inputMode === 'text' && !prompt.trim()) ||
               (inputMode === 'audio' && !audioFile)
             }
-            className={clsx(
-              'rounded-lg px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none',
-              {
-                'bg-blue-600 text-white hover:bg-blue-700':
-                  !isProcessing &&
-                  ((inputMode === 'text' && prompt.trim()) ||
-                    (inputMode === 'audio' && audioFile)),
-                'cursor-not-allowed bg-gray-300 text-gray-500':
-                  isProcessing ||
-                  (inputMode === 'text' && !prompt.trim()) ||
-                  (inputMode === 'audio' && !audioFile),
-              },
-            )}
           >
-            {isProcessing ? '⏳ Processing...' : '🚀 Extract & Populate'}
-          </button>
+            {isProcessing ? 'Processing...' : 'Extract & Populate'}
+          </Button>
 
-          <button
+          <Button
             type='button'
+            variant={'cancel'}
             onClick={() => {
               setPrompt('');
               setAudioFile(null);
@@ -321,10 +308,9 @@ export default function SmartFormInput({
               setSuccess(null);
             }}
             disabled={isDisabled || isProcessing}
-            className='rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 focus:outline-none dark:bg-gray-700 dark:text-gray-300'
           >
-            🗑️ Clear
-          </button>
+            Clear
+          </Button>
         </div>
       </div>
     </div>
