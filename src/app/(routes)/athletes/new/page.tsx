@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
 import { toast } from 'react-toastify';
 import Loader from '@/app/ui/loader';
-import AIPopulation from '@/app/(routes)/athletes/new/AIPopulation';
+import AIPopulationModal from '@/app/(routes)/athletes/new/AIPopulationModal';
 
 export default function NewAthletePage() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export default function NewAthletePage() {
         })(state.status)}
       >
 
-        <AIPopulation onDataExtracted={(data) => {
+        <AIPopulationModal onDataExtracted={(data) => {
           setAiFormData({ ...data });
         }} />
 

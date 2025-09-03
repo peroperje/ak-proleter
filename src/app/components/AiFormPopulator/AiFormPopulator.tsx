@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, ReactElement } from 'react';
 import clsx from 'clsx';
 import useAIService from '@/app/lib/service/AISevice';
 import { AthleteFormData } from '@/app/lib/actions';
@@ -11,17 +11,26 @@ import {
 } from '@/app/ui/icons';
 import Button from '@/app/ui/button';
 
-export interface SmartFormInputProps {
+export interface RenderTextAreaProps {
+  prompt: string;
+  setPrompt: (value: string) => void;
+  handleKeyPress: (e: React.KeyboardEvent) => void;
+  isDisabled: boolean;
+  isProcessing: boolean;
+}
+export interface AiFormPopulatorProps {
   onDataExtracted: (data: AthleteFormData) => void;
   isDisabled?: boolean;
   defaultPrompt: string;
+  renderTextArea: (props:RenderTextAreaProps)=> ReactElement;
 }
 
-export default function SmartFormInput({
+export default function AiFormPopulator({
   onDataExtracted,
   isDisabled = false,
   defaultPrompt,
-}: SmartFormInputProps) {
+                                          renderTextArea,
+}: AiFormPopulatorProps) {
   const aiService = useAIService({ defaultPrompt });
 
   const [prompt, setPrompt] = useState('');
@@ -202,7 +211,13 @@ export default function SmartFormInput({
         </p>
       </div>
       <div className='space-y-3'>
-        {inputMode === 'text' && (
+        {inputMode === 'text' && renderTextArea({
+          prompt,
+          setPrompt,
+          handleKeyPress,
+          isDisabled,
+          isProcessing,
+        }) && (
           <div className='min-h-52'>
             <Textarea
               label={'Enter description of athlete:'}

@@ -1,7 +1,7 @@
 import React, { ReactElement, TextareaHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
-interface Props
+export interface Props
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className'> {
   label: string;
   error?: string;

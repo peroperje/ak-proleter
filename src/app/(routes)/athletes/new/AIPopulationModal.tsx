@@ -3,34 +3,37 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import Modal from '@/app/ui/modal';
 import { HiSparklesIcon } from '@/app/ui/icons';
 import Button from '@/app/ui/button';
-import AiFormPopulator, {
-  SmartFormInputProps,
-} from '@/app/(routes)/athletes/new/AiFormPopulator';
+import {
+  AiFormPopulatorProps,
+  AiFormPopulator,
+  TextAreaDefault as AIDefaultTextAreaPrompt,
+} from '@/app/components/AiFormPopulator';
 import clsx from 'clsx';
 
-const AIPopulation: React.FC<SmartFormInputProps> = ({
+const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
   onDataExtracted,
 }): ReactElement => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [aiPopulationState, setAiPopulationState] = useState<'new' | 'success-populated'>('new');
+  const [aiPopulationState, setAiPopulationState] = useState<
+    'new' | 'success-populated'
+  >('new');
 
   useEffect(() => {
-    if(aiPopulationState === 'success-populated'){
+    if (aiPopulationState === 'success-populated') {
       const timeout = setTimeout(() => {
         setAiPopulationState('new');
       }, 7000);
       return () => clearTimeout(timeout);
     }
-  }, [aiPopulationState,setAiPopulationState])
+  }, [aiPopulationState, setAiPopulationState]);
 
   return (
     <>
       <div
-        className={
-          clsx('p-4 flex items-center justify-between ', {
-            'rounded-lg border border-green-500 bg-green-100 dark:bg-green-400': aiPopulationState === 'success-populated'
-          })
-        }
+        className={clsx('flex items-center justify-between p-4', {
+          'rounded-lg border border-green-500 bg-green-100 dark:bg-green-400':
+            aiPopulationState === 'success-populated',
+        })}
       >
         <h3
           className={'text-sm text-gray-500 md:text-left dark:text-neutral-500'}
@@ -54,7 +57,18 @@ const AIPopulation: React.FC<SmartFormInputProps> = ({
         title={'AI Form Populator'}
       >
         <AiFormPopulator
-          defaultPrompt={'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'}
+          defaultPrompt={
+            'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'
+          }
+          renderTextArea={(textProps) => {
+            return (
+              <AIDefaultTextAreaPrompt
+                {...textProps}
+                label={'Enter description of athlete:'}
+                placeholder='Example: Create athlete Maria Rodriguez, female, born March 15 1992, phone 555-0123, lives at 456 Oak Street, New York'
+              />
+            );
+          }}
           onDataExtracted={(data) => {
             setAiPopulationState('success-populated');
             setIsExpanded(false);
@@ -66,4 +80,4 @@ const AIPopulation: React.FC<SmartFormInputProps> = ({
   );
 };
 
-export default AIPopulation;
+export default AIPopulationModal;
