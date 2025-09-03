@@ -3,15 +3,15 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import Modal from '@/app/ui/modal';
 import { HiSparklesIcon } from '@/app/ui/icons';
 import Button from '@/app/ui/button';
-import {
-  AiFormPopulatorProps,
-  AiFormPopulator,
-  TextAreaDefault as AIDefaultTextAreaPrompt,
-} from '@/app/components/AiFormPopulator';
+
+import AiFormPopulator,{AiFormPopulatorProps} from './AiFormPopulator'
 import clsx from 'clsx';
 
 const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
   onDataExtracted,
+  renderTextArea,
+  defaultPrompt,
+
 }): ReactElement => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [aiPopulationState, setAiPopulationState] = useState<
@@ -20,6 +20,7 @@ const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
 
   useEffect(() => {
     if (aiPopulationState === 'success-populated') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
       const timeout = setTimeout(() => {
         setAiPopulationState('new');
       }, 7000);
@@ -57,18 +58,8 @@ const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
         title={'AI Form Populator'}
       >
         <AiFormPopulator
-          defaultPrompt={
-            'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'
-          }
-          renderTextArea={(textProps) => {
-            return (
-              <AIDefaultTextAreaPrompt
-                {...textProps}
-                label={'Enter description of athlete:'}
-                placeholder='Example: Create athlete Maria Rodriguez, female, born March 15 1992, phone 555-0123, lives at 456 Oak Street, New York'
-              />
-            );
-          }}
+          defaultPrompt={defaultPrompt}
+          renderTextArea={renderTextArea}
           onDataExtracted={(data) => {
             setAiPopulationState('success-populated');
             setIsExpanded(false);

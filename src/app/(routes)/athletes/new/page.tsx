@@ -1,5 +1,5 @@
 'use client';
-import { useActionState, useEffect, useState } from 'react';
+import React, { useActionState, useEffect, useState } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import Box from '@/app/components/Box';
 import PageLayout from '@/app/components/PageLayout';
@@ -10,7 +10,8 @@ import { useRouter } from 'next/navigation';
 import { routes } from '@/app/lib/routes';
 import { toast } from 'react-toastify';
 import Loader from '@/app/ui/loader';
-import AIPopulationModal from '@/app/(routes)/athletes/new/AIPopulationModal';
+
+import { AIPopulationModal ,TextAreaDefault as AIDefaultTextAreaPrompt } from '@/app/components/AiFormPopulator';
 
 export default function NewAthletePage() {
   const router = useRouter();
@@ -61,9 +62,23 @@ export default function NewAthletePage() {
         })(state.status)}
       >
 
-        <AIPopulationModal onDataExtracted={(data) => {
+        <AIPopulationModal
+          onDataExtracted={(data) => {
           setAiFormData({ ...data });
-        }} />
+        }}
+          defaultPrompt={
+            'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'
+          }
+          renderTextArea={(textProps) => {
+            return (
+              <AIDefaultTextAreaPrompt
+                {...textProps}
+                label={'Enter description of athlete:'}
+                placeholder='Example: Create athlete Maria Rodriguez, female, born March 15 1992, phone 555-0123, lives at 456 Oak Street, New York'
+              />
+            );
+          }}
+        />
 
         <AthleteForm
           state={{
