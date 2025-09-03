@@ -62,9 +62,11 @@ export default function NewAthletePage() {
         })(state.status)}
       >
 
-        <AIPopulationModal
+        <AIPopulationModal<AthleteFormData>
           onDataExtracted={(data) => {
-          setAiFormData({ ...data });
+          setAiFormData({ ...data, ...{
+              dateOfBirth: new Date(data.dateOfBirth),
+            } });
         }}
           defaultPrompt={
             'Extract athlete information from this text and return as JSON with these fields: firstName, lastName, dateOfBirth (YYYY-MM-DD format), gender (male/female), phone, address, notes. Only include fields clearly mentioned.'

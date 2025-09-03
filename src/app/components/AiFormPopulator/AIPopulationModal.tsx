@@ -7,12 +7,16 @@ import Button from '@/app/ui/button';
 import AiFormPopulator,{AiFormPopulatorProps} from './AiFormPopulator'
 import clsx from 'clsx';
 
-const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
+interface AIPopulationModalProps<T> extends Omit<AiFormPopulatorProps<T>, 'onDataExtracted'> {
+  onDataExtracted: (data: T) => void;
+}
+
+const AIPopulationModal = <T,>({
   onDataExtracted,
   renderTextArea,
   defaultPrompt,
 
-}): ReactElement => {
+}:AIPopulationModalProps<T>): ReactElement => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [aiPopulationState, setAiPopulationState] = useState<
     'new' | 'success-populated'
@@ -60,7 +64,7 @@ const AIPopulationModal: React.FC<AiFormPopulatorProps> = ({
         <AiFormPopulator
           defaultPrompt={defaultPrompt}
           renderTextArea={renderTextArea}
-          onDataExtracted={(data) => {
+          onDataExtracted={(data:T) => {
             setAiPopulationState('success-populated');
             setIsExpanded(false);
             onDataExtracted(data);

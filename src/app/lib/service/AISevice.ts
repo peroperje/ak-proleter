@@ -1,5 +1,4 @@
 import { InferenceClient } from '@huggingface/inference';
-import { AthleteFormData } from '@/app/lib/actions';
 import { useMemo } from 'react';
 
 
@@ -14,17 +13,14 @@ export class AIService {
   }
 
   // Text processing using Hugging Face with a working model
-  async extractAthleteData(prompt: string): Promise<AthleteFormData | undefined> {
+  async extractData<T>(prompt: string): Promise<T | undefined> {
       try {
         const result = await this.tryDeepSeekModel( prompt);
         if (result) {
           const json = await JSON.parse(result);
-          const dateOfBirth = new Date(json.dateOfBirth);
           if (json) {
-            return {
-              ...json,
-              dateOfBirth: dateOfBirth.toString() !== 'Invalid Date' ? dateOfBirth : undefined,
-            };
+            return json;
+
           }
         }
       } catch (error) {
@@ -90,9 +86,9 @@ JSON:`;
   }
 
   // Process audio: transcribe then extract data
-  async extractAthleteDataFromAudio(audioFile: File): Promise<AthleteFormData | undefined> {
+  async extractDataFromAudio<T>(audioFile: File): Promise<T | undefined> {
     const transcript = await this.transcribeAudioWithHF(audioFile);
-    return this.extractAthleteData(transcript);
+    return this.extractData(transcript);
 
   }
 }

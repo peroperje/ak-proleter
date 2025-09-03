@@ -2,7 +2,6 @@
 import React, { useState, useRef, ReactElement } from 'react';
 import clsx from 'clsx';
 import useAIService from '@/app/lib/service/AISevice';
-import { AthleteFormData } from '@/app/lib/actions';
 import Textarea from '@/app/ui/textarea';
 import {
   FaMicrophoneAltIcon,
@@ -11,6 +10,11 @@ import {
 } from '@/app/ui/icons';
 import Button from '@/app/ui/button';
 
+const isDataPresent = <T,>(data: T | undefined): data is T => {
+  return data !== undefined && Object.keys(data as object).length > 0;
+};
+
+
 export interface RenderTextAreaProps {
   prompt: string;
   setPrompt: (value: string) => void;
@@ -18,19 +22,19 @@ export interface RenderTextAreaProps {
   isDisabled: boolean;
   isProcessing: boolean;
 }
-export interface AiFormPopulatorProps {
-  onDataExtracted: (data: AthleteFormData) => void;
+export interface AiFormPopulatorProps<T> {
+  onDataExtracted: (data: T) => void;
   isDisabled?: boolean;
   defaultPrompt: string;
   renderTextArea: (props:RenderTextAreaProps)=> ReactElement;
 }
 
-export default function AiFormPopulator({
+export default function AiFormPopulator<T,>({
   onDataExtracted,
   isDisabled = false,
   defaultPrompt,
                                           renderTextArea,
-}: AiFormPopulatorProps) {
+}: AiFormPopulatorProps<T>) {
   const aiService = useAIService({ defaultPrompt });
 
   const [prompt, setPrompt] = useState('');
@@ -57,11 +61,11 @@ export default function AiFormPopulator({
     setSuccess(null);
 
     try {
-      const extractedData = await aiService.extractAthleteData(prompt);
+      const extractedData = await aiService.extractData<T>(prompt);
 
       // Check if any data was extracted
-      const hasData =
-        extractedData !== undefined && Object.keys(extractedData).length > 0;
+      const hasData = isDataPresent<T>(extractedData);
+
 
       if (hasData) {
         onDataExtracted(extractedData);
@@ -90,15 +94,14 @@ export default function AiFormPopulator({
 
     try {
       const extractedData =
-        await aiService.extractAthleteDataFromAudio(audioFile);
+        await aiService.extractDataFromAudio<T>(audioFile);
 
-      const hasData =
-        extractedData !== undefined && Object.keys(extractedData).length > 0;
+      const hasData = isDataPresent<T>(extractedData);
 
       if (hasData) {
         onDataExtracted(extractedData);
         setSuccess(
-          `✅ Extracted from audio: ${Object.keys(extractedData).join(', ')}`,
+          `✅ Extracted from audio`,
         );
         setAudioFile(null);
         setTimeout(() => setSuccess(null), 5000);
