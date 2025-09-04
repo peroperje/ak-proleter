@@ -187,7 +187,7 @@ const EventForm: React.FC<EventFormProps> = ({
               type='datetime-local'
               defaultValue={
                 state.data?.startDate
-                  ? state.data?.startDate.toISOString().slice(0, 16)
+                  ? state.data?.startDate.toLocaleString('sv-SE').slice(0, 16).replace(' ', 'T')
                   : undefined
               }
               className={clsx(
@@ -219,7 +219,7 @@ const EventForm: React.FC<EventFormProps> = ({
               type='datetime-local'
               defaultValue={
                 state.data?.endDate
-                  ? state.data?.endDate.toISOString().slice(0, 16)
+                  ? state.data?.endDate.toLocaleString('sv-SE').slice(0, 16).replace(' ', 'T')
                   : undefined
               }
               className={clsx(

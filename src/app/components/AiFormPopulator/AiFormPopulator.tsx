@@ -72,7 +72,7 @@ export default function AiFormPopulator<T,>({
         setPrompt('');
       } else {
         setError(
-          'Could not extract athlete information from the text. Please try rephrasing.',
+          'Could not extract information from the text. Please try rephrasing.',
         );
       }
     } catch (err) {
