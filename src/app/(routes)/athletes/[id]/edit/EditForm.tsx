@@ -1,7 +1,7 @@
 'use client';
 import Box from '@/app/components/Box';
 import { ActionState, AthleteFormData, updateAthlete } from '@/app/lib/actions';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import AthleteForm from '@/app/components/athletes/AthleteForm';
 import { routes } from '@/app/lib/routes';
 import { UsersIcon } from '@/app/ui/icons';
@@ -9,13 +9,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Loader from '@/app/ui/loader';
+import { AIPopulationModal, TextAreaDefault as AIDefaultTextAreaPrompt } from '@/app/components/AiFormPopulator';
 
 interface Props {
-  athlete: AthleteFormData;
-  userId: string;
-}
+    athlete: AthleteFormData;
+    userId: string;
+  }
+
 
 export default function EditForm({ athlete, userId }: Props) {
+  const [aiFormData, setAiFormData] = useState<AthleteFormData | undefined>();
   const router = useRouter();
   const user = athlete;
   // Fetch athlete data when the component mounts
@@ -71,8 +74,32 @@ export default function EditForm({ athlete, userId }: Props) {
         }
       })(state.status)}
     >
+      <AIPopulationModal<AthleteFormData>
+        onDataExtracted={(data) => {
+          setAiFormData({
+            ...data,
+            ...(data.dateOfBirth ? { dateOfBirth: new Date(data.dateOfBirth) } : {}),
+          });
+        }}
+        defaultPrompt={`The athlete data is these fields: firstName (${athlete.firstName}), lastName (${athlete.lastName}), dateOfBirth (${athlete.dateOfBirth.toISOString().split('T')[0]} format), gender (${athlete.gender}), phone (${athlete.phone || ''}), address (${athlete.address || ''}), notes (${athlete.notes || ''})
+        Extract athlete information from this text, update data that mentioned and return as JSON with updated values. Only include fields clearly mentioned.`}
+        renderTextArea={(textProps) => {
+          return (
+            <AIDefaultTextAreaPrompt
+              {...textProps}
+              label={'Update athlete description:'}
+              placeholder={`Example: Update athlete ${athlete.firstName} ${athlete.lastName}, phone changed to 555-0123, new address at 456 Oak Street, New York`}
+            />
+          );
+        }}
+      />
       <AthleteForm
-        state={state}
+        state={{
+          ...state,
+          ...{
+            data: aiFormData ? {...state.data ,...aiFormData } : state.data,
+          },
+        }}
         formAction={formAction}
         isSubmitting={isSubmitting}
       />

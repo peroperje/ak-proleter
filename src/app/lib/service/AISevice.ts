@@ -85,6 +85,7 @@ JSON:`;
     }
   }
 
+
   // Process audio: transcribe then extract data
   async extractDataFromAudio<T>(audioFile: File): Promise<T | undefined> {
     const transcript = await this.transcribeAudioWithHF(audioFile);
