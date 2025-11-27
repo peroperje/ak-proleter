@@ -23,7 +23,7 @@ async function getResults(): Promise<ResultWithRelations[]> {
   });
 
   // Transform the database results to match the Result interface
-  return dbResults.map((result: typeof dbResults) => {
+  return dbResults.map((result) => {
     // Parse the score to a number if possible
     let value = 0;
     if (result.score) {
@@ -40,11 +40,11 @@ async function getResults(): Promise<ResultWithRelations[]> {
 
     // Create a mock discipline since we don't have disciplines in the database
     const mockDiscipline: Pick<Discipline, 'id' | 'name' | 'measurementUnit'> =
-      {
-        id: `d-${result.id}`,
-        name: result.event.title.includes('Sprint') ? 'Sprint' : 'General',
-        measurementUnit: result.score?.includes('m') ? 'distance' : 'time',
-      };
+    {
+      id: `d-${result.id}`,
+      name: result.event.title.includes('Sprint') ? 'Sprint' : 'General',
+      measurementUnit: result.score?.includes('m') ? 'distance' : 'time',
+    };
 
 
     const nameParts = result.athlete.name.split(' ');

@@ -17,7 +17,7 @@ export async function generateStaticParams() {
     select: { id: true },
   });
 
-  return athletes.map((athlete: typeof athletes) => ({
+  return athletes.map((athlete) => ({
     id: athlete.id,
   }));
 }
