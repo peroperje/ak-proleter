@@ -70,23 +70,23 @@ const AdminResultForm: React.FC<Props> = ({
             disciplines={disciplines}
             defaultDisciplineId={state.data?.disciplineId}
             defaultScore={state.data?.score}
-            errors={state.errors?.properties?.disciplineId?.errors}
+            errors={state.errors?.fieldErrors?.disciplineId}
           />
           <AthleteField
             athletes={athletes}
-            errors={state.errors?.properties?.athleteId?.errors}
+            errors={state.errors?.fieldErrors?.athleteId}
             defaultAthleteId={state.data?.athleteId}
           />
           <EventField
             events={events}
             defaultEventId={state.data?.eventId}
-            errors={state.errors?.properties?.eventId?.errors}
+            errors={state.errors?.fieldErrors?.eventId}
           />
           <Textarea
             name='notes'
             label='Notes'
             defaultValue={state.data?.notes}
-            error={state.errors?.properties?.notes?.errors.join(' ')}
+            error={state.errors?.fieldErrors?.notes?.join(' ')}
           />
           <Button type='submit' disabled={pending}>
             {pending ? 'Creating...' : 'Create Result'}

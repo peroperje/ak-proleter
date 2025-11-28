@@ -16,18 +16,8 @@ const ResultSchema = z.object({
 
 
 
-type TreeifiedError<T> = {
-  errors: string[];
-  properties?: {
-    [K in keyof T]?: {
-      errors: string[];
-    };
-  };
-};
-
-
 export type State = {
-  errors?: TreeifiedError<z.infer<typeof ResultSchema>>;
+  errors?: z.ZodFlattenedError<z.infer<typeof ResultSchema>>;
   message: string;
   data?: z.infer<typeof ResultSchema>;
   status: 'success' | 'error' | 'validation' | 'new';
