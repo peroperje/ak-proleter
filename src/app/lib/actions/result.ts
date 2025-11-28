@@ -4,7 +4,6 @@ import { z } from 'zod';
 import prisma from '@/app/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { routes } from '@/app/lib/routes';
-import { redirect } from 'next/navigation';
 
 const ResultSchema = z.object({
   athleteId: z.string().nonempty('Athlete is required'),
@@ -41,9 +40,9 @@ export async function createResult(_prevState: State, formData: FormData): Promi
   if (!validatedFields.success) {
     return {
       status: 'validation',
-      errors: z.treeifyError(validatedFields.error),
+      errors: validatedFields.error.flatten(),
       message: 'Failed to create result, Please check your data.',
-      data:Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
+      data: Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
     };
   }
 
@@ -57,7 +56,7 @@ export async function createResult(_prevState: State, formData: FormData): Promi
     revalidatePath(routes.results.list());
 
     return {
-      status:'success',
+      status: 'success',
       message: 'Result created successfully',
     }
   } catch {

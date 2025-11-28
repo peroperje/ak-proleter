@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import * as yup from 'yup';
 import prisma from '@/app/lib/prisma';
 import { Prisma } from '@prisma/client';
-import { DefaultArgs } from '@prisma/client/runtime/library';
+
 import { Event } from '@/app/lib/definitions';
 
 // Define the type for the form data
@@ -114,10 +114,10 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         // Connect categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
-              categories: {
-                connect: formattedData.categoryIds.map((id) => ({ id })),
-              },
-            }
+            categories: {
+              connect: formattedData.categoryIds.map((id) => ({ id })),
+            },
+          }
           : {}),
       },
     });
@@ -183,16 +183,16 @@ export async function updateEvent(
         // Update categories if provided
         ...(formattedData.categoryIds && formattedData.categoryIds.length > 0
           ? {
-              categories: {
-                set: [], // Remove all existing connections
-                connect: formattedData.categoryIds.map((id) => ({ id })), // Connect new ones
-              },
-            }
+            categories: {
+              set: [], // Remove all existing connections
+              connect: formattedData.categoryIds.map((id) => ({ id })), // Connect new ones
+            },
+          }
           : {
-              categories: {
-                set: [], // Remove all if none provided
-              },
-            }),
+            categories: {
+              set: [], // Remove all if none provided
+            },
+          }),
       },
     });
 
@@ -236,9 +236,9 @@ export async function updateEvent(
 export async function getEventById(
   id: string,
   options: {
-    select?: Prisma.EventSelect<DefaultArgs> | null | undefined;
-    omit?: Prisma.EventOmit<DefaultArgs> | null | undefined;
-    include?: Prisma.EventInclude<DefaultArgs> | null | undefined;
+    select?: Prisma.EventSelect | null | undefined;
+    omit?: Prisma.EventOmit | null | undefined;
+    include?: Prisma.EventInclude | null | undefined;
   },
 ) {
   return await prisma.event.findUnique({
@@ -251,11 +251,11 @@ export async function getEventById(
 
 
 
- const mapDBEvents = (event:PrismaEvent & {
-                        categories?: { id: string; name: string; description: string; minAge: number; maxAge: number | null; }[];
-                        organizer?: { name: string; };
-                      }
- ) => {
+const mapDBEvents = (event: PrismaEvent & {
+  categories?: { id: string; name: string; description: string; minAge: number; maxAge: number | null; }[];
+  organizer?: { name: string; };
+}
+) => {
   let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   const now = new Date();
 
@@ -293,7 +293,7 @@ export async function getEvents(): Promise<Event[]> {
   });
 
   return dbEvents.map((event) => {
-    return  mapDBEvents(event);
+    return mapDBEvents(event);
   });
 }
 export async function getClosedEvents(): Promise<Event[]> {
@@ -322,6 +322,6 @@ export async function getClosedEvents(): Promise<Event[]> {
     },
   });
   return dbEvents.map((event) => {
-    return  mapDBEvents(event);
+    return mapDBEvents(event);
   });
 }
