@@ -1,7 +1,13 @@
 import { PrismaClient, UnitType, DisciplineCategory, MeasurementUnit } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import * as fs from 'fs';
+import 'dotenv/config'
 
-const prisma = new PrismaClient();
+const connectionString = `${process.env.DATABASE_URL}`;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // Define the type for the athlete data from JSON
 interface AthleteData {
