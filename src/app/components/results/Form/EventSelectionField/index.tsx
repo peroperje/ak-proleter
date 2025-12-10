@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Event } from '@/app/lib/definitions';
 import clsx from 'clsx';
 import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
@@ -14,22 +14,22 @@ interface Props {
 }
 
 const EventField: React.FC<Props> = ({ events, errors, defaultEventId }): ReactElement => {
-  const [selected, setSelected] = useState<Event>();
+  const [selected, setSelected] = useState<Event | undefined>(() =>
+    events.find((e) => e.id === defaultEventId)
+  );
   const [search, setSearch] = useState<string>('');
 
-  useEffect(() => {
-    if(defaultEventId){
-      const event = events.find((e)=>e.id ===  defaultEventId);
-      if (event){
-        setSelected(event)
-      }
+  if (defaultEventId && selected?.id !== defaultEventId) {
+    const event = events.find((e) => e.id === defaultEventId);
+    if (event) {
+      setSelected(event)
     }
-  }, [events, defaultEventId, setSelected]);
+  }
   return (
     <div className={'flex w-full flex-col'}>
       <label
         htmlFor='eventId'
-        className={clsx('block text-sm font-bold dark:text-white',{
+        className={clsx('block text-sm font-bold dark:text-white', {
           'text-red-500 dark:text-red-400': errors && errors.length > 0
         })}
       >
@@ -37,7 +37,7 @@ const EventField: React.FC<Props> = ({ events, errors, defaultEventId }): ReactE
       </label>
       <div
         className={
-          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400', {
             'border-red-500 dark:border-red-400': errors && errors.length > 0,
           })
         }
@@ -79,7 +79,7 @@ const EventField: React.FC<Props> = ({ events, errors, defaultEventId }): ReactE
               </div>
             </div>
             {
-             selected.type === 'COMPETITION' && <InputField
+              selected.type === 'COMPETITION' && <InputField
                 placeholder={'1'}
                 name='position'
                 title='Position'

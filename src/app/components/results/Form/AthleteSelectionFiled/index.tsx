@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import ProfilePhotos from '@/app/components/athletes/ProfilePhotos';
 import { Athlete } from '@/app/lib/definitions';
 import clsx from 'clsx';
@@ -12,16 +12,17 @@ interface Props {
 }
 
 const AthleteField: React.FC<Props> = ({ athletes, errors, defaultAthleteId }): ReactElement => {
-  const [selected, setSelected] = useState<Athlete>();
+  const [selected, setSelected] = useState<Athlete | undefined>(() =>
+    athletes.find((a) => a.id === defaultAthleteId)
+  );
   const [search, setSearch] = useState<string>('');
-  useEffect(()=>{
-    if(defaultAthleteId){
-      const athlete = athletes.find((a)=>a.id ===  defaultAthleteId);
-      if (athlete){
-        setSelected(athlete)
-      }
+
+  if (defaultAthleteId && selected?.id !== defaultAthleteId) {
+    const athlete = athletes.find((a) => a.id === defaultAthleteId);
+    if (athlete) {
+      setSelected(athlete)
     }
-  }, [athletes, defaultAthleteId, setSelected])
+  }
   return (
     <div className={'flex w-full flex-col'}>
       <label
@@ -35,7 +36,7 @@ const AthleteField: React.FC<Props> = ({ athletes, errors, defaultAthleteId }): 
       </label>
       <div
         className={
-          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+          clsx('flex flex-wrap justify-center gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400', {
             'border-red-500 dark:border-red-400': errors && errors.length > 0,
           })
         }
@@ -49,9 +50,9 @@ const AthleteField: React.FC<Props> = ({ athletes, errors, defaultAthleteId }): 
         {!!selected && (
           <div
             className={clsx(
-              'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2',{
-                'border-red-500 dark:border-red-400': errors && errors.length > 0,
-              }
+              'flex w-full cursor-pointer items-center gap-4 rounded-lg border-1 border-blue-300 bg-blue-100 p-2', {
+              'border-red-500 dark:border-red-400': errors && errors.length > 0,
+            }
             )}
             onClick={() => setSelected(undefined)}
           >

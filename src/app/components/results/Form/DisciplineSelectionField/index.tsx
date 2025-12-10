@@ -1,5 +1,5 @@
 'use client';
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import clsx from 'clsx';
 import { IoCloseCircleOutlineIcon } from '@/app/ui/icons';
 import { GetDisciplineReturn } from '@/app/lib/actions/dicipline';
@@ -12,40 +12,33 @@ interface Props {
   defaultScore?: number | string;
 }
 
-const DisciplineScoreField: React.FC<Props> = ({ disciplines,errors, defaultDisciplineId, defaultScore }): ReactElement => {
-  const [selected, setSelected] = useState<GetDisciplineReturn[0]>();
+const DisciplineScoreField: React.FC<Props> = ({ disciplines, errors, defaultDisciplineId, defaultScore }): ReactElement => {
+  const [selected, setSelected] = useState<GetDisciplineReturn[0] | undefined>(() =>
+    disciplines.find((d) => d.id === defaultDisciplineId)
+  );
   const [search, setSearch] = useState<string>('');
-  useEffect(()=>{
-    if(defaultDisciplineId){
-      setSelected((prevState)=>{
-        if(defaultDisciplineId){
-          const discipline = disciplines.find((d)=>d.id ===  defaultDisciplineId);
-          if (discipline){
-            return discipline
-          }
-        }
-        return prevState
-      })
+
+  if (defaultDisciplineId && selected?.id !== defaultDisciplineId) {
+    const discipline = disciplines.find((d) => d.id === defaultDisciplineId);
+    if (discipline) {
+      setSelected(discipline);
     }
-  },[
-   defaultDisciplineId,
-    disciplines
-  ])
+  }
   return (
     <div className={'flex w-full flex-col'}>
       <label
         htmlFor='eventId'
         className={
-        clsx('block text-sm font-bold dark:text-white',{
-          'text-red-500 dark:text-red-400': errors && errors.length > 0
-        })
-      }
+          clsx('block text-sm font-bold dark:text-white', {
+            'text-red-500 dark:text-red-400': errors && errors.length > 0
+          })
+        }
       >
         Score & Discipline
       </label>
       <div
         className={
-          clsx('flex flex-col gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400',{
+          clsx('flex flex-col gap-4 rounded-lg border-1 border-gray-200 p-4 text-gray-500 dark:text-neutral-400', {
             'border-red-500 dark:border-red-400': errors && errors.length > 0,
           })
         }
