@@ -14,11 +14,11 @@ A Next.js application for tracking athlete results and performance for Athletic 
 
 ## Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/)
+- **Framework**: [Next.js 16](https://nextjs.org/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: Custom components with Storybook
-- **Authentication**: Custom JWT-based authentication (demo implementation)
+- **Authentication**: Custom JWT-based authentication
 - **Database**: PostgreSQL with Prisma ORM
 - **API**: Next.js API routes
 
@@ -45,27 +45,39 @@ A Next.js application for tracking athlete results and performance for Athletic 
    pnpm install
    ```
 
-3. Run the development server:
-
-   ```bash
-   pnpm dev
-   ```
-
-4. Start the local database:
+3. Start the local database:
 
    ```bash
    pnpm db:start
    ```
 
-5. (Optional) Use Prisma Studio to view and edit the database:
+4. Generate Prisma Client:
+
+    ```bash
+    pnpm prisma:generate
+    ```
+
+5. Seed the database (optional, for initial data):
+
+    ```bash
+    pnpm db:seed
+    ```
+
+6. Run the development server:
+
+   ```bash
+   pnpm dev
+   ```
+
+7. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+8. (Optional) Use Prisma Studio to view and edit the database:
 
    ```bash
    pnpm prisma:studio
    ```
 
    This will open Prisma Studio at [http://localhost:5555](http://localhost:5555)
-
-6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
 For more details on database setup and configuration, see the [Database Documentation](./prisma/README.md).
 
@@ -114,72 +126,6 @@ pnpm build
 - Calendar integration
 - Prisma schema development for data models
 
-## Database Integration
-
-This project now uses a PostgreSQL database with Prisma ORM for data persistence. The mock data has been replaced with real database queries.
-
-### Database Setup
-
-1. Start the PostgreSQL database:
-
-   ```bash
-   pnpm db:start
-   ```
-
-2. Generate Prisma client:
-
-   ```bash
-   pnpm prisma:generate
-   ```
-
-3. Seed the database with initial data:
-   ```bash
-   pnpm prisma:seed
-   ```
-
-### Database Management
-
-- Start the database: `pnpm db:start`
-- Stop the database: `pnpm db:stop`
-- Open Prisma Studio to view/edit data: `pnpm prisma:studio`
-
-### Recent Database Migrations
-
-#### Profile Model Refactoring
-
-The Profile model has been refactored to include:
-- `name` field (String): Required field to store the profile name
-- `openTrackId` field (String?): Optional field to store the OpenTrack ID
-
-To apply this migration and populate existing profiles with data from the associated User's name, run:
-
-```bash
-pnpm migrate:profiles
-```
-
-To verify that the migration was successful, you can run:
-
-```bash
-pnpm test:profiles
-```
-
-#### Optional User-Profile Relationship
-
-The User-Profile relationship has been made optional, allowing profiles to exist without being associated with a user. This enables:
-- Importing athlete data from external sources before creating user accounts
-- More flexibility in data management
-- A more gradual onboarding process
-
-To apply this migration, run:
-
-```bash
-pnpm migrate:optional-user
-```
-
-This will update the database schema and test creating a profile without a user to verify the changes.
-
-For more details on both migrations, see the [Profile Migration Documentation](./src/scripts/README.md).
-
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
