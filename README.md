@@ -10,6 +10,7 @@ A Next.js application for tracking athlete results and performance for Athletic 
 - **Training Management**: Plan and track training sessions and exercises
 - **Coach Management**: Manage coach profiles and assignments
 - **Reports**: Generate reports and analytics on athlete performance
+- **Activity Feed (Timeline)**: Track project events and athlete results chronologically with likes and comments
 - **Authentication**: Role-based access control for administrators, coaches, athletes, and viewers
 
 ## Tech Stack

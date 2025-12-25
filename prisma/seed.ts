@@ -646,6 +646,14 @@ async function seedDisciplines(categories: DisciplineCategory[], units: Measurem
 async function main() {
   console.log('Seeding database...');
 
+  // Refresh collation version to fix WARNING: database "ak_proleter" has a collation version mismatch
+  try {
+    await prisma.$executeRawUnsafe('ALTER DATABASE ak_proleter REFRESH COLLATION VERSION;');
+    console.log('Collation version refreshed successfully.');
+  } catch (error) {
+    console.warn('Could not refresh collation version (this might require higher privileges or be specific to the environment):', error);
+  }
+
   // Clear existing data
   await prisma.result.deleteMany();
   await prisma.news.deleteMany();
