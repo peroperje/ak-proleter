@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import LocationField from '@/app/components/events/EventForm/LocationField';
 import { routes } from '@/app/lib/routes';
 import Box from '@/app/components/Box';
-import React, { useActionState, useEffect } from 'react';
+import React, { useActionState, useEffect, useState } from 'react';
 import { CalendarIcon } from '@/app/ui/icons';
 import { toast } from 'react-toastify';
 
@@ -42,12 +42,22 @@ const EventForm: React.FC<EventFormProps> = ({
   categories,
   initialState,
 }) => {
- const router = useRouter();
+  const router = useRouter();
 
   const [state, formAction, isSubmitting] = useActionState(
     action,
     initialState,
   );
+
+  // Local state for interactive fields to provide immediate visual feedback
+  const [selectedType, setSelectedType] = useState<string | undefined>(state.data?.type);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(state.data?.categoryIds || []);
+
+  // Sync local state when state.data changes (e.g. after AI population or failed validation)
+  useEffect(() => {
+    if (state.data?.type) setSelectedType(state.data.type);
+    if (state.data?.categoryIds) setSelectedCategoryIds(state.data.categoryIds);
+  }, [state.data]);
 
   useEffect(() => {
     if (state.status === 'error') {
@@ -64,6 +74,16 @@ const EventForm: React.FC<EventFormProps> = ({
       router.push(routes.events.list())
     }
   }, [state.status, router, state.message]);
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedType(e.target.value);
+  };
+
+  const handleCategoryChange = (id: string) => {
+    setSelectedCategoryIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
 
   return (
     <Box
@@ -237,70 +257,135 @@ const EventForm: React.FC<EventFormProps> = ({
           </div>
         </div>
 
-        <div className='grid grid-cols-2 gap-4'>
-          <div>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+          {/* Event Type - Radio Buttons */}
+          <div className='bg-gray-50 dark:bg-neutral-800/50 p-6 rounded-2xl border border-gray-100 dark:border-neutral-700/50'>
             <label
-              htmlFor='type'
-              className={clsx('block text-sm font-bold dark:text-white', {
+              className={clsx('block text-sm font-bold mb-4 dark:text-white', {
                 'text-red-500': !!state.errors.type,
               })}
             >
               Event Type
             </label>
-            <select
-              id='type'
-              name='type'
-              defaultValue={state.data?.type}
-              className={clsx(
-                'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
-                {
-                  'border-red-500': !!state.errors.type,
-                },
-              )}
-              required
-            >
-              <option value='COMPETITION'>Competition</option>
-              <option value='TRAINING'>Training</option>
-              <option value='CAMP'>Camp</option>
-              <option value='MEETING'>Meeting</option>
-              <option value='OTHER'>Other</option>
-            </select>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+              {[
+                { value: 'COMPETITION', label: 'Competition' },
+                { value: 'TRAINING', label: 'Training' },
+                { value: 'CAMP', label: 'Camp' },
+                { value: 'MEETING', label: 'Meeting' },
+                { value: 'OTHER', label: 'Other' },
+              ].map((eventType) => (
+                <label
+                  key={eventType.value}
+                  className={clsx(
+                    'relative flex items-center p-3 rounded-xl border cursor-pointer transition-all duration-200 group',
+                    {
+                      'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800': selectedType === eventType.value,
+                      'bg-white border-gray-200 hover:border-blue-300 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-500': selectedType !== eventType.value,
+                    }
+                  )}
+                >
+                  <input
+                    type='radio'
+                    name='type'
+                    value={eventType.value}
+                    checked={selectedType === eventType.value}
+                    onChange={handleTypeChange}
+                    className='sr-only'
+                    required
+                  />
+                  <div className={clsx(
+                    'w-4 h-4 rounded-full border-2 mr-3 flex items-center justify-center transition-all',
+                    {
+                      'border-blue-500 bg-blue-500': selectedType === eventType.value,
+                      'border-gray-300 dark:border-neutral-600': selectedType !== eventType.value,
+                    }
+                  )}>
+                    {selectedType === eventType.value && (
+                      <div className='w-1.5 h-1.5 rounded-full bg-white shadow-sm' />
+                    )}
+                  </div>
+                  <span className={clsx(
+                    'text-sm font-medium transition-colors',
+                    {
+                      'text-blue-700 dark:text-blue-300': selectedType === eventType.value,
+                      'text-gray-600 dark:text-neutral-400': selectedType !== eventType.value,
+                    }
+                  )}>
+                    {eventType.label}
+                  </span>
+                </label>
+              ))}
+            </div>
             {!!state.errors.type && (
-              <p className='text-sm text-red-500 dark:text-neutral-400'>
+              <p className='text-sm text-red-500 mt-2 dark:text-neutral-400'>
                 {state.errors.type}
               </p>
             )}
           </div>
-          <div>
+
+          {/* Categories - Checkboxes */}
+          <div className='bg-gray-50 dark:bg-neutral-800/50 p-6 rounded-2xl border border-gray-100 dark:border-neutral-700/50'>
             <label
-              htmlFor='categoryId'
-              className={clsx('block text-sm font-bold dark:text-white', {
+              className={clsx('block text-sm font-bold mb-4 dark:text-white', {
                 'text-red-500': !!state.errors.categoryIds,
               })}
             >
-              Category
+              Categories
             </label>
-            <select
-              id='categoryIds'
-              name='categoryIds'
-              defaultValue={state.data?.categoryIds}
-              className={clsx(
-                'block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none disabled:pointer-events-none disabled:opacity-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400',
-                {
-                  'border-red-500': !!state.errors.categoryIds,
-                },
-              )}
-              multiple
-            >
-              <option value=''>Select a category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar'>
+              {categories.map((category) => {
+                const isChecked = selectedCategoryIds.includes(category.id);
+                return (
+                  <label
+                    key={category.id}
+                    className={clsx(
+                      'relative flex items-center p-3 rounded-xl border cursor-pointer transition-all duration-200 group',
+                      {
+                        'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800': isChecked,
+                        'bg-white border-gray-200 hover:border-blue-300 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-500': !isChecked,
+                      }
+                    )}
+                  >
+                    <input
+                      type='checkbox'
+                      name='categoryIds'
+                      value={category.id}
+                      checked={isChecked}
+                      onChange={() => handleCategoryChange(category.id)}
+                      className='sr-only'
+                    />
+                    <div className={clsx(
+                      'w-4 h-4 rounded border-2 mr-3 flex items-center justify-center transition-all',
+                      {
+                        'border-blue-500 bg-blue-500': isChecked,
+                        'border-gray-300 dark:border-neutral-600': !isChecked,
+                      }
+                    )}>
+                      {isChecked && (
+                        <svg viewBox="0 0 24 24" className="w-3 h-3 text-white fill-current">
+                          <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className={clsx(
+                      'text-sm font-medium transition-colors',
+                      {
+                        'text-blue-700 dark:text-blue-300': isChecked,
+                        'text-gray-600 dark:text-neutral-400': !isChecked,
+                      }
+                    )}>
+                      {category.name}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <p className='text-[10px] text-gray-400 mt-2 italic'>
+              * No categories selected implies all categories
+            </p>
             {!!state.errors.categoryIds && (
-              <p className='text-sm text-red-500 dark:text-neutral-400'>
+              <p className='text-sm text-red-500 mt-2 dark:text-neutral-400'>
                 {state.errors.categoryIds}
               </p>
             )}
