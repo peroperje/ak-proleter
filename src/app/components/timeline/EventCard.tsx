@@ -21,7 +21,7 @@ function formatTime(date: Date | string): string {
     });
 }
 
-export const EventCard: React.FC<CardProps> = ({ event, metadata, createdAt, likes, comments }) => {
+export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comments }) => {
     const now = new Date();
     let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' = 'upcoming';
 
@@ -60,9 +60,10 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, createdAt, lik
                                 {status}
                             </span>
                         </div>
-                        <p className="text-[10px] text-gray-500 dark:text-neutral-500">
-                            Activity logged: {new Date(createdAt).toLocaleString()}
-                        </p>
+                        <div className="flex items-center text-[10px] text-gray-500 dark:text-neutral-500">
+                            <MapPinIcon className="mr-1 text-blue-500 opacity-70" size={12} />
+                            <span className="truncate">{metadata.location || event?.location}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -74,13 +75,6 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, createdAt, lik
             )}
 
             <div className="mt-4 space-y-3">
-                {/* Location */}
-                <div className="flex items-center text-sm text-gray-600 dark:text-neutral-400">
-                    <MapPinIcon className="mr-2 text-blue-500 opacity-70" size={16} />
-                    <span className="font-medium">Location:</span>
-                    <span className="ml-1 truncate">{metadata.location || event?.location}</span>
-                </div>
-
                 {/* Dates */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 dark:bg-neutral-800/50 rounded-lg">
                     {(() => {

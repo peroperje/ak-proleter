@@ -24,7 +24,7 @@ export interface TimelineMetadata {
 export interface CardProps {
     event?: EventData | null;
     metadata: TimelineMetadata;
-    createdAt: Date | string;
+    createdAt?: Date | string;
     likes: number;
     comments: number;
 }
