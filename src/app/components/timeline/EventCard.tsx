@@ -1,41 +1,17 @@
 import React from 'react';
 import Image from 'next/image';
-import clsx from 'clsx';
 import { MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/ui/icons';
-import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
+import { eventTypeStyles } from '@/app/lib/constants/styles';
 import { CardProps } from './types';
-
-// Helper functions to format date/time
-function formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    });
-}
-
-function formatTime(date: Date | string): string {
-    return new Date(date).toLocaleTimeString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
+import { formatDate, formatTime, getEventStatus, formatCategories } from '@/app/lib/utils/event';
+import { EventBadges } from '@/app/components/events/EventBadges';
 
 export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comments }) => {
-    const now = new Date();
-    let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' = 'upcoming';
-
-    if (event) {
-        if (event.endDate && new Date(event.endDate) < now) {
-            status = 'completed';
-        } else if (new Date(event.startDate) > now) {
-            status = 'upcoming';
-        } else {
-            status = 'ongoing';
-        }
-    }
-
-    const type = event?.type || 'OTHER';
+    const status = getEventStatus(
+        metadata.startDate || event?.startDate || new Date(),
+        event?.endDate || null
+    );
+    const type = (event?.type || 'OTHER') as keyof typeof eventTypeStyles;
 
     return (
         <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
@@ -53,12 +29,7 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                     <div>
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                             <h3 className="font-bold text-gray-900 dark:text-white">{metadata.title || event?.title || 'Event'}</h3>
-                            <span className={clsx("rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider", eventTypeStyles[type as keyof typeof eventTypeStyles])}>
-                                {type}
-                            </span>
-                            <span className={clsx("rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider", eventStatusStyles[status as keyof typeof eventStatusStyles])}>
-                                {status}
-                            </span>
+                            <EventBadges type={type} status={status} />
                         </div>
                         <div className="flex items-center text-[10px] text-gray-500 dark:text-neutral-500">
                             <MapPinIcon className="mr-1 text-blue-500 opacity-70" size={12} />
@@ -113,9 +84,7 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                     <TagIcon className="mr-2 text-blue-500 opacity-70" size={16} />
                     <span className="font-medium mr-1">Categories:</span>
                     <span className="font-bold">
-                        {event?.categories && event.categories.length > 0
-                            ? event.categories.map((cat) => cat.name).join(', ')
-                            : 'All categories'}
+                        {formatCategories(event?.categories)}
                     </span>
                 </div>
             </div>

@@ -6,31 +6,15 @@ import PageLayout from '@/app/components/PageLayout';
 import { Event } from '@/app/lib/definitions';
 import { MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/ui/icons';
 import ClientEventMap from '@/app/components/events/ClientEventMap';
-import { getEventById, Category } from '@/app/lib/actions';
+import { getEventById } from '@/app/lib/actions';
 import CloseBtn from '@/app/components/CloseBtn';
-import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
+import { formatDate, formatTime, formatCategories, getEventStatus } from '@/app/lib/utils/event';
+import { EventBadges } from '@/app/components/events/EventBadges';
 
 const LocationIcon = MapPinIcon;
 const DateFromIcon = CalendarIcon;
 const DateToIcon = ClockIcon;
 const CategoriesIcon = TagIcon;
-
-// Helper function to format date
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
-// Helper function to format time
-function formatTime(date: Date): string {
-  return new Date(date).toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 // Define a type for the database event with included relations
 type DbEventWithRelations = {
@@ -78,16 +62,7 @@ async function fetchEventById(id: string): Promise<Event | null> {
   }
 
   // Determine event status based on dates
-  let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
-  const now = new Date();
-
-  if (dbEvent.endDate && dbEvent.endDate < now) {
-    status = 'completed';
-  } else if (dbEvent.startDate > now) {
-    status = 'upcoming';
-  } else {
-    status = 'ongoing';
-  }
+  const status = getEventStatus(dbEvent.startDate, dbEvent.endDate);
 
   return {
     id: dbEvent.id,
@@ -137,17 +112,7 @@ export default function EventPage({ params }: EventPageProps) {
                   sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />
               </div>
-
-              <span
-                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${eventTypeStyles[event.type]}`}
-              >
-                {event.type.charAt(0) + event.type.toLowerCase().slice(1)}
-              </span>
-              <span
-                className={`inline-flex rounded-full px-3 py-1 text-sm leading-5 font-semibold ${eventStatusStyles[event.status]}`}
-              >
-                {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-              </span>
+              <EventBadges type={event.type} status={event.status} size="sm" />
             </div>
           );
         }}
@@ -210,9 +175,7 @@ export default function EventPage({ params }: EventPageProps) {
                   <CategoriesIcon className='mr-1' size={16} /> Categories
                 </p>
                 <p className='text-sm font-bold text-gray-500 dark:text-neutral-400'>
-                  {event.category && event.category.length > 0
-                    ? event.category.map((cat: Category) => cat.name).join(', ')
-                    : 'All categories'}
+                  {formatCategories(event.category)}
                 </p>
               </div>
             </div>

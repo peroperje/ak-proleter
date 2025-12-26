@@ -6,6 +6,7 @@ import prisma from '@/app/lib/prisma';
 import { Prisma } from '@prisma/client';
 
 import { Event } from '@/app/lib/definitions';
+import { getEventStatus } from '@/app/lib/utils/event';
 
 // Define the type for the form data
 export interface EventFormData {
@@ -247,16 +248,7 @@ const mapDBEvents = (event: PrismaEvent & {
   organizer?: { name: string; };
 }
 ) => {
-  let status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
-  const now = new Date();
-
-  if (event.endDate && event.endDate < now) {
-    status = 'completed';
-  } else if (event.startDate > now) {
-    status = 'upcoming';
-  } else {
-    status = 'ongoing';
-  }
+  const status = getEventStatus(event.startDate, event.endDate);
 
   return {
     id: event.id,

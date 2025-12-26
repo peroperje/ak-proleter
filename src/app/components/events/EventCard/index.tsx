@@ -4,37 +4,19 @@ import Image from 'next/image';
 import { Event } from '@/app/lib/definitions';
 import { routes } from '@/app/lib/routes';
 import { EditIcon, MapPinIcon, CalendarIcon, ClockIcon, TagIcon } from '@/app/ui/icons';
-import { eventStatusStyles, eventTypeStyles } from '@/app/lib/constants/styles';
+import { eventTypeStyles } from '@/app/lib/constants/styles';
+import { formatDate, formatTime, formatCategories } from '@/app/lib/utils/event';
+import { EventBadges } from '@/app/components/events/EventBadges';
+
+interface EventCardProps {
+  event: Event;
+}
 
 const IconComponent = EditIcon;
 const LocationIcon = MapPinIcon;
 const DateFromIcon = CalendarIcon;
 const DateToIcon = ClockIcon;
 const CategoriesIcon = TagIcon;
-
-interface EventCardProps {
-  event: Event;
-}
-
-// Helper function to format date
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    /*hour: '2-digit',
-    minute: '2-digit',*/
-  });
-}
-function formatTime(date: Date): string {
-  return new Date(date).toLocaleTimeString('en-GB', {
-    /*day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',*/
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 interface NoteBoxBgProps {
   type: Event['type'];
@@ -90,16 +72,7 @@ const EventCard: React.FC<EventCardProps> = ({
                   sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />
               </div>
-              <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${eventTypeStyles[type]}`}
-              >
-                {type.charAt(0) + type.toLowerCase().slice(1)}
-              </span>
-              <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs leading-5 font-semibold ${eventStatusStyles[status]}`}
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </span>
+              <EventBadges type={type} status={status} size="sm" />
             </div>
 
             <NoteBoxBg type={type}>
@@ -128,7 +101,7 @@ const EventCard: React.FC<EventCardProps> = ({
               <div className='grid w-full flex-grow grid-cols-2 gap-2'>
                 <div className='flex flex-col gap-1 text-sm'>
                   <span className=' text-gray-500 dark:text-neutral-400'>
-                  From:
+                    From:
                   </span>
                   <span className='flex items-center text-xs font-bold text-gray-500 dark:text-neutral-400'>
                     <DateFromIcon className='mr-1' size={16} /> {formatDate(startDate)}
@@ -140,7 +113,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 </div>
                 <div className='flex flex-col gap-1 text-sm'>
                   <span className='text-gray-500 dark:text-neutral-400'>
-                  To:
+                    To:
                   </span>
 
                   <span className='flex items-center ml-1 text-xs font-bold text-gray-500 dark:text-neutral-400'>
@@ -157,9 +130,7 @@ const EventCard: React.FC<EventCardProps> = ({
                 <CategoriesIcon className='mr-1' size={16} /> Categories:
               </span>
               <span className='font-bold text-gray-500 dark:text-neutral-400'>
-                {category && category.length > 0
-                  ? category.map((cat) => cat.name).join(', ')
-                  : 'All categories'}
+                {formatCategories(category)}
               </span>
             </NoteBoxBg>
           </div>
