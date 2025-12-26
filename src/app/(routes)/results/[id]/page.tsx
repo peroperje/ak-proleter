@@ -60,10 +60,12 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
 
                 {/* Right Side: Result Details */}
                 <div className="lg:col-span-7">
-                    <Box icon={AwardIcon} title="Achievement Details">
+                    <Box icon={AwardIcon} title="Result Details">
                         <ResultInfoContent
                             disciplineName={result.discipline.name}
+                            disciplineDescription={result.discipline.description}
                             score={result.score}
+                            unitSymbol={result.discipline.unit?.symbol}
                             position={result.position}
                             eventName={result.event.title}
                             eventDate={result.event.startDate}

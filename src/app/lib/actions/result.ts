@@ -103,7 +103,11 @@ export async function getResultById(id: string) {
           },
         },
         event: true,
-        discipline: true,
+        discipline: {
+          include: {
+            unit: true,
+          },
+        },
       },
     });
   } catch (error) {
