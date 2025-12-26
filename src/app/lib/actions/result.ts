@@ -49,7 +49,8 @@ export async function createResult(_prevState: State, formData: FormData): Promi
       status: 'success',
       message: 'Result created successfully',
     }
-  } catch {
+  } catch (error) {
+    console.error('Error creating result:', error);
     return {
       status: 'error',
       message: 'Database Error: Failed to create result.',
