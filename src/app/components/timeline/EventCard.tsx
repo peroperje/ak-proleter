@@ -45,9 +45,9 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                 </p>
             )}
 
-            <div className="mt-4 space-y-3">
-                {/* Dates */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 dark:bg-neutral-800/50 rounded-lg">
+            <div className="mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-gray-50 dark:bg-neutral-800/50 rounded-lg">
+                    {/* From Section */}
                     {(() => {
                         const start = metadata.startDate || event?.startDate;
                         return start ? (
@@ -64,8 +64,10 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                             </div>
                         ) : null;
                     })()}
-                    {event?.endDate && (
-                        <div className="flex flex-col gap-1 border-t sm:border-t-0 sm:border-l border-gray-200 dark:border-neutral-700 sm:pl-3 pt-2 sm:pt-0">
+
+                    {/* To Section */}
+                    {event?.endDate ? (
+                        <div className="flex flex-col gap-1 border-t md:border-t-0 md:border-l border-gray-200 dark:border-neutral-700 md:pl-3 pt-2 md:pt-0">
                             <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">To:</span>
                             <div className="flex items-center text-xs font-bold text-gray-700 dark:text-neutral-300">
                                 <CalendarIcon className="mr-1 text-blue-500" size={14} />
@@ -76,16 +78,20 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                                 {formatTime(event.endDate)}
                             </div>
                         </div>
+                    ) : (
+                        <div className="hidden md:block md:border-l border-gray-200 dark:border-neutral-700 md:pl-3" />
                     )}
-                </div>
 
-                {/* Categories */}
-                <div className="flex items-center text-sm text-gray-600 dark:text-neutral-400">
-                    <TagIcon className="mr-2 text-blue-500 opacity-70" size={16} />
-                    <span className="font-medium mr-1">Categories:</span>
-                    <span className="font-bold">
-                        {formatCategories(event?.categories)}
-                    </span>
+                    {/* Categories Section */}
+                    <div className="flex flex-col gap-1 border-t md:border-t-0 md:border-l border-gray-200 dark:border-neutral-700 md:pl-3 pt-2 md:pt-0">
+                        <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Categories:</span>
+                        <div className="flex items-center text-xs font-bold text-gray-700 dark:text-neutral-300">
+                            <TagIcon className="mr-1 text-blue-500" size={14} />
+                            <span className="truncate">
+                                {formatCategories(event?.categories)}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
