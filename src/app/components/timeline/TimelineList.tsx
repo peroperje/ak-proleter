@@ -3,11 +3,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { fetchTimelineAction } from '@/app/lib/actions/timeline';
-import { EventCard, ResultCard } from './TimelineCards';
+import { EventCard } from './EventCard';
+import { ResultCard } from './ResultCard';
+import { TimelineItem } from './types';
 
 const LIMIT = 10;
 
-export default function TimelineList({ initialData }: { initialData: any[] }) {
+export default function TimelineList({ initialData }: { initialData: TimelineItem[] }) {
     const [items, setItems] = useState(initialData);
     const [offset, setOffset] = useState(initialData.length);
     const [hasMore, setHasMore] = useState(initialData.length >= LIMIT);
@@ -24,7 +26,7 @@ export default function TimelineList({ initialData }: { initialData: any[] }) {
         const result = await fetchTimelineAction(LIMIT, offset);
 
         if (result.success && result.data) {
-            const newData = result.data;
+            const newData = result.data as unknown as TimelineItem[];
             setItems((prev) => [...prev, ...newData]);
             setOffset((prev) => prev + newData.length);
             setHasMore(newData.length === LIMIT);
@@ -42,7 +44,7 @@ export default function TimelineList({ initialData }: { initialData: any[] }) {
 
     return (
         <div className="flex flex-col space-y-6">
-            {items.map((item: any) => (
+            {items.map((item: TimelineItem) => (
                 <React.Fragment key={item.id}>
                     {item.eventId && (
                         <EventCard
