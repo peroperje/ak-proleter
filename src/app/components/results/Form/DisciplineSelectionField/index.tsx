@@ -18,12 +18,14 @@ const DisciplineScoreField: React.FC<Props> = ({ disciplines, errors, defaultDis
   );
   const [search, setSearch] = useState<string>('');
 
-  if (defaultDisciplineId && selected?.id !== defaultDisciplineId) {
-    const discipline = disciplines.find((d) => d.id === defaultDisciplineId);
-    if (discipline) {
-      setSelected(discipline);
+  React.useEffect(() => {
+    if (defaultDisciplineId) {
+      const discipline = disciplines.find((d) => d.id === defaultDisciplineId);
+      if (discipline) {
+        setSelected(discipline);
+      }
     }
-  }
+  }, [defaultDisciplineId, disciplines]);
   return (
     <div className={'flex w-full flex-col'}>
       <label

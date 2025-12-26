@@ -19,7 +19,11 @@ export const getTimeline = async (limit: number = 10, offset: number = 0): Promi
             result: {
                 include: {
                     athlete: true,
-                    discipline: true,
+                    discipline: {
+                        include: {
+                            unit: true
+                        }
+                    },
                 },
             },
             _count: {

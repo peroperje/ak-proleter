@@ -57,6 +57,8 @@ export default function TimelineList({ initialData }: { initialData: TimelineIte
                     )}
                     {item.resultId && (
                         <ResultCard
+                            result={item.result}
+                            event={item.event}
                             metadata={item.metadata}
                             createdAt={item.createdAt}
                             likes={item._count.likes}

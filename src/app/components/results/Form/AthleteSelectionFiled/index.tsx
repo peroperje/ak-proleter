@@ -17,12 +17,14 @@ const AthleteField: React.FC<Props> = ({ athletes, errors, defaultAthleteId }): 
   );
   const [search, setSearch] = useState<string>('');
 
-  if (defaultAthleteId && selected?.id !== defaultAthleteId) {
-    const athlete = athletes.find((a) => a.id === defaultAthleteId);
-    if (athlete) {
-      setSelected(athlete)
+  React.useEffect(() => {
+    if (defaultAthleteId) {
+      const athlete = athletes.find((a) => a.id === defaultAthleteId);
+      if (athlete) {
+        setSelected(athlete);
+      }
     }
-  }
+  }, [defaultAthleteId, athletes]);
   return (
     <div className={'flex w-full flex-col'}>
       <label

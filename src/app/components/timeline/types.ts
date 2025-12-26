@@ -3,6 +3,7 @@ export interface EventCategory {
 }
 
 export interface EventData {
+    id: string;
     title?: string;
     description?: string | null;
     location?: string | null;
@@ -21,8 +22,27 @@ export interface TimelineMetadata {
     score?: string | number;
 }
 
+export interface ResultData {
+    id: string;
+    athlete: {
+        id: string;
+        name: string;
+        avatarUrl?: string | null;
+    };
+    discipline: {
+        name: string;
+        description?: string | null;
+        unit?: {
+            symbol: string;
+        } | null;
+    };
+    score?: string | null;
+    position?: number | null;
+}
+
 export interface CardProps {
     event?: EventData | null;
+    result?: ResultData | null;
     metadata: TimelineMetadata;
     createdAt?: Date | string;
     likes: number;
@@ -34,6 +54,7 @@ export interface TimelineItem {
     eventId?: string | null;
     resultId?: string | null;
     event?: EventData | null;
+    result?: ResultData | null;
     metadata: TimelineMetadata;
     createdAt: Date | string;
     _count: {
