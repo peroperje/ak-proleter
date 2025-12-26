@@ -22,7 +22,11 @@ export const getTimeline = async (limit: number = 10, offset: number = 0) => {
             createdAt: 'desc',
         },
         include: {
-            event: true,
+            event: {
+                include: {
+                    categories: true
+                }
+            },
             result: {
                 include: {
                     athlete: true,
