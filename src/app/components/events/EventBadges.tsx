@@ -24,7 +24,8 @@ export const EventBadge: React.FC<EventBadgeProps> = ({
         <span
             className={clsx(
                 "rounded-full font-semibold uppercase tracking-wider",
-                size === 'xs' ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-sm",
+                size === 'xs' ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 ",
+                size !== 'xs' ? "text-sm" : "text-xs",
                 styles
             )}
         >

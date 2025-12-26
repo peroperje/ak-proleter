@@ -72,7 +72,7 @@ const EventCard: React.FC<EventCardProps> = ({
                   sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />
               </div>
-              <EventBadges type={type} status={status} size="sm" />
+              <EventBadges type={type} status={status} />
             </div>
 
             <NoteBoxBg type={type}>

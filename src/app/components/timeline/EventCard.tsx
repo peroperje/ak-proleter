@@ -29,7 +29,7 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
                     <div>
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                             <h3 className="font-bold text-gray-900 dark:text-white">{metadata.title || event?.title || 'Event'}</h3>
-                            <EventBadges type={type} status={status} />
+                            <EventBadges size='xs' type={type} status={status} />
                         </div>
                         <div className="flex items-center text-[10px] text-gray-500 dark:text-neutral-500">
                             <MapPinIcon className="mr-1 text-blue-500 opacity-70" size={12} />
