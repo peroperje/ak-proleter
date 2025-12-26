@@ -46,7 +46,6 @@ export default function TimelineList({ initialData }: { initialData: any[] }) {
                 <React.Fragment key={item.id}>
                     {item.eventId && (
                         <EventCard
-                            type={item.type}
                             metadata={item.metadata}
                             createdAt={item.createdAt}
                             likes={item._count.likes}
@@ -55,7 +54,6 @@ export default function TimelineList({ initialData }: { initialData: any[] }) {
                     )}
                     {item.resultId && (
                         <ResultCard
-                            type={item.type}
                             metadata={item.metadata}
                             createdAt={item.createdAt}
                             likes={item._count.likes}

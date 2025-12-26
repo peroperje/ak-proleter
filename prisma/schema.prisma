@@ -99,14 +99,13 @@ model Result {
 }
 
 model Activity {
-  id        String         @id @default(uuid())
-  type      ActivityAction
+  id        String    @id @default(uuid())
   metadata  Json
-  createdAt DateTime       @default(now())
+  createdAt DateTime  @default(now())
   eventId   String?
   resultId  String?
-  event     Event?         @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  result    Result?        @relation(fields: [resultId], references: [id], onDelete: SetNull)
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  result    Result?   @relation(fields: [resultId], references: [id], onDelete: Cascade)
   comments  Comment[]
   likes     Like[]
 }
@@ -157,11 +156,6 @@ enum UnitType {
   OTHER
 }
 
-enum ActivityAction {
-  CREATE
-  UPDATE
-  DELETE
-}
 
 model DisciplineCategory {
   id                String       @id @default(uuid())

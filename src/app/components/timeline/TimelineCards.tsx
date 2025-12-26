@@ -3,27 +3,13 @@ import { FaCalendarAlt, FaTrophy, FaMapMarkerAlt, FaUser, FaRunning } from 'reac
 import clsx from 'clsx';
 
 interface CardProps {
-    type: 'CREATE' | 'UPDATE' | 'DELETE';
     metadata: any;
     createdAt: Date | string;
     likes: number;
     comments: number;
 }
 
-const ActionBadge = ({ type }: { type: CardProps['type'] }) => {
-    const colors = {
-        CREATE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-        UPDATE: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-        DELETE: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    };
-    return (
-        <span className={clsx('text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider', colors[type])}>
-            {type}
-        </span>
-    );
-};
-
-export const EventCard: React.FC<CardProps> = ({ type, metadata, createdAt, likes, comments }) => {
+export const EventCard: React.FC<CardProps> = ({ metadata, createdAt, likes, comments }) => {
     return (
         <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
@@ -32,10 +18,7 @@ export const EventCard: React.FC<CardProps> = ({ type, metadata, createdAt, like
                         <FaCalendarAlt size={20} />
                     </div>
                     <div>
-                        <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-gray-900 dark:text-white">{metadata.title || 'Event'}</h3>
-                            <ActionBadge type={type} />
-                        </div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">{metadata.title || 'Event'}</h3>
                         <p className="text-xs text-gray-500 dark:text-neutral-500">
                             {new Date(createdAt).toLocaleDateString()}
                         </p>
@@ -62,7 +45,7 @@ export const EventCard: React.FC<CardProps> = ({ type, metadata, createdAt, like
     );
 };
 
-export const ResultCard: React.FC<CardProps> = ({ type, metadata, createdAt, likes, comments }) => {
+export const ResultCard: React.FC<CardProps> = ({ metadata, createdAt, likes, comments }) => {
     return (
         <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
@@ -71,10 +54,7 @@ export const ResultCard: React.FC<CardProps> = ({ type, metadata, createdAt, lik
                         <FaTrophy size={20} />
                     </div>
                     <div>
-                        <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-gray-900 dark:text-white">New Result Achievement</h3>
-                            <ActionBadge type={type} />
-                        </div>
+                        <h3 className="font-bold text-gray-900 dark:text-white">New Result Achievement</h3>
                         <p className="text-xs text-gray-500 dark:text-neutral-500">
                             {new Date(createdAt).toLocaleDateString()}
                         </p>
