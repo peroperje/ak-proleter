@@ -17,20 +17,30 @@ import { routes } from '@/app/lib/routes';
 import Loader from '@/app/ui/loader';
 
 interface Props {
+  action: (state: State, formData: FormData) => Promise<State>;
   title?: string;
   disciplines: GetDisciplineReturn;
   athletes: Athlete[];
   events: Event[];
+  initialData?: any;
 }
 const AdminResultForm: React.FC<Props> = ({
+  action,
   title = 'Create Result',
   disciplines,
   athletes,
   events,
+  initialData,
 }): ReactElement => {
   const router = useRouter();
-  const initialState: State = { message: '', status: 'new' };
-  const [state, dispatch, pending] = useActionState(createResult, initialState);
+  const initialState: State = {
+    message: initialData ? '' : 'Please enter result data',
+    status: 'new',
+    data: initialData
+  };
+  const [state, dispatch, pending] = useActionState(action, initialState);
+
+  const isEdit = !!initialData;
 
   useEffect(() => {
     if (state.status === 'success') {
@@ -51,7 +61,7 @@ const AdminResultForm: React.FC<Props> = ({
   return (
     <PageLayout title={title} action={<CloseBtn />}>
       <Box
-        title={state.message || 'Please enter result data'}
+        title={state.message || (isEdit ? 'Update result data' : 'Please enter result data')}
         variants={((status) => {
           switch (status) {
             case 'success':
@@ -89,7 +99,9 @@ const AdminResultForm: React.FC<Props> = ({
             error={state.errors?.fieldErrors?.notes?.join(' ')}
           />
           <Button type='submit' disabled={pending}>
-            {pending ? 'Creating...' : 'Create Result'}
+            {pending
+              ? (isEdit ? 'Updating...' : 'Creating...')
+              : (isEdit ? 'Update Result' : 'Create Result')}
           </Button>
         </form>
         {pending && <Loader />}

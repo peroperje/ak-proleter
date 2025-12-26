@@ -55,7 +55,50 @@ export async function createResult(_prevState: State, formData: FormData): Promi
       message: 'Database Error: Failed to create result.',
     };
   }
+}
 
+export async function updateResult(id: string, _prevState: State, formData: FormData): Promise<State> {
+  const validatedFields = ResultSchema.safeParse(Object.fromEntries(formData.entries()));
 
+  if (!validatedFields.success) {
+    return {
+      status: 'validation',
+      errors: validatedFields.error.flatten(),
+      message: 'Failed to update result. Please check your data.',
+      data: Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
+    };
+  }
+
+  try {
+    await prisma.result.update({
+      where: { id },
+      data: {
+        ...validatedFields.data,
+      },
+    });
+    revalidatePath(routes.results.list());
+    revalidatePath(`/results/${id}/edit`);
+
+    return {
+      status: 'success',
+      message: 'Result updated successfully',
+    }
+  } catch {
+    return {
+      status: 'error',
+      message: 'Database Error: Failed to update result.',
+    };
+  }
+}
+
+export async function getResultById(id: string) {
+  try {
+    return await prisma.result.findUnique({
+      where: { id },
+    });
+  } catch (error) {
+    console.error('Error fetching result:', error);
+    return null;
+  }
 }
 
