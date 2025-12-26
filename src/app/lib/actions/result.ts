@@ -95,6 +95,16 @@ export async function getResultById(id: string) {
   try {
     return await prisma.result.findUnique({
       where: { id },
+      include: {
+        athlete: {
+          include: {
+            user: true,
+            category: true,
+          },
+        },
+        event: true,
+        discipline: true,
+      },
     });
   } catch (error) {
     console.error('Error fetching result:', error);
