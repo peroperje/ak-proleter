@@ -52,6 +52,7 @@ const EventForm: React.FC<EventFormProps> = ({
   // Local state for interactive fields to provide immediate visual feedback
   const [selectedType, setSelectedType] = useState<string | undefined>(state.data?.type);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(state.data?.categoryIds || []);
+  const [categorySearch, setCategorySearch] = useState('');
 
   // Sync local state when state.data changes (e.g. after AI population or failed validation)
   useEffect(() => {
@@ -83,6 +84,14 @@ const EventForm: React.FC<EventFormProps> = ({
     setSelectedCategoryIds(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
     );
+  };
+
+  const filteredCategories = categories.filter(cat =>
+    cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+  );
+
+  const deselectAllCategories = () => {
+    setSelectedCategoryIds([]);
   };
 
   return (
@@ -325,16 +334,41 @@ const EventForm: React.FC<EventFormProps> = ({
           </div>
 
           {/* Categories - Checkboxes */}
-          <div className='bg-gray-50 dark:bg-neutral-800/50 p-6 rounded-2xl border border-gray-100 dark:border-neutral-700/50'>
-            <label
-              className={clsx('block text-sm font-bold mb-4 dark:text-white', {
-                'text-red-500': !!state.errors.categoryIds,
-              })}
-            >
-              Categories
-            </label>
+          <div className='bg-gray-50 dark:bg-neutral-800/50 p-6 rounded-2xl border border-gray-100 dark:border-neutral-700/50 flex flex-col'>
+            <div className="flex flex-col mb-4">
+              <label
+                className={clsx('block text-sm font-bold dark:text-white', {
+                  'text-red-500': !!state.errors.categoryIds,
+                })}
+              >
+                Categories
+              </label>
+              <div className="flex items-center justify-between mt-1">
+                <button
+                  type="button"
+                  onClick={deselectAllCategories}
+                  className="text-[11px] font-semibold text-blue-500 hover:text-blue-600 dark:text-blue-400 underline transition-colors"
+                >
+                  Deselect All
+                </button>
+                <p className='text-[10px] text-gray-400 italic'>
+                  * No categories selected implies all categories
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search categories..."
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+                className="block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400 dark:placeholder-neutral-500"
+              />
+            </div>
+
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar'>
-              {categories.map((category) => {
+              {filteredCategories.map((category) => {
                 const isChecked = selectedCategoryIds.includes(category.id);
                 return (
                   <label
@@ -380,10 +414,12 @@ const EventForm: React.FC<EventFormProps> = ({
                   </label>
                 );
               })}
+              {filteredCategories.length === 0 && (
+                <p className="col-span-full text-center text-sm text-gray-400 py-4 italic">
+                  No categories found matching &quot;{categorySearch}&quot;
+                </p>
+              )}
             </div>
-            <p className='text-[10px] text-gray-400 mt-2 italic'>
-              * No categories selected implies all categories
-            </p>
             {!!state.errors.categoryIds && (
               <p className='text-sm text-red-500 mt-2 dark:text-neutral-400'>
                 {state.errors.categoryIds}

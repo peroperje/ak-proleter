@@ -111,11 +111,11 @@ export async function createEvent(_state: EventActionState, payload: FormData) {
         endDate: formattedData.endDate,
         type: formattedData.type,
         organizerId: organizer?.id || '',
-        // Connect categories: if none provided, connect all (as per requirement)
+        // Connect categories only if provided
         categories: {
           connect: formattedData.categoryIds && formattedData.categoryIds.length > 0
             ? formattedData.categoryIds.map((id) => ({ id }))
-            : (await prisma.category.findMany({ select: { id: true } })).map((cat) => ({ id: cat.id })),
+            : [],
         },
       },
     });
@@ -178,12 +178,11 @@ export async function updateEvent(
         startDate: formattedData.startDate,
         endDate: formattedData.endDate,
         type: formattedData.type,
-        // Update categories: if none provided, set to all (as per requirement)
+        // Update categories
         categories: {
-          set: [], // Clear existing
-          connect: formattedData.categoryIds && formattedData.categoryIds.length > 0
+          set: formattedData.categoryIds && formattedData.categoryIds.length > 0
             ? formattedData.categoryIds.map((id) => ({ id }))
-            : (await prisma.category.findMany({ select: { id: true } })).map((cat) => ({ id: cat.id })),
+            : [],
         },
       },
     });
