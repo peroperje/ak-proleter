@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { AwardIcon, CalendarIcon, MapPinIcon, NoteIcon } from '@/app/ui/icons';
 
 interface ResultInfoContentProps {
@@ -7,6 +8,7 @@ interface ResultInfoContentProps {
     score: string | null;
     unitSymbol?: string | null;
     position: number | null;
+    eventId: string;
     eventName: string;
     eventDate: Date | string;
     eventLocation: string;
@@ -19,6 +21,7 @@ const ResultInfoContent: React.FC<ResultInfoContentProps> = ({
     score,
     unitSymbol,
     position,
+    eventId,
     eventName,
     eventDate,
     eventLocation,
@@ -60,7 +63,9 @@ const ResultInfoContent: React.FC<ResultInfoContentProps> = ({
                         <div>
                             <h4 className="text-sm font-semibold text-gray-700 dark:text-neutral-300">Event Details</h4>
                             <div className="flex flex-wrap items-center gap-x-3 mt-1">
-                                <span className="text-sm font-bold text-gray-900 dark:text-white">{eventName}</span>
+                                <Link href={`/events/${eventId}`} className="text-sm font-bold underline">
+                                    {eventName}
+                                </Link>
                                 <span className="text-xs text-gray-400 dark:text-neutral-500">•</span>
                                 <span className="text-xs text-gray-500 dark:text-neutral-400">{formattedDate}</span>
                             </div>
@@ -68,10 +73,10 @@ const ResultInfoContent: React.FC<ResultInfoContentProps> = ({
                     </div>
 
                     <div className="flex items-start space-x-3 pt-3 border-t border-gray-200 dark:border-neutral-700">
-                        <MapPinIcon size={18} className="text-gray-400 mt-0.5" />
+                        <MapPinIcon size={16} className="text-gray-400 mt-0.5" />
                         <div>
                             <h4 className="text-sm font-semibold text-gray-700 dark:text-neutral-300">Location</h4>
-                            <p className="text-sm text-gray-900 dark:text-white mt-1">{eventLocation}</p>
+                            <p className="text-xs text-gray-500 dark:text-neutral-400 mt-1 leading-relaxed">{eventLocation}</p>
                         </div>
                     </div>
                 </div>

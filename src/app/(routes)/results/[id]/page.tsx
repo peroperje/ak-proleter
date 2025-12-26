@@ -67,6 +67,7 @@ export default function ResultPage({ params }: { params: Promise<{ id: string }>
                             score={result.score}
                             unitSymbol={result.discipline.unit?.symbol}
                             position={result.position}
+                            eventId={result.event.id}
                             eventName={result.event.title}
                             eventDate={result.event.startDate}
                             eventLocation={result.event.location}
