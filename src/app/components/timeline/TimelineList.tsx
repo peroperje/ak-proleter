@@ -43,7 +43,7 @@ export default function TimelineList({ initialData }: { initialData: TimelineIte
     }, [inView, hasMore, loadMore]);
 
     return (
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-6 max-w-4xl mx-auto w-full">
             {items.map((item: TimelineItem) => (
                 <React.Fragment key={item.id}>
                     {item.eventId && (
@@ -83,7 +83,7 @@ export default function TimelineList({ initialData }: { initialData: TimelineIte
             )}
 
             {items.length === 0 && !isLoading && (
-                <div className="text-center py-10 bg-gray-50 dark:bg-neutral-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-neutral-700">
+                <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
                     <p className="text-gray-500">No activities to show yet.</p>
                 </div>
             )}

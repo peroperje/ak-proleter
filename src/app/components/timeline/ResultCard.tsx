@@ -4,7 +4,7 @@ import { CardProps } from './types';
 
 export const ResultCard: React.FC<CardProps> = ({ metadata, createdAt, likes, comments }) => {
     return (
-        <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
                     <div className="p-2 bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-300">
@@ -13,7 +13,7 @@ export const ResultCard: React.FC<CardProps> = ({ metadata, createdAt, likes, co
                     <div>
                         <h3 className="font-bold text-gray-900 dark:text-white">New Result Achievement</h3>
                         <p className="text-xs text-gray-500 dark:text-neutral-500">
-                            {new Date(createdAt).toLocaleDateString()}
+                            {createdAt ? new Date(createdAt).toLocaleDateString() : ''}
                         </p>
                     </div>
                 </div>

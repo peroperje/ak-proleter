@@ -7,10 +7,8 @@ export default async function Dashboard() {
   const initialData = await getTimeline(10, 0);
 
   return (
-    <PageLayout title='Dashboard'>
-      <Box title={'Activity Feed'} >
-        <TimelineList initialData={initialData} />
-      </Box>
+    <PageLayout title=''>
+      <TimelineList initialData={initialData} />
     </PageLayout>
   );
 }

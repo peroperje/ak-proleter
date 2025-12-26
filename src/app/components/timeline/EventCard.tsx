@@ -14,7 +14,7 @@ export const EventCard: React.FC<CardProps> = ({ event, metadata, likes, comment
     const type = (event?.type || 'OTHER') as keyof typeof eventTypeStyles;
 
     return (
-        <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3">
                     <div className="mt-1 relative h-10 w-10 overflow-hidden rounded-full border-2 border-gray-500 shadow-md">
