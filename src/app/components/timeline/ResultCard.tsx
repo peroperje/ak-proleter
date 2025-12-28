@@ -16,11 +16,15 @@ export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, creat
     const unitSymbol = result?.discipline.unit?.symbol;
     const displayScore = score ? `${score}${unitSymbol ? ` ${unitSymbol}` : ''}` : 'N/A';
 
-    const eventName = event?.title || metadata.title;
-    const eventType = (event?.type || 'OTHER') as keyof typeof eventTypeStyles;
+    // Prioritize metadata for event details
+    const eventName = metadata.title || event?.title;
+    const eventType = (metadata.type || event?.type || 'OTHER') as keyof typeof eventTypeStyles;
+    const eventLocation = metadata.location || event?.location;
+    const eventId = metadata.eventId || event?.id;
+
     const eventStatus = getEventStatus(
         metadata.startDate || event?.startDate || new Date(),
-        event?.endDate || null
+        metadata.endDate || event?.endDate || null
     );
 
     return (
@@ -79,7 +83,7 @@ export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, creat
                 </div>
 
                 {/* Event Details Box */}
-                {event && (
+                {(eventName) && (
                     <div className="p-3 bg-gray-50 dark:bg-neutral-800/50 rounded-xl border border-gray-100 dark:border-neutral-700">
                         <div className="flex items-start space-x-3">
                             <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg border border-gray-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-1 mt-0.5">
@@ -92,15 +96,15 @@ export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, creat
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
-                                    <Link href={`/events/${event.id}`} className="text-xs font-bold text-gray-700 dark:text-neutral-200 hover:text-blue-600 transition-colors truncate">
+                                    <Link href={eventId ? `/events/${eventId}` : '#'} className="text-xs font-bold text-gray-700 dark:text-neutral-200 hover:text-blue-600 transition-colors truncate">
                                         {eventName}
                                     </Link>
                                     <EventBadges size='xs' type={eventType} status={eventStatus} />
                                 </div>
-                                {event.location && (
+                                {eventLocation && (
                                     <div className="flex items-center text-[10px] text-gray-400 dark:text-neutral-500">
                                         <MapPinIcon size={10} className="mr-1 text-blue-500/40" />
-                                        <span className="truncate">{event.location}</span>
+                                        <span className="truncate">{eventLocation}</span>
                                     </div>
                                 )}
                             </div>

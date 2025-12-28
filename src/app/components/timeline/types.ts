@@ -17,6 +17,9 @@ export interface TimelineMetadata {
     title?: string;
     location?: string;
     startDate?: Date | string;
+    endDate?: Date | string;
+    type?: string;
+    eventId?: string;
     athleteName?: string;
     disciplineName?: string;
     score?: string | number;
