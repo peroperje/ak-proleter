@@ -10,6 +10,7 @@ import { getEventById } from '@/app/lib/actions';
 import CloseBtn from '@/app/components/CloseBtn';
 import { formatDate, formatTime, formatCategories, getEventStatus } from '@/app/lib/utils/event';
 import { EventBadges } from '@/app/components/events/EventBadges';
+import AthleteEventResults, { AthleteEventResultData } from '@/app/components/events/AthleteEventResults';
 
 const LocationIcon = MapPinIcon;
 const DateFromIcon = CalendarIcon;
@@ -46,14 +47,29 @@ type DbEventWithRelations = {
     minAge: number;
     maxAge: number | null;
   }[];
+  results: AthleteEventResultData[];
 };
 
-async function fetchEventById(id: string): Promise<Event | null> {
+async function fetchEventById(id: string): Promise<{ event: Event; results: AthleteEventResultData[] } | null> {
   // Fetch event from the database by ID
   const dbEvent = (await getEventById(id, {
     include: {
       organizer: true,
       categories: true,
+      results: {
+        include: {
+          athlete: {
+            include: {
+              category: true,
+            },
+          },
+          discipline: {
+            include: {
+              unit: true,
+            },
+          },
+        },
+      },
     },
   })) as DbEventWithRelations | null;
 
@@ -65,19 +81,22 @@ async function fetchEventById(id: string): Promise<Event | null> {
   const status = getEventStatus(dbEvent.startDate, dbEvent.endDate);
 
   return {
-    id: dbEvent.id,
-    name: dbEvent.title,
-    description: dbEvent.description || '',
-    location: dbEvent.location,
-    startDate: dbEvent.startDate,
-    endDate: dbEvent.endDate || dbEvent.startDate,
-    type: dbEvent.type,
-    category:
-      dbEvent.categories && dbEvent.categories.length > 0
-        ? dbEvent.categories
-        : null,
-    status,
-    organizer: dbEvent.organizer?.name || 'Unknown',
+    event: {
+      id: dbEvent.id,
+      name: dbEvent.title,
+      description: dbEvent.description || '',
+      location: dbEvent.location,
+      startDate: dbEvent.startDate,
+      endDate: dbEvent.endDate || dbEvent.startDate,
+      type: dbEvent.type,
+      category:
+        dbEvent.categories && dbEvent.categories.length > 0
+          ? dbEvent.categories
+          : null,
+      status,
+      organizer: dbEvent.organizer?.name || 'Unknown',
+    },
+    results: dbEvent.results,
   };
 }
 
@@ -91,12 +110,14 @@ type EventPageProps = {
 export default function EventPage({ params }: EventPageProps) {
   const { id } = use(params);
   // Fetch event from the database by ID
-  const event = use(fetchEventById(id));
+  const data = use(fetchEventById(id));
 
   // If event not found, return 404
-  if (!event) {
+  if (!data) {
     notFound();
   }
+
+  const { event, results } = data;
   return (
     <PageLayout title={event.name} action={<CloseBtn />}>
       <Box
@@ -184,6 +205,11 @@ export default function EventPage({ params }: EventPageProps) {
               <p className='text-sm whitespace-pre-wrap text-gray-500 dark:text-neutral-400'>
                 {event.description || 'No description provided.'}
               </p>
+            </div>
+
+            {/* Results section */}
+            <div className='md:col-span-2'>
+              <AthleteEventResults results={results} />
             </div>
           </div>
         </div>

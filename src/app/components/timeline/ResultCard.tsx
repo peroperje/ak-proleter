@@ -7,6 +7,8 @@ import { getEventStatus } from '@/app/lib/utils/event';
 import { EventBadges } from '@/app/components/events/EventBadges';
 import { eventTypeStyles } from '@/app/lib/constants/styles';
 
+import { DisciplineScoreCard } from '@/app/components/results/DisciplineScoreCard';
+
 export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, createdAt, likes, comments }) => {
     const athleteName = result?.athlete.name || metadata.athleteName || 'Athlete';
     const athletePhoto = result?.athlete.avatarUrl;
@@ -14,7 +16,6 @@ export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, creat
     const disciplineDescription = result?.discipline.description;
     const score = result?.score || metadata.score;
     const unitSymbol = result?.discipline.unit?.symbol;
-    const displayScore = score ? `${score}${unitSymbol ? ` ${unitSymbol}` : ''}` : 'N/A';
 
     // Prioritize metadata for event details
     const eventName = metadata.title || event?.title;
@@ -62,30 +63,13 @@ export const ResultCard: React.FC<CardProps> = ({ result, event, metadata, creat
 
             <div className="mt-3">
                 {/* Discipline Score Box */}
-                <Link href={`/results/${result?.id}`} className="hover:opacity-50 transition-opacity" >
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-800/40 rounded-lg text-blue-600 dark:text-blue-400">
-                                    <AwardIcon size={18} />
-                                </div>
-                                <div>
-                                    <h4 className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider">Discipline</h4>
-                                    <p className="text-sm font-bold text-gray-900 dark:text-white">{disciplineName}</p>
-                                    {disciplineDescription && (
-                                        <p className="text-[10px] text-gray-400 dark:text-neutral-500 italic">
-                                            {disciplineDescription}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <h4 className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider">Score</h4>
-                                <p className="text-lg font-black text-blue-600 dark:text-blue-400">{displayScore}</p>
-                            </div>
-                        </div>
-                    </div>
-                </Link>
+                <DisciplineScoreCard
+                    id={result?.id}
+                    disciplineName={disciplineName || 'Unknown Discipline'}
+                    disciplineDescription={disciplineDescription}
+                    score={score ? String(score) : null}
+                    unitSymbol={unitSymbol || null}
+                />
             </div>
 
             <div className="mt-3">

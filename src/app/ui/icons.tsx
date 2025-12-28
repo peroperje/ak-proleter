@@ -11,6 +11,8 @@ export {
   FiClock as ClockIcon,
   FiTag as TagIcon,
   FiFileText as NoteIcon,
+  FiChevronDown as ChevronDownIcon,
+  FiChevronUp as ChevronUpIcon,
 } from 'react-icons/fi';
 export { HiSparkles as HiSparklesIcon } from 'react-icons/hi2';
 
