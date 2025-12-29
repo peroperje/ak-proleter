@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev --turbopack",
+    "dev:withProductionDB": "env-cmd -f env.local next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -55,6 +56,7 @@
     "autoprefixer": "^10.4.23",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
+    "env-cmd": "^11.0.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.1",
     "eslint-plugin-react-hooks": "^7.0.1",

@@ -11,7 +11,7 @@ import { getAthletes } from '@/app/lib/actions';
 
 const IconComponent = UserPlusIcon;
 
-// Add generateStaticParams to pre-render static paths
+
 export async function generateStaticParams() {
   const athletes = await prisma.athlete.findMany({
     select: { id: true },
