@@ -15,7 +15,8 @@
     "db:stop": "docker-compose down",
     "db:seed": "prisma db seed",
     "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prisma:studio-production": "env-cmd -f env.local prisma studio"
   },
   "type": "module",
   "prisma": {
