@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  provider      = "prisma-client-js"
+  output        = "../node_modules/.prisma/client"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,17 +9,17 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
+  id            String    @id @default(uuid())
+  email         String    @unique
   name          String
-  role          UserRole @default(MEMBER)
+  role          UserRole  @default(MEMBER)
   passwordHash  String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  eventsCreated Event[]  @relation("organizer")
-  newsItems     News[]   @relation("author")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  eventsCreated Event[]   @relation("organizer")
+  newsItems     News[]    @relation("author")
   athlete       Athlete?
-  eventsJoined  Event[]  @relation("participants")
+  eventsJoined  Event[]   @relation("participants")
   comments      Comment[]
   likes         Like[]
 }
@@ -67,7 +68,7 @@ model Event {
   results      Result[]
   categories   Category[] @relation("EventToCategory")
   participants User[]     @relation("participants")
-  activities    Activity[]
+  activities   Activity[]
 }
 
 model News {
@@ -95,7 +96,7 @@ model Result {
   event        Event      @relation(fields: [eventId], references: [id])
   athlete      Athlete    @relation(fields: [athleteId], references: [id])
   discipline   Discipline @relation(fields: [disciplineId], references: [id])
-  activities    Activity[]
+  activities   Activity[]
 }
 
 model Activity {
@@ -156,44 +157,43 @@ enum UnitType {
   OTHER
 }
 
-
 model DisciplineCategory {
-  id                String       @id @default(uuid())
-  name              String       @unique
-  description       String?
-  disciplines       Discipline[]
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  disciplines Discipline[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model MeasurementUnit {
-  id                String       @id @default(uuid())
-  name              String       @unique
-  symbol            String       @unique
-  type              UnitType
-  disciplines       Discipline[]
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  id          String       @id @default(uuid())
+  name        String       @unique
+  symbol      String       @unique
+  type        UnitType
+  disciplines Discipline[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Discipline {
-  id                    String             @id @default(uuid())
-  name                  String             @unique
-  internationalSign     String             @unique
-  description           String?
-  categoryId            String?
-  unitId                String?
-  isTrackEvent          Boolean            @default(false)
-  isFieldEvent          Boolean            @default(false)
-  isRoadEvent           Boolean            @default(false)
-  isCombinedEvent       Boolean            @default(false)
-  isTeamEvent           Boolean            @default(false)
-  olympicEvent          Boolean            @default(false)
-  paralympicEvent       Boolean            @default(false)
-  worldChampionshipEvent Boolean           @default(false)
-  category              DisciplineCategory? @relation(fields: [categoryId], references: [id])
-  unit                  MeasurementUnit?   @relation(fields: [unitId], references: [id])
-  results               Result[]
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  id                     String              @id @default(uuid())
+  name                   String              @unique
+  internationalSign      String              @unique
+  description            String?
+  categoryId             String?
+  unitId                 String?
+  isTrackEvent           Boolean             @default(false)
+  isFieldEvent           Boolean             @default(false)
+  isRoadEvent            Boolean             @default(false)
+  isCombinedEvent        Boolean             @default(false)
+  isTeamEvent            Boolean             @default(false)
+  olympicEvent           Boolean             @default(false)
+  paralympicEvent        Boolean             @default(false)
+  worldChampionshipEvent Boolean             @default(false)
+  category               DisciplineCategory? @relation(fields: [categoryId], references: [id])
+  unit                   MeasurementUnit?    @relation(fields: [unitId], references: [id])
+  results                Result[]
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
 }
