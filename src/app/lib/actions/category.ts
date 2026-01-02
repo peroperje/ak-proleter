@@ -33,6 +33,10 @@ export async function getCategories(): Promise<Category[]> {
       },
     });
   } catch (error) {
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.warn('Skipping category fetch during build phase');
+      return [];
+    }
     console.error('Error fetching categories:', error);
     throw new Error('Failed to fetch categories');
   }

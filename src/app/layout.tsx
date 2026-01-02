@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   description: 'Atletski Klub Proleter Zrenjanin',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: Readonly<{
