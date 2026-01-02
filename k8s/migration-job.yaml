@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ak-proleter-migration-v1 # You can append a version/timestamp here
+spec:
+  template:
+    spec:
+      containers:
+      - name: migration
+        image: ak-proleter-app:latest # Make sure this matches your build tag
+        imagePullPolicy: Never # Critical for local Minikube testing
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            echo "--- DEBUG INFO ---"
+            echo "User: $(whoami)"
+            echo "Path: $PATH"
+            echo "Current Dir: $(pwd)"
+            echo "Root Dir Listing:"
+            ls -F /app
+            echo "Checking Prisma Binary:"
+            which prisma || echo "prisma not in path"
+            ls -l /usr/local/bin/prisma || echo "prisma not in /usr/local/bin"
+            
+            echo "--- STARTING MIGRATION ---"
+            if [ -d "prisma" ]; then
+              prisma db push --accept-data-loss --schema ./prisma/schema.prisma
+              pnpm db:seed
+            else
+              echo "ERROR: Prisma directory still missing!"
+              exit 1
+            fi
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: DATABASE_URL
+      restartPolicy: Never
+  backoffLimit: 2
