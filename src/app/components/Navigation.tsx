@@ -10,6 +10,10 @@ import {
   UsersIcon,
 } from '@/app/ui/icons';
 import { IconType as ReactIconType } from 'react-icons';
+import { FaUserCircle } from 'react-icons/fa';
+import { auth } from '@/auth';
+import UserMenu from './UserMenu';
+import LogoutButton from './LogoutButton';
 
 interface NavigationProps {
   currentPage?: string;
@@ -60,7 +64,10 @@ export const navItems: NavItems = {
     icon: BarChartIcon
   }
 };
-const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
+
+const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
+  const session = await auth();
+
   return (
     <header className='bg-white shadow-sm dark:border-b dark:border-neutral-700 dark:bg-neutral-900'>
       <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
@@ -75,11 +82,10 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
                     key={item.name}
                     href={item.href}
                     prefetch={true}
-                    className={`flex items-center rounded-md px-3 py-2 text-sm font-medium ${
-                      currentPage === item.name.toLowerCase()
-                        ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
-                    }`}
+                    className={`flex items-center rounded-md px-3 py-2 text-sm font-medium ${currentPage === item.name.toLowerCase()
+                      ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+                      }`}
                   >
                     {IconComponent && (
                       <IconComponent className='mr-2' size={16} />
@@ -91,12 +97,16 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
             </nav>
           </div>
           <div className='flex items-center'>
-            <Link
-              href='/login'
-              className='text-sm text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
-            >
-              Login
-            </Link>
+            {session?.user ? (
+              <UserMenu user={session.user} />
+            ) : (
+              <Link
+                href='/login'
+                className='text-sm text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -110,17 +120,52 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage }) => {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center rounded-md px-3 py-2 text-base font-medium ${
-                  currentPage === item.name.toLowerCase()
-                    ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
-                }`}
+                className={`flex items-center rounded-md px-3 py-2 text-base font-medium ${currentPage === item.name.toLowerCase()
+                  ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+                  }`}
               >
                 {IconComponent && <IconComponent className='mr-2' size={18} />}
                 {item.name}
               </Link>
             );
           })}
+        </div>
+        <div className='border-t border-gray-200 px-4 py-4 dark:border-neutral-700'>
+          {session?.user ? (
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-3'>
+                {session.user.image ? (
+                  <img
+                    src={session.user.image}
+                    alt='User avatar'
+                    className='h-10 w-10 rounded-full shadow-sm'
+                  />
+                ) : (
+                  <FaUserCircle className='h-10 w-10 text-gray-400' />
+                )}
+                <div className='flex flex-col'>
+                  <span className='text-sm font-medium text-gray-900 dark:text-white'>
+                    {session.user.name}
+                  </span>
+                  <span className='text-xs text-gray-500 dark:text-gray-400'>
+                    {session.user.email}
+                  </span>
+                </div>
+              </div>
+              <LogoutButton
+                className='rounded-md bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700'
+                iconSize={18}
+              />
+            </div>
+          ) : (
+            <Link
+              href='/login'
+              className='flex items-center rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </header>

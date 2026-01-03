@@ -43,15 +43,15 @@ export interface Discipline {
   id: string;
   name: string;
   category:
-    | 'sprint'
-    | 'middle-distance'
-    | 'long-distance'
-    | 'hurdles'
-    | 'jumps'
-    | 'throws'
-    | 'combined'
-    | 'relay'
-    | 'walk';
+  | 'sprint'
+  | 'middle-distance'
+  | 'long-distance'
+  | 'hurdles'
+  | 'jumps'
+  | 'throws'
+  | 'combined'
+  | 'relay'
+  | 'walk';
   measurementUnit: 'time' | 'distance' | 'points';
   ageGroups?: string[]; // e.g., "U18", "Senior"
   genderCategory: 'male' | 'female' | 'mixed';
@@ -109,12 +109,13 @@ export interface Coach {
   active: boolean;
 }
 
-// User model for authentication
+import { UserRole } from '@prisma/client';
+
 export interface User {
   id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'coach' | 'athlete' | 'viewer';
+  email: string | null;
+  name: string | null;
+  role: UserRole;
   athleteId?: string; // If the user is an athlete
   coachId?: string; // If the user is a coach
 }

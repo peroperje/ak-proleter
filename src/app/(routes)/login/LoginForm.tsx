@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { FcGoogle } from 'react-icons/fc';
 import Button from '@/app/ui/button';
 import InputField from '@/app/ui/input-field';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -91,11 +92,9 @@ export default function LoginForm() {
         <FcGoogle size={20} />
         Google
       </button>
-
       <div className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-        <p>Demo accounts:</p>
-        <p>admin@akproleter.rs / admin123</p>
-        <p>coach@akproleter.rs / coach123</p>
+        <p >Don't have an account? <Link href='/register' className='font-medium text-teal-600 hover:text-teal-500 dark:text-teal-500'>Create one</Link></p>
+
       </div>
     </form>
   );

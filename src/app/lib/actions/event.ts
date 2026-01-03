@@ -245,7 +245,7 @@ export async function getEventById(
 
 const mapDBEvents = (event: PrismaEvent & {
   categories?: { id: string; name: string; description: string; minAge: number; maxAge: number | null; }[];
-  organizer?: { name: string; };
+  organizer?: { name: string | null; };
 }
 ) => {
   const status = getEventStatus(event.startDate, event.endDate);

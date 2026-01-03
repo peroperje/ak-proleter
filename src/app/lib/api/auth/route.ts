@@ -32,6 +32,14 @@ export async function POST(request: Request) {
     // In a real app, you would use bcrypt.compare
     // For this demo, we'll just check if the password matches the hashed password
     // This is not secure and should not be used in production
+    // Check if password matches
+    if (!user.passwordHash) {
+      return NextResponse.json(
+        { error: 'Invalid email or password' },
+        { status: 401 },
+      );
+    }
+
     const passwordMatches = await bcrypt.compare(
       body.password,
       user.passwordHash,
@@ -48,7 +56,7 @@ export async function POST(request: Request) {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role.toLowerCase() as 'admin' | 'coach' | 'athlete' | 'viewer',
+      role: user.role,
     };
 
     // In a real app, you would generate a JWT token here
@@ -93,11 +101,7 @@ export async function GET() {
       id: adminUser.id,
       email: adminUser.email,
       name: adminUser.name,
-      role: adminUser.role.toLowerCase() as
-        | 'admin'
-        | 'coach'
-        | 'athlete'
-        | 'viewer',
+      role: adminUser.role,
     };
 
     return NextResponse.json({

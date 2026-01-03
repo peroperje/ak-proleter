@@ -35,12 +35,13 @@ export default function LoginForm() {
             const result = await signIn("credentials", {
                 email: data.email,
                 password: data.password,
-                redirect: true,
-                callbackUrl: "/",
+                redirect: false,
             })
 
             if (result?.error) {
                 setError("Invalid email or password")
+            } else {
+                window.location.href = "/"
             }
         } catch (err) {
             setError("An unexpected error occurred")
