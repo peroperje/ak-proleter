@@ -42,11 +42,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# EXPLICITLY copy prisma and package.json into the runner
-# Standalone often misses these as they aren't 'runtime' dependencies
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/package.json ./package.json
-
 # Fix permissions for the nextjs user
 RUN chown -R nextjs:nodejs /app
 

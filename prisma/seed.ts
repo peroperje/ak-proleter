@@ -2,12 +2,22 @@ import { PrismaClient, UnitType, DisciplineCategory, MeasurementUnit } from '@pr
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as fs from 'fs';
+import * as path from 'path';
 import 'dotenv/config'
+
+import { fileURLToPath } from 'url';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+
+// Find the project root directory. Use process.cwd() as it's more reliable in containerized environments.
+const projectRoot = process.cwd();
+console.log(`Debug: Project root is ${projectRoot}`);
+
+// Cache for avatar filenames to avoid repeated disk I/O
+let cachedAvatarFiles: string[] | null = null;
 
 // Define the type for the athlete data from JSON
 interface AthleteData {
@@ -58,19 +68,44 @@ function determineGender(fullName: string): string {
 
 // Function to get a gender-appropriate avatar image from the avatars directory
 function getRandomAvatar(gender: string): string {
-  const avatarsDir = '/home/petar/Projects/ak-proleter/public/avatars-img';
-  const avatarFiles = fs.readdirSync(avatarsDir);
+  if (!cachedAvatarFiles) {
+    // Correct path relative to the project root
+    let avatarsDir = path.join(projectRoot, 'public', 'avatars-img');
 
-  if (avatarFiles.length === 0) {
+    // Fallback for different environments (e.g. if running from prisma directory)
+    if (!fs.existsSync(avatarsDir)) {
+      const alternativePath = path.join(projectRoot, '..', 'public', 'avatars-img');
+      if (fs.existsSync(alternativePath)) {
+        avatarsDir = alternativePath;
+      }
+    }
+
+    console.log(`Debug: Looking for avatars in ${avatarsDir}`);
+
+    try {
+      if (fs.existsSync(avatarsDir)) {
+        cachedAvatarFiles = fs.readdirSync(avatarsDir);
+        console.log(`Debug: Found ${cachedAvatarFiles.length} avatars`);
+      } else {
+        console.warn(`Warning: Avatars directory not found at ${avatarsDir}`);
+        cachedAvatarFiles = [];
+      }
+    } catch (err) {
+      console.warn(`Warning: Could not read avatars directory at ${avatarsDir}:`, err);
+      cachedAvatarFiles = [];
+    }
+  }
+
+  if (cachedAvatarFiles.length === 0) {
     return ''; // Return empty string if no avatars found
   }
 
   // Filter avatars based on gender
   const genderFilter = gender === 'female' ? 'female' : 'male';
-  const filteredAvatars = avatarFiles.filter(file => file.toLowerCase().includes(genderFilter));
+  const filteredAvatars = cachedAvatarFiles.filter(file => file.toLowerCase().includes(genderFilter));
 
   // If no matching avatars found, fall back to all avatars
-  const availableAvatars = filteredAvatars.length > 0 ? filteredAvatars : avatarFiles;
+  const availableAvatars = filteredAvatars.length > 0 ? filteredAvatars : cachedAvatarFiles;
 
   const randomIndex = Math.floor(Math.random() * availableAvatars.length);
   const randomAvatar = availableAvatars[randomIndex];

@@ -7,29 +7,15 @@ spec:
     spec:
       containers:
       - name: migration
-        image: ak-proleter-app:latest # Make sure this matches your build tag
-        imagePullPolicy: Never # Critical for local Minikube testing
+        image: ak-proleter-app:dev
+        imagePullPolicy: Never 
         command: ["/bin/sh", "-c"]
         args:
           - |
-            echo "--- DEBUG INFO ---"
-            echo "User: $(whoami)"
-            echo "Path: $PATH"
-            echo "Current Dir: $(pwd)"
-            echo "Root Dir Listing:"
-            ls -F /app
-            echo "Checking Prisma Binary:"
-            which prisma || echo "prisma not in path"
-            ls -l /usr/local/bin/prisma || echo "prisma not in /usr/local/bin"
-            
-            echo "--- STARTING MIGRATION ---"
-            if [ -d "prisma" ]; then
-              prisma db push --accept-data-loss --schema ./prisma/schema.prisma
-              pnpm db:seed
-            else
-              echo "ERROR: Prisma directory still missing!"
-              exit 1
-            fi
+            echo "--- STARTING DATABASE MIGRATIONS ---"
+            prisma migrate deploy
+            pnpm db:seed
+            echo "--- DATABASE INITIALIZATION COMPLETE ---"
         env:
           - name: DATABASE_URL
             valueFrom:

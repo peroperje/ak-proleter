@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ak-proleter-dev-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ak-proleter-dev
+  template:
+    metadata:
+      labels:
+        app: ak-proleter-dev
+    spec:
+      containers:
+        - name: ak-proleter
+          image: ak-proleter-app:dev # Use the image built from Dockerfile.dev
+          imagePullPolicy: Always # Good for local development (Minikube/Kind)
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DATABASE_URL
+          # Probes might need more time in development as Next.js compiles on first hit
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ak-proleter-dev-service
+spec:
+  selector:
+    app: ak-proleter-dev
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
