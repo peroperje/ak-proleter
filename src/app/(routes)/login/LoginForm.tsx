@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { FcGoogle } from 'react-icons/fc';
 import Button from '@/app/ui/button';
 import InputField from '@/app/ui/input-field';
 
@@ -37,6 +38,10 @@ export default function LoginForm() {
     }
   }
 
+  const handleGoogleSignIn = () => {
+    signIn('google', { callbackUrl: '/' });
+  };
+
   return (
     <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
       {error && (
@@ -66,6 +71,26 @@ export default function LoginForm() {
       <Button variant='submit' type='submit' disabled={isLoading}>
         {isLoading ? 'Logging in...' : 'Login'}
       </Button>
+
+      <div className='relative my-2'>
+        <div className='absolute inset-0 flex items-center'>
+          <div className='w-full border-t border-gray-300 dark:border-gray-600'></div>
+        </div>
+        <div className='relative flex justify-center text-xs uppercase'>
+          <span className='bg-white px-2 text-gray-500 dark:bg-neutral-900'>
+            Or continue with
+          </span>
+        </div>
+      </div>
+
+      <button
+        type='button'
+        onClick={handleGoogleSignIn}
+        className='flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700'
+      >
+        <FcGoogle size={20} />
+        Google
+      </button>
 
       <div className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
         <p>Demo accounts:</p>
