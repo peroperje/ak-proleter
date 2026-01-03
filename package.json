@@ -15,6 +15,7 @@
     "db:stop": "docker-compose down",
     "db:seed": "prisma db seed",
     "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:studio-production": "env-cmd -f env.local prisma studio"
   },
@@ -23,6 +24,7 @@
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.1",
     "@hookform/resolvers": "^5.2.2",
     "@huggingface/inference": "^4.13.5",
     "@next/eslint-plugin-next": "16.1.1",
@@ -33,6 +35,7 @@
     "bcrypt": "^6.0.0",
     "leaflet": "^1.9.4",
     "next": "16.1.1",
+    "next-auth": "5.0.0-beta.30",
     "pg": "^8.16.3",
     "prisma": "^7.2.0",
     "react": "19.2.3",

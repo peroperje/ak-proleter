@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Button from '@/app/ui/button';
 import InputField from '@/app/ui/input-field';
 
@@ -17,27 +18,20 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+      if (result?.error) {
+        setError('Invalid email or password');
+      } else {
+        router.push('/');
+        router.refresh();
       }
-
-      // In a real app, you would store the token in localStorage or cookies
-      // and set up a global auth state
-
-      // For demo purposes, we'll just redirect to the dashboard
-      router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
