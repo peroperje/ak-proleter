@@ -183,15 +183,6 @@ minikube service ak-proleter-dev-service
   - `(routes)`: Page components for each route
 - `prisma`: Database configuration and Prisma ORM setup
 
-## Demo Accounts
-
-For testing purposes, the following demo accounts are available:
-
-- **Admin**: admin@akproleter.rs / admin123
-- **Coach**: coach@akproleter.rs / coach123
-- **Athlete**: marko.petrovic@example.com / athlete123
-- **Viewer**: viewer@akproleter.rs / viewer123
-
 ## Development
 
 ### Storybook
