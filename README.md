@@ -11,7 +11,28 @@ A Next.js application for tracking athlete results and performance for Athletic 
 - **Coach Management**: Manage coach profiles and assignments
 - **Reports**: Generate reports and analytics on athlete performance
 - **Activity Feed (Timeline)**: Track project events and athlete results chronologically with likes and comments
-- **Authentication**: Role-based access control for administrators, coaches, athletes, and viewers
+- **Authentication**: Role-based access control (RBAC) powered by NextAuth.js
+
+
+## Authentication & Role-Based Access Control (RBAC)
+
+The application uses **Auth.js v5 (NextAuth.js)** for secure authentication and a centralized authorization system managed via `src/auth.config.ts` and `src/proxy.ts`.
+
+### Access Levels
+
+| Route Pattern | Access Level | Description |
+| :--- | :--- | :--- |
+| `/login`, `/register` | **Public** | Accessible to everyone. Redirects to `/` if already logged in. |
+| `/`, `/athletes/[id]`, `/events/[id]`, `/results/[id]` | **Private (All Roles)** | Requires an active session. |
+| `/athletes`, `/events`, `/results` | **Admin Only** | Requires `ADMIN` role. |
+| `/athletes/new`, `/events/new`, `/results/new` | **Admin Only** | Requires `ADMIN` role. |
+| `**/edit` | **Admin Only** | Requires `ADMIN` role. |
+
+### Technical Implementation
+
+- **Middleware/Proxy**: `src/proxy.ts` handles global route interception.
+- **Rules Engine**: `src/auth.config.ts` contains the logic for determining access based on the user's role and the requested path.
+- **Session Management**: Roles are persisted in the JWT token and synchronized with the database session.
 
 ## Tech Stack
 
@@ -19,7 +40,7 @@ A Next.js application for tracking athlete results and performance for Athletic 
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: Custom components with Storybook
-- **Authentication**: Custom JWT-based authentication
+- **Authentication**: [Auth.js v5 (NextAuth.js)](https://authjs.dev/) with Prisma Adapter
 - **Database**: PostgreSQL with Prisma ORM
 - **API**: Next.js API routes
 
