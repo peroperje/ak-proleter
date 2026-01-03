@@ -67,6 +67,20 @@ export const navItems: NavItems = {
 
 const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
   const session = await auth();
+  const isLoggedIn = !!session?.user;
+  const userRole = (session?.user as any)?.role;
+
+  const filteredNavItems = Object.values(navItems).filter((item) => {
+    // Dashboard is available for all logged-in users
+    if (item.name === 'Dashboard') return isLoggedIn;
+
+    // Admin-only sections
+    if (['Athletes', 'Events', 'Results', 'Reports'].includes(item.name)) {
+      return userRole === 'ADMIN';
+    }
+
+    return true;
+  });
 
   return (
     <header className='bg-white shadow-sm dark:border-b dark:border-neutral-700 dark:bg-neutral-900'>
@@ -75,7 +89,7 @@ const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
           <div className='flex items-center'>
             <Logo className='mr-8' />
             <nav className='hidden space-x-4 md:flex'>
-              {Object.values(navItems).map((item) => {
+              {filteredNavItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link
@@ -114,7 +128,7 @@ const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
       {/* Mobile navigation menu - shown on small screens */}
       <div className='border-t border-gray-200 md:hidden dark:border-neutral-700'>
         <div className='space-y-1 px-2 py-3'>
-          {Object.values(navItems).map((item) => {
+          {filteredNavItems.map((item) => {
             const IconComponent = item.icon;
             return (
               <Link
