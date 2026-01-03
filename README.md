@@ -82,6 +82,75 @@ A Next.js application for tracking athlete results and performance for Athletic 
 
 For more details on database setup and configuration, see the [Database Documentation](./prisma/README.md).
 
+## Kubernetes Deployment
+
+The application is containerized and ready for deployment on Kubernetes. All configuration files are located in the `k8s/` directory.
+
+### 1. Build Docker Images
+
+First, build the Docker images for the application.
+
+**For Production:**
+```bash
+docker build -t ak-proleter-app:latest -f Dockerfile .
+```
+
+**For Development (runs `pnpm dev` inside container):**
+```bash
+docker build -t ak-proleter-app:dev -f Dockerfile.dev .
+```
+
+### 2. Configure Secrets
+
+Update `k8s/app-config.yaml` with your database connection string and other secrets. Then apply it:
+
+```bash
+kubectl apply -f k8s/app-config.yaml
+```
+
+### 3. Deploy Database
+
+The deployment includes a PostgreSQL setup. If you already have a PostgreSQL instance, you can skip this and update the `DATABASE_URL` in `app-config.yaml`.
+
+```bash
+kubectl apply -f k8s/postgres-pvc.yaml
+kubectl apply -f k8s/postgres-deployment.yaml
+```
+
+### 4. Run Database Migrations and Seeding
+
+Use the migration job to run Prisma migrations and seed the database:
+
+```bash
+kubectl apply -f k8s/migration-job.yaml
+```
+
+*Note: You may need to delete and re-create this job (`kubectl delete job ak-proleter-migration-v1`) if you need to run it again.*
+
+### 5. Deploy the Application
+
+**For Production:**
+```bash
+kubectl apply -f k8s/app-deployment.yaml
+```
+
+**For Development/Testing:**
+```bash
+kubectl apply -f k8s/app-dev-deployment.yaml
+```
+
+### Accessing the Application
+
+The services are configured as `LoadBalancer`. On local environments like Minikube, you might need to run `minikube tunnel` or use:
+
+```bash
+minikube service ak-proleter-service
+```
+or for dev:
+```bash
+minikube service ak-proleter-dev-service
+```
+
 ## Project Structure
 
 - `src/app`: Main application code (Next.js App Router)
