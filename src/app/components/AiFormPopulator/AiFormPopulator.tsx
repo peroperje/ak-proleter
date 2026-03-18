@@ -2,6 +2,7 @@
 import React, { useState, useRef, ReactElement } from 'react';
 import clsx from 'clsx';
 import useAIService from '@/app/lib/service/AISevice';
+import { useAIConfig } from '@/app/components/providers/AIConfigProvider';
 import Textarea from '@/app/ui/textarea';
 import {
   FaMicrophoneAltIcon,
@@ -35,7 +36,21 @@ export default function AiFormPopulator<T,>({
   defaultPrompt,
                                           renderTextArea,
 }: AiFormPopulatorProps<T>) {
-  const aiService = useAIService({ defaultPrompt });
+  const { models, selectedModelId } = useAIConfig();
+  
+  // Create config for the service
+  const activeModel = models.find((m: any) => m.id === selectedModelId);
+  const modelConfig = activeModel 
+    ? {
+        id: activeModel.id,
+        name: activeModel.name,
+        provider: activeModel.provider,
+        modelName: activeModel.model_name,
+        // No apiKey here, let the service call the proxy API
+      }
+    : undefined;
+
+  const aiService = useAIService({ defaultPrompt, modelConfig });
 
   const [prompt, setPrompt] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);

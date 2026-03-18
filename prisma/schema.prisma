@@ -237,3 +237,23 @@ model Discipline {
   createdAt              DateTime            @default(now())
   updatedAt              DateTime            @updatedAt
 }
+
+model AIModel {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  provider  String
+  modelName String
+  keys      AIKey[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AIKey {
+  id        String   @id @default(uuid())
+  userId    String?  // Optional for now
+  modelId   String
+  key       String   @db.Text
+  model     AIModel  @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

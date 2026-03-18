@@ -1,73 +1,178 @@
 import { InferenceClient } from '@huggingface/inference';
 import { useMemo } from 'react';
 
+export type ContextHints = {
+  recentAthletes?: { id: string; name: string }[];
+  currentEventId?: string;
+  eventDisciplines?: string[];
+  [key: string]: any;
+};
+
+export type AIModelConfig = {
+  id: string;
+  name: string;
+  provider: string;
+  modelName: string;
+  apiKey?: string;
+};
 
 export class AIService {
-  private readonly hfApiKey: string;
+  private readonly modelConfig: AIModelConfig;
   private readonly defaultPrompt: string;
 
-  constructor(defultPrompt:string) {
-    // the Hugging Face API key
-    this.hfApiKey = process.env.NEXT_PUBLIC_HF_API_KEY || '';
-    this.defaultPrompt = defultPrompt;
+  constructor(defaultPrompt: string, modelConfig?: AIModelConfig) {
+    this.defaultPrompt = defaultPrompt;
+    // Default to Hugging Face if no config provided (backward compatibility or fallback)
+    this.modelConfig = modelConfig || {
+      id: 'default',
+      name: 'Default HF',
+      provider: 'huggingface',
+      modelName: 'deepseek-ai/DeepSeek-V3-0324',
+      apiKey: process.env.NEXT_PUBLIC_HF_API_KEY || ''
+    };
   }
 
-  // Text processing using Hugging Face with a working model
-  async extractData<T>(prompt: string): Promise<T | undefined> {
-      try {
-        const result = await this.tryDeepSeekModel( prompt);
-        if (result) {
-          const json = await JSON.parse(result);
-          if (json) {
-            return json;
-
-          }
-        }
-      } catch (error) {
-        console.error(`Error with model DeepSeekModel:`, error);
+  // Text processing using the configured model
+  async extractData<T>(
+    prompt: string,
+    role: string = 'ATHLETE',
+    language: string = 'sr-RS',
+    contextHints?: ContextHints
+  ): Promise<T | undefined> {
+    try {
+      // If we're on the client and no apiKey in config, proxy through server API
+      // to keep API keys secure and abstracted
+      if (typeof window !== 'undefined' && !this.modelConfig.apiKey) {
+        const response = await fetch('/api/ai/extract', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            role,
+            language,
+            contextHints,
+            modelId: this.modelConfig.id === 'default' ? undefined : this.modelConfig.id
+          })
+        });
+        if (response.ok) return await response.json();
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to extract data via API');
       }
 
-    // If all models fail, use fallback extraction
+      let result: string | undefined;
+
+      switch (this.modelConfig.provider.toLowerCase()) {
+        case 'huggingface':
+          result = await this.tryHuggingFaceModel(prompt, role, language, contextHints);
+          break;
+        case 'gemini':
+          result = await this.tryGeminiModel(prompt, role, language, contextHints);
+          break;
+        case 'openai':
+          result = await this.tryOpenAIModel(prompt, role, language, contextHints);
+          break;
+        case 'groq':
+          result = await this.tryGroqModel(prompt, role, language, contextHints);
+          break;
+        default:
+          console.error(`Unsupported provider: ${this.modelConfig.provider}`);
+          return undefined;
+      }
+
+      if (result) {
+        const jsonMatch = result.match(/\{[\s\S]*\}/);
+        const jsonString = jsonMatch ? jsonMatch[0] : result;
+        const json = JSON.parse(jsonString);
+        if (json) {
+          return json;
+        }
+      }
+    } catch (error) {
+      console.error(`Error with model ${this.modelConfig.modelName}:`, error);
+    }
+    return undefined;
   }
 
-  private async tryDeepSeekModel( prompt: string): Promise<string | undefined> {
-    const model ="deepseek-ai/DeepSeek-V3-0324";
-    const systemPrompt = `${this.defaultPrompt}
+  private constructSystemPrompt(role: string, language: string, contextHints?: ContextHints): string {
+    const contextInfo = contextHints ? `
+Context Hints (Available IDs and Names):
+${JSON.stringify(contextHints, null, 2)}
+Use these hints to map names that sound similar or IDs mentioned in the text.
+` : '';
 
-Text: "${prompt}"
+    return `
+${this.defaultPrompt}
+User Role: ${role}
+Target Language: ${language}
+${contextInfo}
 
+Return ONLY a valid JSON object matching the result schema (athleteId, eventId, disciplineId, score, notes).
 JSON:`;
-    const client = new InferenceClient(this.hfApiKey);
+  }
+
+  private async tryHuggingFaceModel(
+    prompt: string,
+    role: string,
+    language: string,
+    contextHints?: ContextHints
+  ): Promise<string | undefined> {
+    if (!this.modelConfig.apiKey) throw new Error("Hugging Face API key is missing");
+
+    const systemPrompt = this.constructSystemPrompt(role, language, contextHints);
+    const client = new InferenceClient(this.modelConfig.apiKey);
+    
     const chatCompletion = await client.chatCompletion({
-      model: model,
+      model: this.modelConfig.modelName,
       messages: [
         {
+          role: 'system',
+          content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
+        },
+        {
           role: 'user',
-          content: systemPrompt,
+          content: `${systemPrompt}\n\nText to process: "${prompt}"`,
         },
       ],
       response_format: {
         type: 'json_object',
       },
       temperature: 0.1,
-      max_tokens: 100,
+      max_tokens: 150,
       top_p: 0.95,
-      frequency_penalty: 0.0,
-      presence_penalty: 0.0,
       stream: false,
     });
     return chatCompletion.choices[0].message.content;
   }
 
+  // Placeholder for Gemini integration
+  private async tryGeminiModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
+    console.log("Gemini provider not yet fully implemented in this refactor");
+    return undefined;
+  }
+
+  // Placeholder for OpenAI integration
+  private async tryOpenAIModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
+    console.log("OpenAI provider not yet fully implemented in this refactor");
+    return undefined;
+  }
+
+  // Placeholder for Groq integration
+  private async tryGroqModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
+    console.log("Groq provider not yet fully implemented in this refactor");
+    return undefined;
+  }
 
   // Alternative: Use Hugging Face's Whisper model for transcription
   async transcribeAudioWithHF(audioFile: File): Promise<string> {
     try {
+      const apiKey = this.modelConfig.apiKey || process.env.NEXT_PUBLIC_HF_API_KEY || '';
+      if (!apiKey) throw new Error("API key is missing for transcription");
+
       const response = await fetch(
         "https://api-inference.huggingface.co/models/openai/whisper-large-v3",
         {
           headers: {
-            Authorization: `Bearer ${this.hfApiKey}`,
+            Authorization: `Bearer ${apiKey}`,
           },
           method: "POST",
           body: audioFile,
@@ -85,18 +190,20 @@ JSON:`;
     }
   }
 
-
   // Process audio: transcribe then extract data
   async extractDataFromAudio<T>(audioFile: File): Promise<T | undefined> {
     const transcript = await this.transcribeAudioWithHF(audioFile);
     return this.extractData(transcript);
-
   }
 }
+
 type UseAIServiceProps = {
   defaultPrompt: string;
+  modelConfig?: AIModelConfig;
 }
-const useAIService = ({defaultPrompt}:UseAIServiceProps) => {
-  return useMemo(()=>new AIService(defaultPrompt),[defaultPrompt]);
+
+const useAIService = ({ defaultPrompt, modelConfig }: UseAIServiceProps) => {
+  return useMemo(() => new AIService(defaultPrompt, modelConfig), [defaultPrompt, modelConfig]);
 }
-export default useAIService
+
+export default useAIService;

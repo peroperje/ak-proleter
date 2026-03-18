@@ -4,6 +4,7 @@ import './globals.css';
 import React, { Suspense } from 'react';
 import Navigation from '@/app/components/Navigation';
 import ToastProvider from '@/app/components/providers/ToastProvider';
+import { AIConfigProvider } from '@/app/components/providers/AIConfigProvider';
 
 const inter = Inter({
   weight: ['400', '700'],
@@ -32,10 +33,11 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
 
         <div className='min-h-screen bg-gray-50 dark:bg-neutral-800'>
-
-          <Navigation />
-          <ToastProvider />
-          <Suspense fallback={'Loading...'}>{children}</Suspense>
+          <AIConfigProvider>
+            <Navigation />
+            <ToastProvider />
+            <Suspense fallback={'Loading...'}>{children}</Suspense>
+          </AIConfigProvider>
         </div>
       </body>
     </html>
