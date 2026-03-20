@@ -5,7 +5,7 @@ export type ContextHints = {
   recentAthletes?: { id: string; name: string }[];
   currentEventId?: string;
   eventDisciplines?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type AIModelConfig = {
@@ -95,9 +95,9 @@ export class AIService {
 
   private constructSystemPrompt(role: string, language: string, contextHints?: ContextHints): string {
     const contextInfo = contextHints ? `
-Context Hints (Available IDs and Names):
+Context Hints:
 ${JSON.stringify(contextHints, null, 2)}
-Use these hints to map names that sound similar or IDs mentioned in the text.
+Use these to understand the context of the input text (e.g. timestamp, location).
 ` : '';
 
     return `
@@ -106,7 +106,7 @@ User Role: ${role}
 Target Language: ${language}
 ${contextInfo}
 
-Return ONLY a valid JSON object matching the result schema (athleteId, eventId, disciplineId, score, notes).
+Return ONLY a valid JSON object matching the requested schema.
 JSON:`;
   }
 
@@ -145,21 +145,58 @@ JSON:`;
   }
 
   // Placeholder for Gemini integration
-  private async tryGeminiModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async tryGeminiModel(_prompt: string, _role: string, _language: string, _contextHints?: ContextHints): Promise<string | undefined> {
     console.log("Gemini provider not yet fully implemented in this refactor");
     return undefined;
   }
 
   // Placeholder for OpenAI integration
-  private async tryOpenAIModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async tryOpenAIModel(_prompt: string, _role: string, _language: string, _contextHints?: ContextHints): Promise<string | undefined> {
     console.log("OpenAI provider not yet fully implemented in this refactor");
     return undefined;
   }
 
   // Placeholder for Groq integration
   private async tryGroqModel(prompt: string, role: string, language: string, contextHints?: ContextHints): Promise<string | undefined> {
-    console.log("Groq provider not yet fully implemented in this refactor");
-    return undefined;
+    if (!this.modelConfig.apiKey) throw new Error("Groq API key is missing");
+
+    const systemPrompt = this.constructSystemPrompt(role, language, contextHints);
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.modelConfig.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: this.modelConfig.modelName,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
+          },
+          {
+            role: 'user',
+            content: `${systemPrompt}\n\nText to process: "${prompt}"`,
+          }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.1,
+        max_tokens: 150,
+        top_p: 0.95,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Groq API error: ${response.statusText} - ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content;
   }
 
   // Alternative: Use Hugging Face's Whisper model for transcription

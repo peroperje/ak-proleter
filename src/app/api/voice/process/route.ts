@@ -1,69 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { AIService, ContextHints } from '@/app/lib/service/AISevice';
-import prisma from '@/app/lib/prisma';
+import { getApiSession } from '@/app/lib/api-auth';
+import { AIService } from '@/app/lib/service/AISevice';
+import { prisma } from '@/app/lib/prisma';
 
 const DEFAULT_PROMPT = `
 Extract athletic result data from the text. 
-The result should include:
-- athleteId (string, UUID)
-- eventId (string, UUID)
-- disciplineId (string, UUID)
-- score (string, e.g., "12.5s", "5.43m")
-- notes (string, optional)
+The result should include ONLY:
+- athleteName (string)
+- score (string or number)
+- scoreUnit (string)
 
-If the text is in Serbian, translate terminology to understand the intent but keep the IDs as provided in context hints.
+If the text is in Serbian, translate terminology to understand the intent but keep the names as provided.
 `;
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
+    const session = await getApiSession();
 
+    console.log('session', session);
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { transcription, contextHints, language = 'sr-RS' } = body;
-
-    if (!transcription) {
-      return NextResponse.json({ error: 'Missing transcription' }, { status:400 });
+    const { transcription, text, timestamp, location, lat, lon, language = 'sr-RS' } = body;
+    const voiceInput = transcription || text;
+    console.log('voiceInput', voiceInput);
+    if (!voiceInput) {
+      return NextResponse.json({ error: 'Missing transcription or text' }, { status:400 });
     }
 
     const userRole = session.user.role || 'USER';
-    const userId = session.user.id;
+
+    // Get Active Model from DB (fallback to default if not configured)
+    const activeModel = await prisma.aIModel.findFirst({
+      include: { keys: true },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    let modelConfig;
+    if (activeModel) {
+      modelConfig = {
+        id: activeModel.id,
+        name: activeModel.name,
+        provider: activeModel.provider,
+        modelName: activeModel.modelName,
+        apiKey: activeModel.keys?.[0]?.key || ''
+      };
+    }
 
     // 1. Process with AI
-    const aiService = new AIService(DEFAULT_PROMPT);
+    const aiService = new AIService(DEFAULT_PROMPT, modelConfig);
+    console.log({voiceInput, userRole, language, timestamp, location, lat, lon, modelConfig});
     const resultData = await aiService.extractData<any>(
-      transcription,
+      voiceInput,
       userRole,
       language,
-      contextHints as ContextHints
+      { timestamp, location }
     );
 
-    if (!resultData || !resultData.athleteId || !resultData.eventId || !resultData.disciplineId) {
-      return NextResponse.json({ 
-        error: 'AI failed to extract required fields', 
-        details: resultData 
+    console.log('resultData', resultData);
+    if (!resultData || !resultData.athleteName || !resultData.score) {
+      return NextResponse.json({
+        error: 'AI failed to extract required fields (athleteName, score, scoreUnit)',
+        details: resultData
       }, { status: 422 });
     }
 
-    // 2. RBAC Validation
-    if (userRole !== 'ADMIN') {
-      // If the user is an ATHLETE, they can only record for themselves
-      const athlete = await prisma.athlete.findUnique({
-        where: { userId: userId },
-      });
-
-      if (!athlete || resultData.athleteId !== athlete.id) {
-        return NextResponse.json({ 
-          error: 'Forbidden: You can only record results for yourself.' 
-        }, { status: 403 });
-      }
-    }
-
     // 3. Persistence
+    /*
     const newResult = await prisma.result.create({
       data: {
         athleteId: resultData.athleteId,
@@ -73,18 +78,19 @@ export async function POST(req: NextRequest) {
         notes: resultData.notes || '',
       },
     });
-
+*/
     return NextResponse.json({
       success: true,
       message: 'Result recorded successfully',
-      data: newResult,
+  //    data: newResult,
+     data:{}
     });
 
   } catch (error: any) {
     console.error('Voice Processing API Error:', error);
-    return NextResponse.json({ 
-      error: 'Internal Server Error', 
-      message: error.message 
+    return NextResponse.json({
+      error: 'Internal Server Error',
+      message: error.message
     }, { status: 500 });
   }
 }
