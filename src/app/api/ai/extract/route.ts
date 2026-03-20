@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/app/lib/prisma';
-import { AIService } from '@/app/lib/service/AISevice';
+import { AIService } from '@/app/lib/service/AIService';
 
 export async function POST(req: Request) {
   try {

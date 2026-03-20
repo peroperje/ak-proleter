@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, ReactElement } from 'react';
 import clsx from 'clsx';
-import useAIService from '@/app/lib/service/AISevice';
+import useAIService from '@/app/lib/service/AIService';
 import { useAIConfig } from '@/app/components/providers/AIConfigProvider';
 import Textarea from '@/app/ui/textarea';
 import {
@@ -39,7 +39,7 @@ export default function AiFormPopulator<T,>({
   const { models, selectedModelId } = useAIConfig();
   
   // Create config for the service
-  const activeModel = models.find((m: any) => m.id === selectedModelId);
+  const activeModel = models.find((m) => m.id === selectedModelId);
   const modelConfig = activeModel 
     ? {
         id: activeModel.id,
