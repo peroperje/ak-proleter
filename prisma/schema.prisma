@@ -138,6 +138,18 @@ model Result {
   athlete      Athlete    @relation(fields: [athleteId], references: [id])
   discipline   Discipline @relation(fields: [disciplineId], references: [id])
   activities   Activity[]
+  voiceLogs    VoiceLog[]
+}
+
+model VoiceLog {
+  id           String   @id @default(uuid())
+  requestData  Json
+  aiResponse   Json
+  resultId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  result       Result?  @relation(fields: [resultId], references: [id], onDelete: SetNull)
 }
 
 model Activity {

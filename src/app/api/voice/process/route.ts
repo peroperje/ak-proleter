@@ -73,15 +73,6 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     if (!voiceInput) {
       return NextResponse.json({ error: 'Missing transcription or text' }, { status: 400 });
     }
-    console.log({
-      transcription,
-      text,
-      timestamp,
-      location,
-      lat,
-      lon,
-      language,
-    });
     const userRole = session.user.role || 'USER';
 
     // Get Active Model from DB (fallback to default if not configured)
@@ -120,8 +111,6 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
       contextHints
     );
 
-    console.log('resultData', resultData);
-
     // 2. Validation Logic
     if (!resultData) {
         return NextResponse.json({
@@ -153,8 +142,6 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         }, { status: 422 });
     }
     const disciplineId = matchedDiscipline.id;
-
-    console.log('Extracted Final Score:', numericScore);
 
     // Get or Create Event (Time-Boxed Proximity Matching)
     const recordTime = new Date(timestamp);
@@ -201,6 +188,17 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         eventId,
         score: numericScore.toString(),
         notes: "Inserted by Voice Assistant",
+      }
+    });
+
+    // 4. Log processing tracking data
+    await prisma.voiceLog.create({
+      data: {
+        // eslint-disable-next-line
+        requestData: body as any, 
+        // eslint-disable-next-line
+        aiResponse: resultData as any,
+        resultId: newResult.id,
       }
     });
 
