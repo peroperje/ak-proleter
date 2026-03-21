@@ -73,10 +73,10 @@ const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
 
   const filteredNavItems = Object.values(navItems).filter((item) => {
     // Basic pages available for all logged-in users
-    if (['Dashboard', 'Settings'].includes(item.name)) return isLoggedIn;
+    if (['Dashboard'].includes(item.name)) return isLoggedIn;
 
     // Admin-only sections
-    if (['Athletes', 'Events', 'Results'].includes(item.name)) {
+    if (['Athletes', 'Events', 'Results', 'Settings'].includes(item.name)) {
       return userRole === 'ADMIN';
     }
 
