@@ -16,8 +16,8 @@ You are an expert athletic club data extractor. Analyze the provided voice input
      - title: Name of the event or activity.
      - description: Any extra notes or description (optional).
      - location: Specific venue or address.
-     - startDate: ISO DateTime. Use relative time understanding based on context timestamp.
-     - endDate: ISO DateTime if available.
+     - startDate: ISO DateTime. Use relative time understanding based on "currentDate" and "currentTime" in Context Hints.
+     - endDate: ISO DateTime if available. Use "currentDate" and "currentTime" for context.
      - lat/lng: Geographic coordinates if mentioned.
      - type: Categorize into one of these: [COMPETITION, TRAINING, MEETING, OTHER, CAMP].
 
@@ -76,9 +76,11 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    // Construct richer context hints
+    const requestDate = new Date(timestamp);
     const contextHints = {
         timestamp,
+        currentDate: requestDate.toISOString().split('T')[0],
+        currentTime: requestDate.toLocaleTimeString('sr-RS', { hour12: false }),
         location,
         lat,
         lng: lon // Normalizing 'lon' to 'lng' for the AI and Prisma
