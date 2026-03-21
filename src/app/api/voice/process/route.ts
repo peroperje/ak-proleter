@@ -7,22 +7,28 @@ const DEFAULT_PROMPT = `
 You are an expert athletic club data extractor. Analyze the provided voice input and extract athletic performance results into a JSON object.
 
 1. **Extraction Schema**:
-   - score: The numeric value of the performance.
-   - scoreUnit: The units for the score. Use specific symbols ONLY: [s, min, h, m, km, pts, cnt, kg, cm, ms].
-   - dataType: Always set to "RESULT".
+   - disciplineName: The perfectly matched string from the VALID DISCIPLINES list.
+   - resultType: MUST be exactly one of "TIME", "DISTANCE", "WEIGHT", "POINTS", or "COUNT" based on context.
+   - score: The numeric value of the performance. If resultType is NOT "TIME", output the number here (e.g. meters, kilograms). If it is "TIME", this MUST be null.
+   - timeParts: If resultType is "TIME", you MUST output an object containing:
+      * minutes: number (e.g., if there are no minutes, output 0)
+      * seconds: number
+      * milliseconds: number (e.g., typically a decimal part of the seconds)
+     If resultType is NOT "TIME", this MUST be null.
 
-2. **Contextual Fallback**:
-   - If "location", "lat", or "lng" matching the voice input are NOT mentioned, the values should be null. (The backend will then use the device-provided context values if necessary).
-
-3. **Response Format**:
-   - Output ONLY a valid JSON object.
+2. **Response Format**:
+   - Output ONLY a valid JSON object matching the schema.
 `;
 
 interface ExtractedResult {
-  score: string | number;
-  scoreUnit: string;
   disciplineName: string;
-  dataType: "RESULT";
+  resultType: string;
+  score: string | number | null;
+  timeParts: {
+    minutes: number;
+    seconds: number;
+    milliseconds: number;
+  } | null;
 }
 
 export async function POST(req: NextRequest) {
@@ -51,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     const dynamicPrompt = `${DEFAULT_PROMPT}
 
-When dataType is "RESULT", you MUST map the spoken discipline to one of the exact strings from this list. Do not invent names.
+You MUST map the spoken discipline to one of the exact strings from this list. Do not invent names.
 
 VALID DISCIPLINES:
 ${JSON.stringify(disciplineNames)}
@@ -117,15 +123,22 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     console.log('resultData', resultData);
 
     // 2. Validation Logic
-    if (!resultData || resultData.dataType !== 'RESULT') {
+    if (!resultData) {
         return NextResponse.json({
-            error: 'AI could not extract a valid result.',
-            details: resultData
+            error: 'AI could not extract a valid result.'
         }, { status: 422 });
     }
 
+    let numericScore: number | null = null;
+    if (resultData.resultType === 'TIME' && resultData.timeParts) {
+      const { minutes, seconds, milliseconds } = resultData.timeParts;
+      numericScore = (minutes * 60) + seconds + (milliseconds / 100);
+    } else if (resultData.score !== null && resultData.score !== undefined) {
+      numericScore = Number(resultData.score);
+    }
+
     // Basic verification for Result fields: score
-    if (!resultData.score) {
+    if (numericScore === null || isNaN(numericScore)) {
         return NextResponse.json({ error: 'AI failed to extract required Result fields (score)' }, { status: 422 });
     }
 
@@ -141,7 +154,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     }
     const disciplineId = matchedDiscipline.id;
 
-    console.log('Extracted Result:', resultData);
+    console.log('Extracted Final Score:', numericScore);
 
     // Get or Create Event (Time-Boxed Proximity Matching)
     const recordTime = new Date(timestamp);
@@ -186,7 +199,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         athleteId,
         disciplineId,
         eventId,
-        score: resultData.score.toString(),
+        score: numericScore.toString(),
         notes: "Inserted by Voice Assistant",
       }
     });

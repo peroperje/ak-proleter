@@ -17,6 +17,13 @@ export function formatAthleticScore(
         return score;
     }
 
+    const formatDistance = (n: number) => {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(n);
+    };
+
     // It's a valid numeric value. Format based on unit standard.
     switch (unitSymbol) {
         case 's':
@@ -35,11 +42,6 @@ export function formatAthleticScore(
             // Track events conventionally use 2 decimal places.
             let sStr = s.toFixed(2);
             
-            // For longer times (>= 1 hour), if there is no fractional part, omit decimals.
-            if (h > 0 && s % 1 === 0) {
-               sStr = s.toFixed(0);
-            }
-            
             // Pad seconds if there are minutes or hours
             if (h > 0 || m > 0) {
                 if (s < 10) sStr = `0${sStr}`;
@@ -56,21 +58,18 @@ export function formatAthleticScore(
         }
         case 'cm': {
             // High Jump, Pole Vault often stored in cm but displayed in meters (e.g. 205 cm -> 2.05)
-            return `${(num / 100).toFixed(2)}`;
+            return formatDistance(num / 100);
         }
         case 'm': {
             // Long Jump, Throws (e.g. 8.95 m -> 8.95)
-            return `${num.toFixed(2)}`;
+            return formatDistance(num);
         }
-        case 'pts': {
-            // Decathlon, Heptathlon points
-            return `${Math.round(num)} pts`;
-        }
+        case 'pts':
         case 'cnt': {
             return `${Math.round(num)}`;
         }
         case 'kg': {
-             return `${num} kg`;
+             return `${formatDistance(num)} kg`;
         }
         default: {
             return unitSymbol ? `${num} ${unitSymbol}` : `${num}`;
