@@ -35,7 +35,11 @@ export async function createResult(_prevState: State, formData: FormData): Promi
       data: Object.fromEntries(formData.entries()) as unknown as z.infer<typeof ResultSchema>
     };
   }
-
+console.log({
+  data: {
+    ...validatedFields.data,
+  },
+});
   try {
     await prisma.result.create({
       data: {

@@ -21,6 +21,7 @@ You are an expert athletic club data extractor. Analyze the provided voice input
 interface ExtractedResult {
   score: string | number;
   scoreUnit: string;
+  disciplineName: string;
   dataType: "RESULT";
 }
 
@@ -28,9 +29,36 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getApiSession();
 
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // 1. Get athleteId
+    const athlete = await prisma.athlete.findUnique({
+      where: { userId: session.user.id }
+    });
+
+    if (!athlete) {
+      return NextResponse.json({ error: 'Athlete profile not found' }, { status: 404 });
+    }
+    const athleteId = athlete.id;
+
+    // 2. Load disciplines for exact matching
+    const allDisciplines = await prisma.discipline.findMany({
+      select: { id: true, name: true }
+    });
+    const disciplineNames = allDisciplines.map(d => d.name);
+
+    const dynamicPrompt = `${DEFAULT_PROMPT}
+
+When dataType is "RESULT", you MUST map the spoken discipline to one of the exact strings from this list. Do not invent names.
+
+VALID DISCIPLINES:
+${JSON.stringify(disciplineNames)}
+
+EXTRACTED FORMAT REQUIREMENT:
+Ensure the returned JSON includes "disciplineName" with the perfectly matched string from the VALID DISCIPLINES list.
+`;
 
     const body = await req.json();
     const { transcription, text, timestamp, location, lat, lon, language = 'sr-RS' } = body;
@@ -78,7 +106,7 @@ export async function POST(req: NextRequest) {
     };
 
     // 1. Process with AI
-    const aiService = new AIService(DEFAULT_PROMPT, modelConfig);
+    const aiService = new AIService(dynamicPrompt, modelConfig);
     const resultData = await aiService.extractData<ExtractedResult>(
       voiceInput,
       userRole,
@@ -100,17 +128,73 @@ export async function POST(req: NextRequest) {
     if (!resultData.score) {
         return NextResponse.json({ error: 'AI failed to extract required Result fields (score)' }, { status: 422 });
     }
+
+    // Validate discipline
+    const extractedDisciplineName = resultData.disciplineName;
+    const matchedDiscipline = allDisciplines.find(d => d.name === extractedDisciplineName);
+
+    if (!matchedDiscipline) {
+        return NextResponse.json({
+            error: 'Could not map discipline exactly.',
+            details: { extractedName: extractedDisciplineName }
+        }, { status: 422 });
+    }
+    const disciplineId = matchedDiscipline.id;
+
     console.log('Extracted Result:', resultData);
 
-    // 3. Persistence (Disabled for now as per previous conversation)
-    /*
-    // In the future, we will use session.user.id or athleteId to save the result
-    */
+    // Get or Create Event (Time-Boxed Proximity Matching)
+    const recordTime = new Date(timestamp);
+    const startOfDay = new Date(recordTime);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(recordTime);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    let targetEvent = await prisma.event.findFirst({
+      where: {
+        startDate: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      orderBy: {
+        startDate: 'desc',
+      },
+    });
+
+    if (!targetEvent) {
+      targetEvent = await prisma.event.create({
+        data: {
+          title: 'Dnevni trening',
+          location:
+            location ||
+            'Стадион, Карађорђев трг, МЗ Центар, Zrenjanin, City of Zrenjanin, Central Banat Administrative District, Vojvodina, 23101, Serbia',
+          lat: lat || 45.387256,
+          lng: lon || 20.3998004,
+          startDate: recordTime,
+          type: 'TRAINING',
+          organizerId: session.user.id,
+        },
+      });
+    }
+
+    const eventId = targetEvent.id;
+
+    // 3. Persistence
+    const newResult = await prisma.result.create({
+      data: {
+        athleteId,
+        disciplineId,
+        eventId,
+        score: resultData.score.toString(),
+        notes: "Inserted by Voice Assistant",
+      }
+    });
 
     return NextResponse.json({
       success: true,
       message: `Result recorded successfully`,
-      data: resultData
+      data: newResult
     });
 
   } catch (error: unknown) {
