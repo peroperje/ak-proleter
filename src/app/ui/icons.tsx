@@ -13,6 +13,7 @@ export {
   FiFileText as NoteIcon,
   FiChevronDown as ChevronDownIcon,
   FiChevronUp as ChevronUpIcon,
+  FiSettings as SettingsIcon,
 } from 'react-icons/fi';
 export { HiSparkles as HiSparklesIcon } from 'react-icons/hi2';
 

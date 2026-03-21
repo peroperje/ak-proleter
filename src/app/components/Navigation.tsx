@@ -1,13 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Logo from './Logo';
 import { routes } from '@/app/lib/routes';
 import {
   AwardIcon,
-  BarChartIcon,
   CalendarIcon,
   HomeIcon,
   UsersIcon,
+  SettingsIcon,
 } from '@/app/ui/icons';
 import { IconType as ReactIconType } from 'react-icons';
 import { FaUserCircle } from 'react-icons/fa';
@@ -57,25 +58,25 @@ export const navItems: NavItems = {
     icon: AwardIcon
   },
 
-  reports: {
-    name: 'Reports',
-    href: routes.reports.list(),
-    description: 'Generate reports and analytics on athlete performance.',
-    icon: BarChartIcon
+  settings: {
+    name: 'Settings',
+    href: '/settings',
+    description: 'Configure your profile and account settings.',
+    icon: SettingsIcon
   }
 };
 
 const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
   const session = await auth();
   const isLoggedIn = !!session?.user;
-  const userRole = (session?.user as any)?.role;
+  const userRole = (session?.user as { role?: string })?.role;
 
   const filteredNavItems = Object.values(navItems).filter((item) => {
-    // Dashboard is available for all logged-in users
-    if (item.name === 'Dashboard') return isLoggedIn;
+    // Basic pages available for all logged-in users
+    if (['Dashboard', 'Settings'].includes(item.name)) return isLoggedIn;
 
     // Admin-only sections
-    if (['Athletes', 'Events', 'Results', 'Reports'].includes(item.name)) {
+    if (['Athletes', 'Events', 'Results'].includes(item.name)) {
       return userRole === 'ADMIN';
     }
 
@@ -150,9 +151,11 @@ const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-3'>
                 {session.user.image ? (
-                  <img
+                  <Image
                     src={session.user.image}
                     alt='User avatar'
+                    width={40}
+                    height={40}
                     className='h-10 w-10 rounded-full shadow-sm'
                   />
                 ) : (
