@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { AwardIcon, CalendarIcon, MapPinIcon, NoteIcon } from '@/app/ui/icons';
-
+import { formatAthleticScore } from '@/app/lib/utils/format';
 interface ResultInfoContentProps {
     disciplineName: string;
     disciplineDescription?: string | null;
@@ -33,7 +33,7 @@ const ResultInfoContent: React.FC<ResultInfoContentProps> = ({
         year: 'numeric'
     });
 
-    const displayScore = score ? `${score}${unitSymbol ? ` ${unitSymbol}` : ''}` : 'N/A';
+    const displayScore = formatAthleticScore(score, unitSymbol);
 
     return (
         <div className="space-y-6">
@@ -94,7 +94,7 @@ const ResultInfoContent: React.FC<ResultInfoContentProps> = ({
                             <NoteIcon size={18} className="text-gray-400" />
                             <h4 className="text-sm font-semibold text-gray-700 dark:text-neutral-300">Notes</h4>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-neutral-400 italic">"{notes}"</p>
+                        <p className="text-sm text-gray-600 dark:text-neutral-400 italic">&quot;{notes}&quot;</p>
                     </div>
                 )}
             </div>

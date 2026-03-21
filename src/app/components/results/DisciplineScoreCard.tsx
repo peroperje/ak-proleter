@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { AwardIcon } from '@/app/ui/icons';
-
+import { formatAthleticScore } from '@/app/lib/utils/format';
 interface DisciplineScoreCardProps {
     id?: string;
     disciplineName: string;
@@ -17,11 +17,9 @@ export const DisciplineScoreCard: React.FC<DisciplineScoreCardProps> = ({
     score,
     unitSymbol,
 }) => {
-    const displayScore = score
-        ? `${score}${unitSymbol ? ` ${unitSymbol}` : ''}`
-        : 'N/A';
+    const displayScore = formatAthleticScore(score, unitSymbol);
 
-    const CardContent = () => (
+    const content = (
         <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800">
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -54,10 +52,10 @@ export const DisciplineScoreCard: React.FC<DisciplineScoreCardProps> = ({
     if (id) {
         return (
             <Link href={`/results/${id}`} className="hover:opacity-50 transition-opacity">
-                <CardContent />
+                {content}
             </Link>
         );
     }
 
-    return <CardContent />;
+    return content;
 };
