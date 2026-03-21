@@ -24,11 +24,18 @@ export const authConfig = {
             const isPublicRoute = ["/login", "/register"].includes(pathname)
 
             const isAdminRoute =
-                ["/athletes", "/events", "/results", "/admin-dashboard"].includes(pathname) ||
-                pathname.startsWith("/athletes/new") ||
-                pathname.startsWith("/events/new") ||
-                pathname.startsWith("/results/new") ||
-                pathname.includes("/edit")
+              [
+                '/athletes',
+                '/events',
+                '/results',
+                '/admin-dashboard',
+                '/settings',
+              ].includes(pathname) ||
+              pathname.startsWith('/athletes/new') ||
+              pathname.startsWith('/events/new') ||
+              pathname.startsWith('/results/new') ||
+              pathname.startsWith('/settings/ai-models') ||
+              pathname.includes('/edit');
 
             // If it's a public route and user is logged in, redirect to home
             if (isPublicRoute) {
