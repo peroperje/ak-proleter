@@ -4,34 +4,25 @@ import { AIService } from '@/app/lib/service/AIService';
 import { prisma } from '@/app/lib/prisma';
 
 const DEFAULT_PROMPT = `
-You are an expert athletic club data extractor. Analyze the provided voice input and extract structured information into a JSON object.
+You are an expert athletic club data extractor. Analyze the provided voice input and extract athletic performance results into a JSON object.
 
-1. **Classification**: First, determine if the input represents an "EVENT" or a "RESULT".
-   - If User Role is ADMIN, both types are possible.
-   - If User Role is ATHLETE, it is ALWAYS a "RESULT".
+1. **Extraction Schema**:
+   - score: The numeric value of the performance.
+   - scoreUnit: The units for the score. Use specific symbols ONLY: [s, min, h, m, km, pts, cnt, kg, cm, ms].
+   - dataType: Always set to "RESULT".
 
-2. **Extraction Schemas**:
+2. **Contextual Fallback**:
+   - If "location", "lat", or "lng" matching the voice input are NOT mentioned, the values should be null. (The backend will then use the device-provided context values if necessary).
 
-   - **dataType: "EVENT"**:
-     - title: Name of the event or activity.
-     - description: Any extra notes or description (optional).
-     - location: Specific venue or address.
-     - startDate: ISO DateTime. Use relative time understanding based on "currentDate" and "currentTime" in Context Hints.
-     - endDate: ISO DateTime if available. Use "currentDate" and "currentTime" for context.
-     - lat/lng: Geographic coordinates if mentioned.
-     - type: Categorize into one of these: [COMPETITION, TRAINING, MEETING, OTHER, CAMP].
-
-   - **dataType: "RESULT"**:
-     - athleteName: Full name of the athlete.
-     - score: The numeric value of the performance.
-     - scoreUnit: The units for the score. Use specific symbols ONLY: [s, min, h, m, km, pts, cnt, kg, cm, ms].
-
-3. **Contextual Fallback**:
-   - If "location", "lat", or "lng" are NOT mentioned in the voice input, set them to null in the JSON. (The backend will then use the device-provided context values if necessary).
-
-4. **Response Format**:
+3. **Response Format**:
    - Output ONLY a valid JSON object.
 `;
+
+interface ExtractedResult {
+  score: string | number;
+  scoreUnit: string;
+  dataType: "RESULT";
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -88,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Process with AI
     const aiService = new AIService(DEFAULT_PROMPT, modelConfig);
-    const resultData = await aiService.extractData<any>(
+    const resultData = await aiService.extractData<ExtractedResult>(
       voiceInput,
       userRole,
       language,
@@ -98,50 +89,36 @@ export async function POST(req: NextRequest) {
     console.log('resultData', resultData);
 
     // 2. Validation Logic
-    if (!resultData || !resultData.dataType) {
+    if (!resultData || resultData.dataType !== 'RESULT') {
         return NextResponse.json({
-            error: 'AI could not categorize the input.',
+            error: 'AI could not extract a valid result.',
             details: resultData
         }, { status: 422 });
     }
 
-    if (resultData.dataType === 'EVENT') {
-        // Basic verification for Event fields: title, startDate, type
-        if (!resultData.title || !resultData.startDate || !resultData.type) {
-            return NextResponse.json({
-                error: 'AI failed to extract required Event fields (title, startDate, or type)',
-                details: resultData
-            }, { status: 422 });
-        }
-        console.log('Extracted Event:', resultData);
-    } else if (resultData.dataType === 'RESULT') {
-        // Basic verification for Result fields: athleteName, score
-        if (!resultData.athleteName || !resultData.score) {
-            return NextResponse.json({ error: 'AI failed to extract required Result fields (athleteName, score)' }, { status: 422 });
-        }
-        console.log('Extracted Result:', resultData);
+    // Basic verification for Result fields: score
+    if (!resultData.score) {
+        return NextResponse.json({ error: 'AI failed to extract required Result fields (score)' }, { status: 422 });
     }
+    console.log('Extracted Result:', resultData);
 
     // 3. Persistence (Disabled for now as per previous conversation)
     /*
-    if (resultData.dataType === 'RESULT') {
-        // Save result...
-    } else if (resultData.dataType === 'EVENT') {
-        // Save event...
-    }
+    // In the future, we will use session.user.id or athleteId to save the result
     */
 
     return NextResponse.json({
       success: true,
-      message: `${resultData.dataType} recorded successfully`,
+      message: `Result recorded successfully`,
       data: resultData
     });
 
-  } catch (error: any) {
-    console.error('Voice Processing API Error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Voice Processing API Error:', err);
     return NextResponse.json({
       error: 'Internal Server Error',
-      message: error.message
+      message: err.message
     }, { status: 500 });
   }
 }

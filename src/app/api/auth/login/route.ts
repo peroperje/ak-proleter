@@ -33,7 +33,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Check if password matches
+    // 4. Check if user is an athlete and has an athlete record (restricted for mobile app)
+    if (user.role !== 'ATHLETE' || !user.athlete) {
+      return NextResponse.json(
+        { error: 'Forbidden', message: 'Mobile access is restricted to registered athletes only.' },
+        { status: 403 },
+      );
+    }
+
+    // 5. Check if password matches
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatches) {
       return NextResponse.json(
@@ -65,10 +73,11 @@ export async function POST(request: Request) {
       token: token,
     });
 
-  } catch (error: any) {
-    console.error('Mobile Auth API Error:', error);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('Mobile Auth API Error:', err);
     return NextResponse.json(
-      { error: 'Authentication failed', message: error.message },
+      { error: 'Authentication failed', message: err.message },
       { status: 500 },
     );
   }
