@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Logo from './Logo';
 import { routes } from '@/app/lib/routes';
 import {
@@ -11,10 +10,9 @@ import {
   SettingsIcon,
 } from '@/app/ui/icons';
 import { IconType as ReactIconType } from 'react-icons';
-import { FaUserCircle } from 'react-icons/fa';
 import { auth } from '@/auth';
 import UserMenu from './UserMenu';
-import LogoutButton from './LogoutButton';
+import MobileNav from './MobileNav';
 
 interface NavigationProps {
   currentPage?: string;
@@ -122,67 +120,27 @@ const Navigation: React.FC<NavigationProps> = async ({ currentPage }) => {
                 Login
               </Link>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile navigation menu - shown on small screens */}
-      <div className='border-t border-gray-200 md:hidden dark:border-neutral-700'>
-        <div className='space-y-1 px-2 py-3'>
-          {filteredNavItems.map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center rounded-md px-3 py-2 text-base font-medium ${currentPage === item.name.toLowerCase()
-                  ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
-                  }`}
-              >
-                {IconComponent && <IconComponent className='mr-2' size={18} />}
-                {item.name}
-              </Link>
-            );
-          })}
-        </div>
-        <div className='border-t border-gray-200 px-4 py-4 dark:border-neutral-700'>
-          {session?.user ? (
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-3'>
-                {session.user.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt='User avatar'
-                    width={40}
-                    height={40}
-                    className='h-10 w-10 rounded-full shadow-sm'
-                  />
-                ) : (
-                  <FaUserCircle className='h-10 w-10 text-gray-400' />
-                )}
-                <div className='flex flex-col'>
-                  <span className='text-sm font-medium text-gray-900 dark:text-white'>
-                    {session.user.name}
-                  </span>
-                  <span className='text-xs text-gray-500 dark:text-gray-400'>
-                    {session.user.email}
-                  </span>
-                </div>
+            <MobileNav>
+              <div className='space-y-1 px-2 py-3'>
+                {filteredNavItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`flex items-center rounded-md px-3 py-2 text-base font-medium ${currentPage === item.name.toLowerCase()
+                        ? 'bg-gray-100 text-gray-900 dark:bg-neutral-800 dark:text-white'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+                        }`}
+                    >
+                      {IconComponent && <IconComponent className='mr-2' size={18} />}
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </div>
-              <LogoutButton
-                className='rounded-md bg-gray-100 p-2 text-gray-600 hover:bg-gray-200 dark:bg-neutral-800 dark:text-gray-300 dark:hover:bg-neutral-700'
-                iconSize={18}
-              />
-            </div>
-          ) : (
-            <Link
-              href='/login'
-              className='flex items-center rounded-md px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-neutral-800 dark:hover:text-white'
-            >
-              Login
-            </Link>
-          )}
+            </MobileNav>
+          </div>
         </div>
       </div>
     </header>

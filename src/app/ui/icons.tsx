@@ -14,6 +14,8 @@ export {
   FiChevronDown as ChevronDownIcon,
   FiChevronUp as ChevronUpIcon,
   FiSettings as SettingsIcon,
+  FiMenu as MenuIcon,
+  FiX as XIcon,
 } from 'react-icons/fi';
 export { HiSparkles as HiSparklesIcon } from 'react-icons/hi2';
 

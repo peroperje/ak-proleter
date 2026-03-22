@@ -13,7 +13,7 @@ You are an expert athletic club data extractor. Analyze the provided voice input
    - timeParts: If resultType is "TIME", you MUST output an object containing:
       * minutes: number (e.g., if there are no minutes, output 0)
       * seconds: number
-      * milliseconds: number (e.g., typically a decimal part of the seconds)
+      * hundredths: number (a whole integer between 00 and 99 representing the fractional part of the second. IMPORTANT: Always treat this as a two-digit representation. For example, "14,8" represents 80 hundredths while "14,08" represents 08 hundredths. Note: In Serbian, a comma (,) is used as a decimal separator.)
      If resultType is NOT "TIME", this MUST be null.
 
 2. **Response Format**:
@@ -27,7 +27,7 @@ interface ExtractedResult {
   timeParts: {
     minutes: number;
     seconds: number;
-    milliseconds: number;
+    hundredths: number;
   } | null;
 }
 
@@ -120,8 +120,8 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
 
     let numericScore: number | null = null;
     if (resultData.resultType === 'TIME' && resultData.timeParts) {
-      const { minutes, seconds, milliseconds } = resultData.timeParts;
-      numericScore = (minutes * 60) + seconds + (milliseconds / 100);
+      const { minutes, seconds, hundredths } = resultData.timeParts;
+      numericScore = (minutes * 60) + seconds + (hundredths / 100);
     } else if (resultData.score !== null && resultData.score !== undefined) {
       numericScore = Number(resultData.score);
     }
