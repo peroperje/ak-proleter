@@ -5,7 +5,6 @@ import { prisma } from '@/app/lib/prisma';
 
 const DEFAULT_PROMPT = `
 You are an expert athletic club data extractor. Analyze the provided voice input and extract athletic performance results into a JSON object.
-
 1. **Extraction Schema**:
    - disciplineName: The perfectly matched string from the VALID DISCIPLINES list.
    - resultType: MUST be exactly one of "TIME", "DISTANCE", "WEIGHT", "POINTS", or "COUNT" based on context.
@@ -15,7 +14,6 @@ You are an expert athletic club data extractor. Analyze the provided voice input
       * seconds: number
       * hundredths: number (a whole integer between 00 and 99 representing the fractional part of the second. IMPORTANT: Always treat this as a two-digit representation. For example, "14,8" represents 80 hundredths while "14,08" represents 08 hundredths. Note: In Serbian, a comma (,) is used as a decimal separator.)
      If resultType is NOT "TIME", this MUST be null.
-
 2. **Response Format**:
    - Output ONLY a valid JSON object matching the schema.
 `;
@@ -56,12 +54,9 @@ export async function POST(req: NextRequest) {
     const disciplineNames = allDisciplines.map(d => d.name);
 
     const dynamicPrompt = `${DEFAULT_PROMPT}
-
 You MUST map the spoken discipline to one of the exact strings from this list. Do not invent names.
-
 VALID DISCIPLINES:
 ${JSON.stringify(disciplineNames)}
-
 EXTRACTED FORMAT REQUIREMENT:
 Ensure the returned JSON includes "disciplineName" with the perfectly matched string from the VALID DISCIPLINES list.
 `;
@@ -195,7 +190,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     await prisma.voiceLog.create({
       data: {
         // eslint-disable-next-line
-        requestData: body as any, 
+        requestData: body as any,
         // eslint-disable-next-line
         aiResponse: resultData as any,
         resultId: newResult.id,

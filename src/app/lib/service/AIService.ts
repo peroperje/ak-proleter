@@ -120,7 +120,7 @@ JSON:`;
 
     const systemPrompt = this.constructSystemPrompt(role, language, contextHints);
     const client = new InferenceClient(this.modelConfig.apiKey);
-    
+
     const chatCompletion = await client.chatCompletion({
       model: this.modelConfig.modelName,
       messages: [
@@ -163,7 +163,24 @@ JSON:`;
     if (!this.modelConfig.apiKey) throw new Error("Groq API key is missing");
 
     const systemPrompt = this.constructSystemPrompt(role, language, contextHints);
-
+    console.log({body: JSON.stringify({
+        model: this.modelConfig.modelName,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
+          },
+          {
+            role: 'user',
+            content: `${systemPrompt}\n\nText to process: "${prompt}"`,
+          }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.1,
+        max_tokens: 150,
+        top_p: 0.95,
+        stream: false
+      })})
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
