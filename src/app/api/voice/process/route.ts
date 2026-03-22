@@ -121,6 +121,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         currentDate: requestDate.toISOString().split('T')[0],
     };
 
+
     // 1. Process with AI
     const aiService = new AIService(dynamicPrompt, modelConfig);
     const resultData = await aiService.extractData<ExtractedResult>(
@@ -223,7 +224,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         resultId: newResult.id,
       }
     });
-
+    
     return NextResponse.json({
       success: true,
       message: `Result recorded successfully`,
