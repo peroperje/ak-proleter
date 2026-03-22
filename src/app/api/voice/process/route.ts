@@ -4,28 +4,57 @@ import { AIService } from '@/app/lib/service/AIService';
 import { prisma } from '@/app/lib/prisma';
 
 const DEFAULT_PROMPT = `
-You are an expert athletic club data extractor. Analyze the provided voice input and extract athletic performance results into a JSON object.
-1. **Extraction Schema**:
-   - disciplineName: The perfectly matched string from the VALID DISCIPLINES list.
-   - resultType: MUST be exactly one of "TIME", "DISTANCE", "WEIGHT", "POINTS", or "COUNT" based on context.
-   - score: The numeric value of the performance. If resultType is NOT "TIME", output the number here (e.g. meters, kilograms). If it is "TIME", this MUST be null.
-   - timeParts: If resultType is "TIME", you MUST output an object containing:
-      * minutes: number (e.g., if there are no minutes, output 0)
-      * seconds: number
-      * hundredths: number (a whole integer between 00 and 99 representing the fractional part of the second. IMPORTANT: Always treat this as a two-digit representation. For example, "14,8" represents 80 hundredths while "14,08" represents 08 hundredths. Note: In Serbian, a comma (,) is used as a decimal separator.)
-     If resultType is NOT "TIME", this MUST be null.
-2. **Response Format**:
-   - Output ONLY a valid JSON object matching the schema.
+### ROLE
+You are a high-precision athletic data extractor.
+
+### EXTRACTION RULES (Chain of Thought)
+For every input, you must follow these steps in your internal logic:
+1. Identify the numeric value and the separator (comma or dot).
+2. Count the digits after the separator.
+3. If 1 digit (e.g., ,7), it is Tenths -> Convert to Hundredths (7 * 10 = 70).
+4. If 2 digits (e.g., ,07), it is Hundredths -> Keep as is (07).
+5. Always output 'minutes', 'seconds', and 'hundredths' as STRINGS. Preserve leading zeros for hundredths (2-character string).
+
+### EXTRACTION SCHEMA
+- analysis: A logical analysis explaining how you extracted the values, especially for decimals.
+- disciplineName: THE PERFECTLY MATCHED string from the VALID DISCIPLINES list.
+- resultType: MUST be exactly one of "TIME", "DISTANCE", "WEIGHT", "POINTS", or "COUNT".
+- score: Numeric value if resultType is NOT "TIME". If it is "TIME", output null.
+- timeParts: If resultType is "TIME", output an object:
+    * minutes: string
+    * seconds: string
+    * hundredths: string (2 characters, e.g., "70" or "03")
+  If resultType is NOT "TIME", output null.
+
+### FEW-SHOT EXAMPLES
+User: "100m za 9,7"
+Output: {
+  "analysis": "The value is 9,7. There is one digit after the comma (7), which represents 70 hundredths.",
+  "disciplineName": "100 meters",
+  "resultType": "TIME",
+  "timeParts": {"minutes": "0", "seconds": "9", "hundredths": "70"},
+  "score": null
+}
+
+User: "100m za 15,03"
+Output: {
+  "analysis": "The value is 15,03. There are two digits after the comma (03), which represents 03 hundredths.",
+  "disciplineName": "100 meters",
+  "resultType": "TIME",
+  "timeParts": {"minutes": "0", "seconds": "15", "hundredths": "03"},
+  "score": null
+}
 `;
 
 interface ExtractedResult {
+  analysis: string;
   disciplineName: string;
   resultType: string;
   score: string | number | null;
   timeParts: {
-    minutes: number;
-    seconds: number;
-    hundredths: number;
+    minutes: string;
+    seconds: string;
+    hundredths: string;
   } | null;
 }
 
@@ -89,12 +118,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
 
     const requestDate = new Date(timestamp);
     const contextHints = {
-        timestamp,
         currentDate: requestDate.toISOString().split('T')[0],
-        currentTime: requestDate.toLocaleTimeString('sr-RS', { hour12: false }),
-        location,
-        lat,
-        lng: lon // Normalizing 'lon' to 'lng' for the AI and Prisma
     };
 
     // 1. Process with AI
@@ -116,7 +140,10 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     let numericScore: number | null = null;
     if (resultData.resultType === 'TIME' && resultData.timeParts) {
       const { minutes, seconds, hundredths } = resultData.timeParts;
-      numericScore = (minutes * 60) + seconds + (hundredths / 100);
+      const parsedMinutes = parseInt(minutes, 10) || 0;
+      const parsedSeconds = parseInt(seconds, 10) || 0;
+      const parsedHundredths = parseInt(hundredths, 10) || 0;
+      numericScore = (parsedMinutes * 60) + parsedSeconds + (parsedHundredths / 100);
     } else if (resultData.score !== null && resultData.score !== undefined) {
       numericScore = Number(resultData.score);
     }

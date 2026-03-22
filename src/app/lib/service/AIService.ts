@@ -94,20 +94,13 @@ export class AIService {
   }
 
   private constructSystemPrompt(role: string, language: string, contextHints?: ContextHints): string {
-    const contextInfo = contextHints ? `
-Context Hints:
-${JSON.stringify(contextHints, null, 2)}
-Use these to understand the context of the input text (e.g. timestamp, location).
-` : '';
+    const contextInfo = contextHints?.currentDate ? `\nCurrent Date: ${contextHints.currentDate}\n` : '';
 
     return `
 ${this.defaultPrompt}
 User Role: ${role}
-Target Language: ${language}
-${contextInfo}
-
-Return ONLY a valid JSON object matching the requested schema.
-JSON:`;
+Target Language: ${language}${contextInfo}
+Return ONLY a valid JSON object matching the requested schema.`;
   }
 
   private async tryHuggingFaceModel(
@@ -126,7 +119,7 @@ JSON:`;
       messages: [
         {
           role: 'system',
-          content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
+          content: "You are an athletic result processing assistant. Analyze the input, explain your logic in the 'analysis' field, and output ONLY valid JSON. Minutes, seconds, and hundredths must be strings. Hundredths must be a 2-character string (e.g. '70' or '03').",
         },
         {
           role: 'user',
@@ -137,8 +130,8 @@ JSON:`;
         type: 'json_object',
       },
       temperature: 0.1,
-      max_tokens: 150,
-      top_p: 0.95,
+      max_tokens: 200,
+      top_p: 1,
       stream: false,
     });
     return chatCompletion.choices[0].message.content;
@@ -163,24 +156,6 @@ JSON:`;
     if (!this.modelConfig.apiKey) throw new Error("Groq API key is missing");
 
     const systemPrompt = this.constructSystemPrompt(role, language, contextHints);
-    console.log({body: JSON.stringify({
-        model: this.modelConfig.modelName,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
-          },
-          {
-            role: 'user',
-            content: `${systemPrompt}\n\nText to process: "${prompt}"`,
-          }
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.1,
-        max_tokens: 150,
-        top_p: 0.95,
-        stream: false
-      })})
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -192,7 +167,7 @@ JSON:`;
         messages: [
           {
             role: 'system',
-            content: 'You are an athletic result processing assistant. Output ONLY valid JSON.',
+            content: "You are an athletic result processing assistant. Analyze the input, explain your logic in the 'analysis' field, and output ONLY valid JSON. Minutes, seconds, and hundredths must be strings. Hundredths must be a 2-character string (e.g. '70' or '03').",
           },
           {
             role: 'user',
@@ -200,9 +175,9 @@ JSON:`;
           }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.1,
-        max_tokens: 150,
-        top_p: 0.95,
+        temperature: 0.0,
+        max_tokens: 200,
+        top_p: 1,
         stream: false
       })
     });
