@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getApiSession } from '@/app/lib/api-auth';
 import { AIService } from '@/app/lib/service/AIService';
 import { prisma } from '@/app/lib/prisma';
+import { formatAthleticScore } from '@/app/lib/utils/format';
 
 const DEFAULT_PROMPT = `
 ### ROLE
@@ -78,7 +79,15 @@ export async function POST(req: NextRequest) {
 
     // 2. Load disciplines for exact matching
     const allDisciplines = await prisma.discipline.findMany({
-      select: { id: true, name: true }
+      select: { 
+        id: true, 
+        name: true,
+        unit: {
+          select: {
+            symbol: true
+          }
+        }
+      }
     });
     const disciplineNames = allDisciplines.map(d => d.name);
 
@@ -215,7 +224,7 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
     });
 
     // 4. Log processing tracking data
-    await prisma.voiceLog.create({
+    const voiceLog = await prisma.voiceLog.create({
       data: {
         // eslint-disable-next-line
         requestData: body as any,
@@ -224,11 +233,23 @@ Ensure the returned JSON includes "disciplineName" with the perfectly matched st
         resultId: newResult.id,
       }
     });
+
+    const formattedScore = formatAthleticScore(
+      numericScore.toString(),
+      matchedDiscipline.unit?.symbol
+    );
     
     return NextResponse.json({
       success: true,
       message: `Result recorded successfully`,
-      data: newResult
+      data: {
+        id: newResult.id,
+        discipline: matchedDiscipline.name,
+        voiceLogId: voiceLog.id,
+        score: numericScore.toString(),
+        formattedScore: formattedScore,
+        voiceInput: voiceInput
+      }
     });
 
   } catch (error: unknown) {
